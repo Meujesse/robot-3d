@@ -50,6 +50,12 @@
   .btn.stop { background: rgba(20,24,34,.8); color: #fff; border: 1px solid rgba(255,255,255,.25); }
   .btn svg { width: 18px; height: 18px; fill: currentColor; }
   .btn[hidden] { display: none; }
+  .open { position: absolute; top: 12px; right: 14px; z-index: 7; font-size: 12px; color: #1b1b1b; background: #f5b400; padding: 6px 10px;
+    border-radius: 6px; text-decoration: none; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+  .open[hidden] { display: none; }
+  .help { position: absolute; left: 50%; top: 14px; transform: translateX(-50%); z-index: 6; max-width: 70%; text-align: center; font-size: 13px; line-height: 1.35;
+    color: #1b1b1b; background: #ffd28a; padding: 8px 12px; border-radius: 10px; }
+  .help[hidden] { display: none; }
   .state { z-index: 6; font-size: 12px; color: rgba(255,255,255,.85); background: rgba(20,24,34,.55); padding: 5px 10px; border-radius: 999px; white-space: nowrap;
     display: flex; align-items: center; gap: 7px; }
   .state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #999; }
@@ -73,6 +79,8 @@
     </model-viewer>
   </div>
   <div class="cap" id="cap"></div>
+  <a class="open" id="open" href="#" target="_blank" rel="noopener" hidden>Ouvrir en grand ↗</a>
+  <div class="help" id="help" hidden></div>
   <div class="ctrl">
     <button class="btn" id="start">
       <svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm5-4a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
@@ -95,6 +103,9 @@
   const stage = document.getElementById('stage'), stateEl = document.getElementById('state'), cap = document.getElementById('cap');
   const startBtn = document.getElementById('start'), stopBtn = document.getElementById('stop');
   const robot = RobotRig.create({ mv: document.getElementById('robot'), rig: document.getElementById('rig'), glint: document.getElementById('glint') });
+  const embedded = (() => { try { return window.self !== window.top; } catch { return true; } })();
+  const openBtn = document.getElementById('open'), help = document.getElementById('help');
+  if (embedded) { openBtn.href = location.href; openBtn.hidden = false; }
   const LABEL = { idle: 'Prêt', connecting: 'Connexion…', listening: 'Il t’écoute', thinking: 'Il réfléchit…', speaking: 'Il parle' };
   function setState(s, label) { robot.setState(s === 'connecting' ? 'thinking' : s); stage.dataset.state = s; stateEl.textContent = label || LABEL[s] || s; }
 
@@ -124,8 +135,15 @@
 
   async function start() {
     startBtn.disabled = true; setState('connecting');
-    try { await navigator.mediaDevices.getUserMedia({ audio: true }); }
-    catch (e) { setState('idle', 'Micro refusé'); startBtn.disabled = false; return; }
+    help.hidden = true;
+    try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }); st.getTracks().forEach(t => t.stop()); }
+    catch (e) {
+      setState('idle', 'Micro refusé'); startBtn.disabled = false;
+      help.textContent = embedded
+        ? 'Le micro est bloqué dans la page intégrée à Genially. Clique sur « Ouvrir en grand » en haut à droite : le robot s’ouvre dans un onglet où ton navigateur te demandera l’autorisation.'
+        : 'Le micro est refusé. Clique sur l’icône à gauche de l’adresse (cadenas ou caméra), mets le micro sur « Autoriser », puis recharge la page.';
+      help.hidden = false; return;
+    }
     try {
       conv = await ElevenLabsClient.Conversation.startSession({
         agentId: robot.agentId(),

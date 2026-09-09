@@ -68,6 +68,10 @@
   @keyframes micpulse { 50% { box-shadow: 0 0 0 8px rgba(239,68,68,.25); } }
   .btn svg { width: 20px; height: 20px; fill: currentColor; }
   .hint { font-size: 11px; color: rgba(255,255,255,.55); padding: 0 16px 10px; }
+  .hint.warn { color: #ffd28a; }
+  .open { position: absolute; top: 12px; right: 14px; z-index: 7; font-size: 12px; color: #1b1b1b; background: #f5b400; padding: 6px 10px;
+    border-radius: 6px; text-decoration: none; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+  .open[hidden] { display: none; }
 </style>
 </head>
 <body>
@@ -84,6 +88,7 @@
       </model-viewer>
     </div>
     <div class="status" id="status">Connexion…</div>
+    <a class="open" id="open" href="#" target="_blank" rel="noopener" hidden>Ouvrir en grand ↗</a>
   </div>
   <div class="chat">
     <div class="card">
@@ -112,6 +117,9 @@
   const log = document.getElementById('log'), input = document.getElementById('input'), form = document.getElementById('form');
   const micBtn = document.getElementById('mic'), hint = document.getElementById('hint');
   const robot = RobotRig.create({ mv: document.getElementById('robot'), rig: document.getElementById('rig'), glint: document.getElementById('glint') });
+  const embedded = (() => { try { return window.self !== window.top; } catch { return true; } })();
+  const openBtn = document.getElementById('open');
+  if (embedded) { openBtn.href = location.href; openBtn.hidden = false; }
 
   // ---- bulles ----
   function bubble(role, text = '', cls = '') {
@@ -154,12 +162,15 @@
   connect();
 
   function send(text) {
-    text = (text || '').trim(); if (!text || !conv) return;
+    text = (text || '').trim(); if (!text) return;
+    if (!conv) { hint.textContent = 'Le robot n’est pas encore connecté (' + status.textContent + '). Réessaie dans un instant.'; hint.classList.add('warn'); return; }
     lastUserText = text; bubble('me', text); input.value = '';
     conv.sendUserMessage(text);
     robot.setState('thinking'); showDots();
   }
   form.addEventListener('submit', e => { e.preventDefault(); send(input.value); });
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); send(input.value); } });
+  document.getElementById('send').addEventListener('click', e => { e.preventDefault(); send(input.value); });
   input.addEventListener('input', () => { if (conv) conv.sendUserActivity(); });
 
   // ---- dictée (reconnaissance vocale du navigateur) ----
@@ -174,9 +185,22 @@
       if (e.results[e.results.length - 1].isFinal) { send(txt); }
     };
     rec.onend = () => { listening = false; micBtn.classList.remove('on'); robot.setState(robot.getState() === 'listening' ? 'idle' : robot.getState()); };
-    rec.onerror = ev => { console.warn('dictée', ev.error); hint.textContent = ev.error === 'not-allowed' ? 'Autorise le micro pour dicter.' : 'Dictée interrompue, réessaie.'; };
-    micBtn.addEventListener('click', () => {
+    rec.onerror = ev => {
+      console.warn('dictée', ev.error); hint.classList.add('warn');
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') hint.textContent = embedded
+        ? 'Le micro est bloqué dans la page intégrée. Clique sur « Ouvrir en grand » en haut à droite, puis autorise le micro.'
+        : 'Le micro est refusé. Clique sur l’icône à gauche de l’adresse, autorise le micro, puis recharge.';
+      else if (ev.error === 'network') hint.textContent = 'La dictée n’est pas disponible dans ce navigateur (elle marche dans Chrome ou Edge). Écris ta question, ou utilise la page « On parle ».';
+      else if (ev.error === 'no-speech') hint.textContent = 'Je n’ai rien entendu, réessaie.';
+      else hint.textContent = 'Dictée interrompue (' + ev.error + '), réessaie.';
+    };
+    micBtn.addEventListener('click', async () => {
       if (listening) { rec.stop(); return; }
+      hint.classList.remove('warn');
+      try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }); st.getTracks().forEach(t => t.stop()); }
+      catch (e) { hint.classList.add('warn'); hint.textContent = embedded
+        ? 'Le micro est bloqué dans la page intégrée. Clique sur « Ouvrir en grand » en haut à droite, puis autorise le micro.'
+        : 'Le micro est refusé. Clique sur l’icône à gauche de l’adresse, autorise le micro, puis recharge.'; return; }
       try { rec.start(); listening = true; micBtn.classList.add('on'); robot.setState('listening'); robot.gesture('antenna'); input.value = ''; hint.textContent = 'Je t’écoute…'; }
       catch (e) { console.warn(e); }
     });
