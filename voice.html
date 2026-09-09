@@ -11,7 +11,7 @@
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
     font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
   .stage { position: relative; width: 100%; height: 100%; }
-  .rig { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 70%; }
+  .rig { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 70%; transition: none; }
   .shadow { position: absolute; left: 50%; bottom: 3%; width: 42%; height: 9%; transform: translateX(-50%);
     background: radial-gradient(ellipse at center, rgba(0,0,0,.40) 0%, rgba(0,0,0,.22) 35%, rgba(0,0,0,0) 70%);
     animation: shadow-breathe 3.2s ease-in-out infinite; pointer-events: none; }
@@ -20,6 +20,10 @@
   @keyframes hover-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3%); } }
   @keyframes shadow-breathe { 0%,100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.85); opacity: .72; } }
   .glint { position: relative; width: 0; height: 0; pointer-events: none; opacity: 0; transition: opacity .3s; }
+  model-viewer.jump { animation: hover-float 3.2s ease-in-out infinite, jump .9s cubic-bezier(.3,.8,.4,1) 1; }
+  model-viewer.shake { animation: hover-float 3.2s ease-in-out infinite, shake .6s ease-in-out 1; }
+  @keyframes jump { 0% { translate: 0 0; } 35% { translate: 0 -9%; } 100% { translate: 0 0; } }
+  @keyframes shake { 0%,100% { translate: 0 0; } 20% { translate: -2.5% 0; } 40% { translate: 2.5% 0; } 60% { translate: -1.8% 0; } 80% { translate: 1.8% 0; } }
   .glint.on { opacity: 1; }
   .glint i { position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%;
     background: radial-gradient(circle, rgba(150,230,255,.95) 0%, rgba(150,230,255,.4) 45%, rgba(150,230,255,0) 70%);
@@ -147,6 +151,7 @@
     try {
       conv = await ElevenLabsClient.Conversation.startSession({
         agentId: robot.agentId(),
+        clientTools: robot.clientTools(),
         connectionType: 'webrtc',
         onConnect: () => { setState('listening'); startBtn.hidden = true; stopBtn.hidden = false; robot.setAmpSource(outputAmp); pollInput(); },
         onDisconnect: () => { conv = null; setState('idle', 'Conversation terminée'); startBtn.hidden = false; startBtn.disabled = false; stopBtn.hidden = true; robot.setAmpSource(null); },
