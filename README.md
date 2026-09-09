@@ -1,6 +1,6 @@
 # Robot 3D — viewer interactif pour Genially
 
-Petit robot volant en 3D interactive, pensé pour être inséré en iframe dans un Genially (fond transparent, ombre au sol, rotation, réactions, voix).
+Noki, petit robot volant en 3D interactive, pensé pour être inséré en iframe dans un Genially (fond transparent, ombre au sol, rotation, réactions, voix).
 
 En ligne : https://meujesse.github.io/robot-3d/
 

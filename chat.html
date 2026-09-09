@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Robot 3D : on discute</title>
+<title>Noki : on discute</title>
 <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/dist/lib.iife.js"></script>
 <script src="robot-rig.js"></script>
@@ -81,7 +81,7 @@
 <body>
 <div class="wrap">
   <div class="stage" id="stage" data-conn="connecting">
-    <div class="tag" id="tag">V9 · on discute</div>
+    <div class="tag" id="tag">V9 · on discute avec Noki</div>
     <div class="rig" id="rig">
       <div class="shadow"></div>
       <model-viewer id="robot" src="robot-parts.glb?v=3" alt="Petit robot volant"
@@ -102,7 +102,7 @@
         <button type="button" class="btn mic" id="mic" title="Parler">
           <svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm5-4a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
         </button>
-        <input id="input" type="text" placeholder="Pose une question au robot…" maxlength="400">
+        <input id="input" type="text" placeholder="Pose une question à Noki…" maxlength="400">
         <button type="submit" class="btn send" id="send" title="Envoyer">
           <svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg>
         </button>
@@ -145,7 +145,7 @@
         clientTools: robot.clientTools(),
         connectionType: 'websocket',
         textOnly: true,
-        onConnect: () => setStatus('connected', 'Robot connecté'),
+        onConnect: () => setStatus('connected', 'Noki connecté'),
         onDisconnect: () => setStatus('error', 'Déconnecté (recharge la page)'),
         onError: (m) => { console.error(m); setStatus('error', 'Erreur : ' + m); },
         onAgentChatResponsePart: ({ text, type }) => {
@@ -171,7 +171,7 @@
 
   function send(text) {
     text = (text || '').trim(); if (!text) return;
-    if (!conv) { hint.textContent = 'Le robot n’est pas encore connecté (' + status.textContent + '). Réessaie dans un instant.'; hint.classList.add('warn'); return; }
+    if (!conv) { hint.textContent = 'Noki n’est pas encore connecté (' + status.textContent + '). Réessaie dans un instant.'; hint.classList.add('warn'); return; }
     lastUserText = text; bubble('me', text); input.value = '';
     conv.sendUserMessage(text);
     robot.setState('thinking'); showDots();
