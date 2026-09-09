@@ -173,38 +173,42 @@
   document.getElementById('send').addEventListener('click', e => { e.preventDefault(); send(input.value); });
   input.addEventListener('input', () => { if (conv) conv.sendUserActivity(); });
 
-  // ---- dictée (reconnaissance vocale du navigateur) ----
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  let rec = null, listening = false;
-  if (!SR) { micBtn.title = 'Dictée non disponible dans ce navigateur'; micBtn.style.opacity = .4; hint.textContent = 'Écris ta question (la dictée demande Chrome, Vivaldi ou Edge).'; }
-  else {
-    rec = new SR(); rec.lang = 'fr-FR'; rec.interimResults = true; rec.continuous = false;
-    rec.onresult = e => {
-      let txt = ''; for (const r of e.results) txt += r[0].transcript;
-      input.value = txt;
-      if (e.results[e.results.length - 1].isFinal) { send(txt); }
-    };
-    rec.onend = () => { listening = false; micBtn.classList.remove('on'); robot.setState(robot.getState() === 'listening' ? 'idle' : robot.getState()); };
-    rec.onerror = ev => {
-      console.warn('dictée', ev.error); hint.classList.add('warn');
-      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') hint.textContent = embedded
-        ? 'Le micro est bloqué dans la page intégrée. Clique sur « Ouvrir en grand » en haut à droite, puis autorise le micro.'
-        : 'Le micro est refusé. Clique sur l’icône à gauche de l’adresse, autorise le micro, puis recharge.';
-      else if (ev.error === 'network') hint.textContent = 'La dictée n’est pas disponible dans ce navigateur (elle marche dans Chrome ou Edge). Écris ta question, ou utilise la page « On parle ».';
-      else if (ev.error === 'no-speech') hint.textContent = 'Je n’ai rien entendu, réessaie.';
-      else hint.textContent = 'Dictée interrompue (' + ev.error + '), réessaie.';
-    };
-    micBtn.addEventListener('click', async () => {
-      if (listening) { rec.stop(); return; }
-      hint.classList.remove('warn');
-      try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }); st.getTracks().forEach(t => t.stop()); }
-      catch (e) { hint.classList.add('warn'); hint.textContent = embedded
-        ? 'Le micro est bloqué dans la page intégrée. Clique sur « Ouvrir en grand » en haut à droite, puis autorise le micro.'
-        : 'Le micro est refusé. Clique sur l’icône à gauche de l’adresse, autorise le micro, puis recharge.'; return; }
-      try { rec.start(); listening = true; micBtn.classList.add('on'); robot.setState('listening'); robot.gesture('antenna'); input.value = ''; hint.textContent = 'Je t’écoute…'; }
-      catch (e) { console.warn(e); }
-    });
+  // ---- micro : écoute par ElevenLabs (marche dans tous les navigateurs), réponse à l'écrit ----
+  // Quand le micro est actif, on bascule sur une session vocale de l'agent, son coupé : il entend, il répond en texte.
+  let voice = null, micOn = false;
+  async function startVoice() {
+    hint.classList.remove('warn');
+    try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }); st.getTracks().forEach(t => t.stop()); }
+    catch (e) { hint.classList.add('warn'); hint.textContent = embedded
+      ? 'Le micro est bloqué dans la page intégrée. Clique sur « Ouvrir en grand » en haut à droite, puis autorise le micro.'
+      : 'Le micro est refusé. Clique sur l’icône à gauche de l’adresse, autorise le micro, puis recharge.'; return; }
+    hint.textContent = 'Connexion du micro…';
+    try {
+      if (conv) { try { await conv.endSession(); } catch {} conv = null; }
+      voice = await ElevenLabsClient.Conversation.startSession({
+        agentId: robot.agentId(),
+        connectionType: 'webrtc',
+        onConnect: () => {
+          micOn = true; micBtn.classList.add('on'); setStatus('connected', 'Micro actif');
+          hint.textContent = 'Je t’écoute : parle-lui, il te répond à l’écrit. Touche à nouveau le micro pour l’arrêter.';
+          robot.setState('listening'); robot.gesture('antenna');
+          try { voice.setVolume({ volume: 0 }); } catch {}
+        },
+        onDisconnect: () => { voice = null; micOn = false; micBtn.classList.remove('on'); robot.setState('idle'); hint.textContent = 'Micro arrêté. Écris ta question, ou touche le micro.'; connect(); },
+        onError: (m) => { console.error(m); hint.classList.add('warn'); hint.textContent = 'Erreur micro : ' + m; },
+        onModeChange: ({ mode }) => { if (mode === 'listening' && robot.getState() !== 'speaking') robot.setState('listening'); },
+        onMessage: ({ message, role, source }) => {
+          const r = role || (source === 'ai' ? 'agent' : 'user');
+          if (r === 'user') { bubble('me', message); robot.setState('thinking'); showDots(); return; }
+          hideDots(); bubble('bot', message); robot.speakText(message);
+          setTimeout(() => { if (micOn && robot.getState() === 'idle') robot.setState('listening'); }, 600 + message.length * 55);
+        },
+      });
+      conv = voice;   // les messages tapés passent aussi par la session vocale
+    } catch (e) { console.error(e); hint.classList.add('warn'); hint.textContent = 'Connexion du micro impossible.'; connect(); }
   }
+  async function stopVoice() { if (voice) { try { await voice.endSession(); } catch {} } }
+  micBtn.addEventListener('click', () => { if (micOn) stopVoice(); else startVoice(); });
 })();
 </script>
 </body>
