@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot 3D : on parle</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/dist/lib.iife.js"></script>
+<script src="robot-rig.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
+  .stage { position: relative; width: 100%; height: 100%; }
+  .rig { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 70%; }
+  .shadow { position: absolute; left: 50%; bottom: 3%; width: 42%; height: 9%; transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.40) 0%, rgba(0,0,0,.22) 35%, rgba(0,0,0,0) 70%);
+    animation: shadow-breathe 3.2s ease-in-out infinite; pointer-events: none; }
+  model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent;
+    --poster-color: transparent; --progress-bar-color: transparent; animation: hover-float 3.2s ease-in-out infinite; cursor: grab; }
+  @keyframes hover-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3%); } }
+  @keyframes shadow-breathe { 0%,100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.85); opacity: .72; } }
+  .glint { position: relative; width: 0; height: 0; pointer-events: none; opacity: 0; transition: opacity .3s; }
+  .glint.on { opacity: 1; }
+  .glint i { position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(150,230,255,.95) 0%, rgba(150,230,255,.4) 45%, rgba(150,230,255,0) 70%);
+    box-shadow: 0 0 12px 3px rgba(150,230,255,.5); animation: glint-pulse .9s ease-in-out infinite; }
+  @keyframes glint-pulse { 0%,100% { transform: scale(.7); } 50% { transform: scale(1.2); } }
+
+  .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
+
+  /* Sous-titres */
+  .cap { position: absolute; left: 50%; bottom: 21%; transform: translateX(-50%); z-index: 5; max-width: 86%; text-align: center;
+    font-size: 15px; line-height: 1.35; color: #fff; background: rgba(20,24,34,.62); padding: 8px 14px; border-radius: 14px;
+    opacity: 0; transition: opacity .25s; pointer-events: none; }
+  .cap.on { opacity: 1; }
+  .cap.me { background: rgba(245,180,0,.9); color: #1b1b1b; }
+
+  /* Halo d'écoute autour du robot */
+  .ring { position: absolute; left: 50%; top: 50%; width: 62%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
+    border: 2px solid rgba(150,230,255,.0); pointer-events: none; transition: border-color .3s; }
+  .stage[data-state="listening"] .ring { border-color: rgba(150,230,255,.45); animation: ring 1.6s ease-out infinite; }
+  @keyframes ring { 0% { transform: translate(-50%,-50%) scale(.92); opacity: 1; } 100% { transform: translate(-50%,-50%) scale(1.12); opacity: 0; } }
+
+  /* Contrôles */
+  .ctrl { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 6; display: flex; align-items: center; gap: 10px; }
+  .btn { border: 0; border-radius: 999px; padding: 12px 20px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    color: #1b1b1b; background: #f5b400; box-shadow: 0 6px 20px rgba(0,0,0,.25); transition: transform .1s, background .15s; }
+  .btn:active { transform: scale(.96); }
+  .btn.stop { background: rgba(20,24,34,.8); color: #fff; border: 1px solid rgba(255,255,255,.25); }
+  .btn svg { width: 18px; height: 18px; fill: currentColor; }
+  .btn[hidden] { display: none; }
+  .state { z-index: 6; font-size: 12px; color: rgba(255,255,255,.85); background: rgba(20,24,34,.55); padding: 5px 10px; border-radius: 999px; white-space: nowrap;
+    display: flex; align-items: center; gap: 7px; }
+  .state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #999; }
+  .stage[data-state="listening"] .state::before { background: #4ade80; }
+  .stage[data-state="thinking"] .state::before { background: #f5b400; animation: blink 1s infinite; }
+  .stage[data-state="speaking"] .state::before { background: #7fe3ff; }
+  @keyframes blink { 50% { opacity: .3; } }
+</style>
+</head>
+<body>
+<div class="stage" id="stage" data-state="idle">
+  <div class="tag" id="tag">V10 · on parle</div>
+  <div class="ring"></div>
+  <div class="rig" id="rig">
+    <div class="shadow"></div>
+    <model-viewer id="robot" src="robot-parts.glb" alt="Petit robot volant"
+      camera-controls disable-zoom disable-pan interaction-prompt="none"
+      camera-orbit="-18deg 82deg 118%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
+      environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto">
+      <div class="glint" id="glint" slot="hotspot-glint" data-position="0.0 0.46 0.345" data-normal="0 0 1"><i></i></div>
+    </model-viewer>
+  </div>
+  <div class="cap" id="cap"></div>
+  <div class="ctrl">
+    <button class="btn" id="start">
+      <svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm5-4a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+      Parler au robot
+    </button>
+    <button class="btn stop" id="stop" hidden>
+      <svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>
+      Terminer
+    </button>
+    <div class="state" id="state">Prêt</div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const p = new URLSearchParams(location.search);
+  if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
+  else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
+
+  const stage = document.getElementById('stage'), stateEl = document.getElementById('state'), cap = document.getElementById('cap');
+  const startBtn = document.getElementById('start'), stopBtn = document.getElementById('stop');
+  const robot = RobotRig.create({ mv: document.getElementById('robot'), rig: document.getElementById('rig'), glint: document.getElementById('glint') });
+  const LABEL = { idle: 'Prêt', connecting: 'Connexion…', listening: 'Il t’écoute', thinking: 'Il réfléchit…', speaking: 'Il parle' };
+  function setState(s, label) { robot.setState(s === 'connecting' ? 'thinking' : s); stage.dataset.state = s; stateEl.textContent = label || LABEL[s] || s; }
+
+  let conv = null, capTimer = null;
+  function caption(text, me = false) {
+    clearTimeout(capTimer); cap.textContent = text; cap.classList.toggle('me', me); cap.classList.add('on');
+    capTimer = setTimeout(() => cap.classList.remove('on'), me ? 3500 : 9000);
+  }
+
+  // Amplitude de la voix du robot → œil et corps
+  function outputAmp() {
+    if (!conv || !conv.getOutputByteFrequencyData) return 0;
+    try { const d = conv.getOutputByteFrequencyData(); let s = 0; const n = Math.min(40, d.length); for (let i = 1; i < n; i++) s += d[i]; return Math.min(1, s / (n * 120)); }
+    catch { return 0; }
+  }
+  // Voix de l'utilisateur → petit sursaut d'antenne au début d'une prise de parole
+  let userTalking = false, userTimer = null;
+  function pollInput() {
+    if (!conv) return;
+    try {
+      const v = conv.getInputVolume ? conv.getInputVolume() : 0;
+      if (v > 0.25 && !userTalking) { userTalking = true; if (robot.getState() === 'listening') robot.gesture('antenna'); }
+      if (v <= 0.15 && userTalking) { clearTimeout(userTimer); userTimer = setTimeout(() => { userTalking = false; }, 600); }
+    } catch {}
+    setTimeout(pollInput, 120);
+  }
+
+  async function start() {
+    startBtn.disabled = true; setState('connecting');
+    try { await navigator.mediaDevices.getUserMedia({ audio: true }); }
+    catch (e) { setState('idle', 'Micro refusé'); startBtn.disabled = false; return; }
+    try {
+      conv = await ElevenLabsClient.Conversation.startSession({
+        agentId: robot.agentId(),
+        connectionType: 'webrtc',
+        onConnect: () => { setState('listening'); startBtn.hidden = true; stopBtn.hidden = false; robot.setAmpSource(outputAmp); pollInput(); },
+        onDisconnect: () => { conv = null; setState('idle', 'Conversation terminée'); startBtn.hidden = false; startBtn.disabled = false; stopBtn.hidden = true; robot.setAmpSource(null); },
+        onError: (m) => { console.error(m); setState('idle', 'Erreur : ' + m); },
+        onModeChange: ({ mode }) => { setState(mode === 'speaking' ? 'speaking' : 'listening'); },
+        onMessage: ({ message, role, source }) => {
+          const r = role || (source === 'ai' ? 'agent' : 'user');
+          if (r === 'user') { caption(message, true); setState('thinking'); }
+          else caption(message, false);
+        },
+        onVadScore: ({ vadScore }) => { if (vadScore > 0.8 && robot.getState() === 'listening' && !userTalking) { userTalking = true; robot.gesture('antenna'); } },
+      });
+    } catch (e) { console.error(e); setState('idle', 'Connexion impossible'); startBtn.disabled = false; }
+  }
+  async function stop() { if (conv) { try { await conv.endSession(); } catch {} } }
+  startBtn.addEventListener('click', start);
+  stopBtn.addEventListener('click', stop);
+})();
+</script>
+</body>
+</html>

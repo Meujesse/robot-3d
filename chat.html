@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot 3D : on discute</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/dist/lib.iife.js"></script>
+<script src="robot-rig.js"></script>
+<style>
+  :root { --ink: #16202b; --panel: rgba(16,22,32,.72); --me: #f5b400; --bot: rgba(255,255,255,.14); }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
+  .wrap { display: grid; grid-template-columns: minmax(0, 46%) minmax(0, 54%); height: 100%; }
+  @media (max-width: 640px) { .wrap { grid-template-columns: 1fr; grid-template-rows: 44% 56%; } }
+
+  /* ---- scène robot ---- */
+  .stage { position: relative; min-width: 0; }
+  .rig { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 70%; }
+  .shadow { position: absolute; left: 50%; bottom: 3%; width: 46%; height: 9%; transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.40) 0%, rgba(0,0,0,.22) 35%, rgba(0,0,0,0) 70%);
+    animation: shadow-breathe 3.2s ease-in-out infinite; pointer-events: none; }
+  model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent;
+    --poster-color: transparent; --progress-bar-color: transparent; animation: hover-float 3.2s ease-in-out infinite; cursor: grab; }
+  @keyframes hover-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3%); } }
+  @keyframes shadow-breathe { 0%,100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.85); opacity: .72; } }
+  .glint { position: relative; width: 0; height: 0; pointer-events: none; opacity: 0; transition: opacity .3s; }
+  .glint.on { opacity: 1; }
+  .glint i { position: absolute; left: -10px; top: -10px; width: 20px; height: 20px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(150,230,255,.95) 0%, rgba(150,230,255,.4) 45%, rgba(150,230,255,0) 70%);
+    box-shadow: 0 0 12px 3px rgba(150,230,255,.5); animation: glint-pulse .9s ease-in-out infinite; }
+  @keyframes glint-pulse { 0%,100% { transform: scale(.7); } 50% { transform: scale(1.2); } }
+  .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
+  .status { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 5; font-size: 12px; color: rgba(255,255,255,.85);
+    background: rgba(20,24,34,.55); padding: 5px 10px; border-radius: 999px; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #999; }
+  .stage[data-conn="connected"] .status::before { background: #4ade80; }
+  .stage[data-conn="connecting"] .status::before { background: #f5b400; animation: blink 1s infinite; }
+  .stage[data-conn="error"] .status::before { background: #ef4444; }
+  @keyframes blink { 50% { opacity: .3; } }
+
+  /* ---- panneau de conversation ---- */
+  .chat { display: flex; flex-direction: column; min-width: 0; padding: 14px 14px 14px 0; }
+  @media (max-width: 640px) { .chat { padding: 0 10px 10px; } }
+  .card { flex: 1; display: flex; flex-direction: column; min-height: 0; background: var(--panel); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px; backdrop-filter: blur(10px); overflow: hidden; }
+  .log { flex: 1; overflow-y: auto; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+  .b { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.35; font-size: 15px; white-space: pre-wrap; word-break: break-word;
+    animation: pop .25s ease-out; }
+  @keyframes pop { from { transform: translateY(6px) scale(.98); opacity: 0; } }
+  .b.bot { align-self: flex-start; background: var(--bot); border-bottom-left-radius: 4px; }
+  .b.me { align-self: flex-end; background: var(--me); color: #1b1b1b; border-bottom-right-radius: 4px; }
+  .b.bot.typing::after { content: "▍"; animation: blink .8s infinite; opacity: .7; }
+  .b.dots { color: rgba(255,255,255,.7); letter-spacing: .2em; }
+  .b.dots span { animation: dot 1.2s infinite; } .b.dots span:nth-child(2) { animation-delay: .2s; } .b.dots span:nth-child(3) { animation-delay: .4s; }
+  @keyframes dot { 0%,60%,100% { opacity: .25; } 30% { opacity: 1; } }
+  .row { display: flex; gap: 8px; padding: 10px; border-top: 1px solid rgba(255,255,255,.1); background: rgba(0,0,0,.15); }
+  .row input { flex: 1; min-width: 0; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: #fff; border-radius: 999px;
+    padding: 11px 16px; font-size: 15px; outline: none; }
+  .row input::placeholder { color: rgba(255,255,255,.5); }
+  .row input:focus { border-color: var(--me); }
+  .btn { border: 0; border-radius: 999px; width: 44px; height: 44px; display: grid; place-items: center; cursor: pointer; color: #fff;
+    background: rgba(255,255,255,.14); transition: background .15s, transform .1s; flex: none; }
+  .btn:hover { background: rgba(255,255,255,.24); } .btn:active { transform: scale(.94); }
+  .btn.send { background: var(--me); color: #1b1b1b; }
+  .btn.mic.on { background: #ef4444; animation: micpulse 1.2s infinite; }
+  @keyframes micpulse { 50% { box-shadow: 0 0 0 8px rgba(239,68,68,.25); } }
+  .btn svg { width: 20px; height: 20px; fill: currentColor; }
+  .hint { font-size: 11px; color: rgba(255,255,255,.55); padding: 0 16px 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="stage" id="stage" data-conn="connecting">
+    <div class="tag" id="tag">V9 · on discute</div>
+    <div class="rig" id="rig">
+      <div class="shadow"></div>
+      <model-viewer id="robot" src="robot-parts.glb" alt="Petit robot volant"
+        camera-controls disable-zoom disable-pan interaction-prompt="none"
+        camera-orbit="-22deg 82deg 118%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
+        environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto">
+        <div class="glint" id="glint" slot="hotspot-glint" data-position="0.0 0.46 0.345" data-normal="0 0 1"><i></i></div>
+      </model-viewer>
+    </div>
+    <div class="status" id="status">Connexion…</div>
+  </div>
+  <div class="chat">
+    <div class="card">
+      <div class="log" id="log"></div>
+      <div class="hint" id="hint">Écris ta question, ou touche le micro et parle.</div>
+      <form class="row" id="form" autocomplete="off">
+        <button type="button" class="btn mic" id="mic" title="Parler">
+          <svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm5-4a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+        </button>
+        <input id="input" type="text" placeholder="Pose une question au robot…" maxlength="400">
+        <button type="submit" class="btn send" id="send" title="Envoyer">
+          <svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const p = new URLSearchParams(location.search);
+  if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
+  else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
+
+  const stage = document.getElementById('stage'), status = document.getElementById('status');
+  const log = document.getElementById('log'), input = document.getElementById('input'), form = document.getElementById('form');
+  const micBtn = document.getElementById('mic'), hint = document.getElementById('hint');
+  const robot = RobotRig.create({ mv: document.getElementById('robot'), rig: document.getElementById('rig'), glint: document.getElementById('glint') });
+
+  // ---- bulles ----
+  function bubble(role, text = '', cls = '') {
+    const el = document.createElement('div'); el.className = 'b ' + (role === 'me' ? 'me' : 'bot') + (cls ? ' ' + cls : '');
+    el.textContent = text; log.appendChild(el); log.scrollTop = log.scrollHeight; return el;
+  }
+  let dots = null;
+  function showDots() { if (!dots) { dots = bubble('bot', '', 'dots'); dots.innerHTML = '<span>●</span><span>●</span><span>●</span>'; } }
+  function hideDots() { if (dots) { dots.remove(); dots = null; } }
+
+  // ---- ElevenLabs (mode texte) ----
+  let conv = null, streaming = null, lastUserText = '';
+  function setStatus(conn, text) { stage.dataset.conn = conn; status.textContent = text; }
+  async function connect() {
+    setStatus('connecting', 'Connexion…');
+    try {
+      conv = await ElevenLabsClient.Conversation.startSession({
+        agentId: robot.agentId(),
+        connectionType: 'websocket',
+        textOnly: true,
+        onConnect: () => setStatus('connected', 'Robot connecté'),
+        onDisconnect: () => setStatus('error', 'Déconnecté (recharge la page)'),
+        onError: (m) => { console.error(m); setStatus('error', 'Erreur : ' + m); },
+        onAgentChatResponsePart: ({ text, type }) => {
+          if (type === 'start') { hideDots(); streaming = bubble('bot', '', 'typing'); robot.setState('speaking'); }
+          if (type === 'delta' && streaming) { streaming.textContent += text; log.scrollTop = log.scrollHeight; }
+          if (type === 'stop' && streaming) { streaming.classList.remove('typing'); }
+        },
+        onMessage: ({ message, role, source }) => {
+          const r = role || (source === 'ai' ? 'agent' : 'user');
+          if (r === 'user') { if (message !== lastUserText) bubble('me', message); return; }
+          hideDots();
+          if (streaming) { streaming.textContent = message; streaming.classList.remove('typing'); streaming = null; }
+          else bubble('bot', message);
+          robot.speakText(message);
+        },
+      });
+    } catch (e) { console.error(e); setStatus('error', 'Connexion impossible'); }
+  }
+  connect();
+
+  function send(text) {
+    text = (text || '').trim(); if (!text || !conv) return;
+    lastUserText = text; bubble('me', text); input.value = '';
+    conv.sendUserMessage(text);
+    robot.setState('thinking'); showDots();
+  }
+  form.addEventListener('submit', e => { e.preventDefault(); send(input.value); });
+  input.addEventListener('input', () => { if (conv) conv.sendUserActivity(); });
+
+  // ---- dictée (reconnaissance vocale du navigateur) ----
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let rec = null, listening = false;
+  if (!SR) { micBtn.title = 'Dictée non disponible dans ce navigateur'; micBtn.style.opacity = .4; hint.textContent = 'Écris ta question (la dictée demande Chrome, Vivaldi ou Edge).'; }
+  else {
+    rec = new SR(); rec.lang = 'fr-FR'; rec.interimResults = true; rec.continuous = false;
+    rec.onresult = e => {
+      let txt = ''; for (const r of e.results) txt += r[0].transcript;
+      input.value = txt;
+      if (e.results[e.results.length - 1].isFinal) { send(txt); }
+    };
+    rec.onend = () => { listening = false; micBtn.classList.remove('on'); robot.setState(robot.getState() === 'listening' ? 'idle' : robot.getState()); };
+    rec.onerror = ev => { console.warn('dictée', ev.error); hint.textContent = ev.error === 'not-allowed' ? 'Autorise le micro pour dicter.' : 'Dictée interrompue, réessaie.'; };
+    micBtn.addEventListener('click', () => {
+      if (listening) { rec.stop(); return; }
+      try { rec.start(); listening = true; micBtn.classList.add('on'); robot.setState('listening'); robot.gesture('antenna'); input.value = ''; hint.textContent = 'Je t’écoute…'; }
+      catch (e) { console.warn(e); }
+    });
+  }
+})();
+</script>
+</body>
+</html>
