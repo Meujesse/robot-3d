@@ -1,2 +1,5 @@
 robot-full.glb
+robot-parts-full.glb
+audio-rocco/
+tools/node_modules/
 .DS_Store

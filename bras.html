@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot 3D : bras et antenne</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .stage { position: relative; width: 100%; height: 100%; }
+  .shadow {
+    position: absolute; left: 50%; bottom: 2%; width: 42%; height: 9%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.40) 0%, rgba(0,0,0,.22) 35%, rgba(0,0,0,0) 70%);
+    animation: shadow-breathe 3.2s ease-in-out infinite; pointer-events: none;
+  }
+  model-viewer {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background: transparent; --poster-color: transparent; --progress-bar-color: transparent;
+    animation: hover-float 3.2s ease-in-out infinite; cursor: grab;
+  }
+  model-viewer:active { cursor: grabbing; }
+  @keyframes hover-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3.5%); } }
+  @keyframes shadow-breathe { 0%,100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.82); opacity: .7; } }
+  .bar {
+    position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; max-width: 96%;
+  }
+  .bar button {
+    border: 1px solid rgba(255,255,255,.35); background: rgba(20,24,34,.72); color: #fff;
+    border-radius: 999px; padding: 8px 14px; font-size: 13px; cursor: pointer; backdrop-filter: blur(6px);
+    transition: background .15s, transform .1s;
+  }
+  .bar button:hover { background: rgba(60,70,95,.85); }
+  .bar button:active { transform: scale(.96); }
+  .bar button.on { background: #f5b400; color: #1b1b1b; border-color: #f5b400; }
+  .tag {
+    position: absolute; top: 12px; left: 14px; color: rgba(255,255,255,.8); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="tag">Test : bras et antenne animés</div>
+  <div class="shadow"></div>
+  <model-viewer id="robot" src="robot-parts.glb" alt="Petit robot volant"
+    camera-controls disable-zoom disable-pan interaction-prompt="none"
+    camera-orbit="-30deg 82deg 125%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
+    environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto"></model-viewer>
+  <div class="bar">
+    <button data-anim="hello">Salut (bras droit)</button>
+    <button data-anim="hello_left">Salut (bras gauche)</button>
+    <button data-anim="cheer">Bravo (deux bras)</button>
+    <button data-anim="shrug">Hausser les bras</button>
+    <button data-anim="antenna">Antenne</button>
+    <button id="idle">Balancement continu</button>
+    <button id="eye">Œil vert</button>
+  </div>
+</div>
+<script>
+  const mv = document.getElementById('robot');
+  let idleOn = false;
+  function play(name, loop = false) {
+    mv.animationName = name;
+    mv.currentTime = 0;
+    mv.play({ repetitions: loop ? Infinity : 1 });
+  }
+  document.querySelectorAll('.bar button[data-anim]').forEach(b => {
+    b.addEventListener('click', () => { idleOn = false; document.getElementById('idle').classList.remove('on'); play(b.dataset.anim); });
+  });
+  document.getElementById('idle').addEventListener('click', e => {
+    idleOn = !idleOn; e.target.classList.toggle('on', idleOn);
+    if (idleOn) play('idle', true); else mv.pause();
+  });
+  let eyeOn = false;
+  document.getElementById('eye').addEventListener('click', e => {
+    eyeOn = !eyeOn; e.target.classList.toggle('on', eyeOn);
+    const m = mv.model && mv.model.materials.find(x => x.name === 'eye_material');
+    if (m) m.setEmissiveFactor(eyeOn ? [0.1, 0.9, 0.3] : [0, 0, 0]);
+  });
+  mv.addEventListener('finished', () => { if (idleOn) play('idle', true); });
+  mv.addEventListener('load', () => { console.log('animations', mv.availableAnimations); play('hello'); });
+</script>
+</body>
+</html>

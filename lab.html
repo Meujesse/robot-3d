@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot 3D interactif</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  .stage { position: relative; width: 100%; height: 100%; }
+
+  /* Rig = déplacement horizontal/vertical du robot ET de son ombre */
+  .rig { position: absolute; inset: 0; transition: transform 1.6s cubic-bezier(.45,.05,.3,1); will-change: transform; }
+  .rig.jump { animation: jump .9s cubic-bezier(.3,.8,.4,1) 1; }
+  .rig.shake { animation: shake .55s ease-in-out 1; }
+  @keyframes jump { 0% { translate: 0 0; } 35% { translate: 0 -9%; } 100% { translate: 0 0; } }
+  @keyframes shake { 0%,100% { translate: 0 0; } 20% { translate: -2.5% 0; } 40% { translate: 2.5% 0; } 60% { translate: -1.8% 0; } 80% { translate: 1.8% 0; } }
+
+  .shadow {
+    position: absolute; left: 50%; bottom: 2%; width: 42%; height: 9%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.40) 0%, rgba(0,0,0,.22) 35%, rgba(0,0,0,0) 70%);
+    animation: shadow-breathe var(--float-dur, 3.2s) ease-in-out infinite; pointer-events: none;
+  }
+  model-viewer {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background: transparent; --poster-color: transparent; --progress-bar-color: transparent;
+    animation: hover-float var(--float-dur, 3.2s) ease-in-out infinite; cursor: grab;
+  }
+  model-viewer:active { cursor: grabbing; }
+  .stage.sleeping { --float-dur: 6.5s; }
+  .stage.sleeping .shadow { opacity: .6; }
+  @keyframes hover-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3.5%); } }
+  @keyframes shadow-breathe { 0%,100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.82); opacity: .7; } }
+
+  /* petit "pop" à la touche */
+  model-viewer.pop { animation: hover-float var(--float-dur, 3.2s) ease-in-out infinite, pop .45s ease-out 1; }
+  @keyframes pop { 0% { scale: 1; } 30% { scale: 1.06; } 100% { scale: 1; } }
+
+  /* Étiquette de version + consigne */
+  .tag {
+    position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none;
+  }
+  .hint {
+    position: absolute; top: 12px; right: 14px; z-index: 5; color: rgba(255,255,255,.9); font-size: 13px;
+    background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none;
+    transition: opacity .6s; max-width: 55%;
+  }
+  .hint.off { opacity: 0; }
+
+  /* Sous-titre de ce que dit le robot (discret) */
+  .say {
+    position: absolute; left: 50%; bottom: 13%; transform: translateX(-50%); z-index: 5;
+    color: #fff; font-size: 15px; background: rgba(20,24,34,.62); padding: 6px 12px; border-radius: 999px;
+    opacity: 0; transition: opacity .25s; pointer-events: none; white-space: nowrap;
+  }
+  .say.on { opacity: 1; }
+
+  /* Zzz */
+  .zzz { position: absolute; left: 62%; top: 22%; z-index: 5; font-size: 22px; color: rgba(255,255,255,.9); opacity: 0; pointer-events: none; }
+  .stage.sleeping .zzz { animation: zzz 2.6s ease-in-out infinite; }
+  @keyframes zzz { 0% { opacity: 0; translate: 0 0; } 20% { opacity: 1; } 100% { opacity: 0; translate: 18px -40px; } }
+
+  /* Barre de démonstration des états */
+  .bar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 6; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+  .bar button {
+    border: 1px solid rgba(255,255,255,.35); background: rgba(20,24,34,.72); color: #fff; border-radius: 999px;
+    padding: 8px 14px; font-size: 13px; cursor: pointer; backdrop-filter: blur(6px); transition: background .15s, transform .1s;
+  }
+  .bar button:hover { background: rgba(60,70,95,.85); }
+  .bar button:active { transform: scale(.96); }
+  .bar[hidden] { display: none; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="tag" id="tag"></div>
+  <div class="hint" id="hint"></div>
+  <div class="rig" id="rig">
+    <div class="shadow"></div>
+    <model-viewer id="robot" src="robot-parts.glb" alt="Petit robot volant"
+      auto-rotate auto-rotate-delay="0" rotation-per-second="22deg"
+      camera-controls disable-zoom disable-pan interaction-prompt="none"
+      camera-orbit="-30deg 82deg 112%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
+      environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto"></model-viewer>
+    <div class="zzz">z<small>z</small><small><small>z</small></small></div>
+  </div>
+  <div class="say" id="say"></div>
+  <div class="bar" id="bar" hidden>
+    <button data-state="happy">Bonne réponse</button>
+    <button data-state="wrong">Mauvaise réponse</button>
+    <button data-state="sleep">Dodo</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const p = new URLSearchParams(location.search);
+  const v = parseInt(p.get('v') || '6', 10);
+  const F = {                       // fonctionnalités cumulatives
+    touch: v >= 2,
+    look:  v >= 3,
+    move:  v >= 4,
+    talk:  v >= 5,
+    state: v >= 6,
+  };
+  if (p.get('touch') === '0') F.touch = false;
+  if (p.get('look') === '0') F.look = false;
+  if (p.get('move') === '0') F.move = false;
+  if (p.get('talk') === '0') F.talk = false;
+  if (p.get('state') === '0') F.state = false;
+
+  const NAMES = { 2: 'V2 · il réagit au toucher', 3: 'V3 · il te regarde', 4: 'V4 · il se déplace', 5: 'V5 · il parle', 6: 'V6 · il change d’état' };
+  const HINTS = { 2: 'Touche le robot', 3: 'Bouge la souris autour de lui', 4: 'Touche-le, il décolle', 5: 'Il te parle tout seul', 6: 'Essaie les boutons en bas' };
+
+  const stage = document.getElementById('stage');
+  const rig = document.getElementById('rig');
+  const mv = document.getElementById('robot');
+  const say = document.getElementById('say');
+  const tag = document.getElementById('tag');
+  const hint = document.getElementById('hint');
+  const bar = document.getElementById('bar');
+  let dragging = false, saidSeen = false, asleep = false, sleepTimer = null;
+  tag.textContent = p.get('tag') ?? (NAMES[v] || 'Robot 3D');
+  if (p.get('tag') === '') tag.style.display = 'none';
+  hint.textContent = HINTS[v] || '';
+  if (p.get('hint') === '0' || !HINTS[v]) hint.classList.add('off');
+
+  // ---------- Audio (voix ElevenLabs "Rocco Robot") ----------
+  const LINES = {
+    hey: 'Hey Sacha ! Bonjour !', oui: 'Oui ?', ok: 'OK !', chatouille: 'Hé, ça chatouille !',
+    vois: 'Je te vois !', decolle: 'Attention, je décolle !', bravo: 'Bravo ! Bonne réponse !',
+    faux: 'Hmm... pas tout à fait. Essaie encore !', dodo: 'Zzz... Hein ? Je suis réveillé !', coucou: 'Coucou ! Tu veux jouer ?',
+  };
+  const audios = {};
+  for (const k of Object.keys(LINES)) { const a = new Audio('audio/' + k + '.mp3'); a.preload = 'auto'; audios[k] = a; }
+  let actx = null, analyser = null, fxIn = null, sources = new WeakMap();
+  const FX = p.get('fx') !== '0';
+  let speaking = null;
+  function ensureAudioGraph(a) {
+    try {
+      if (!actx) {
+        actx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = actx.createAnalyser(); analyser.fftSize = 256;
+        // Légère touche "robot" : un peu de modulation en anneau mélangée au son propre (?fx=0 pour couper)
+        fxIn = actx.createGain();
+        const dry = actx.createGain(); dry.gain.value = FX ? 0.72 : 1;
+        const ring = actx.createGain(); ring.gain.value = 0;
+        const osc = actx.createOscillator(); osc.type = 'sine'; osc.frequency.value = 38;
+        const depth = actx.createGain(); depth.gain.value = FX ? 0.28 : 0;
+        osc.connect(depth).connect(ring.gain); osc.start();
+        const tone = actx.createBiquadFilter(); tone.type = 'peaking'; tone.frequency.value = 2400; tone.Q.value = 1.2; tone.gain.value = FX ? 4 : 0;
+        fxIn.connect(dry); fxIn.connect(ring);
+        const sum = actx.createGain(); dry.connect(sum); ring.connect(sum);
+        sum.connect(tone).connect(analyser).connect(actx.destination);
+      }
+      if (actx.state === 'suspended') actx.resume();
+      if (!sources.has(a)) { const s = actx.createMediaElementSource(a); s.connect(fxIn); sources.set(a, s); }
+    } catch (e) { /* pas grave : l'œil pulsera en sinus */ }
+  }
+  let unlocked = false, pendingLine = null;
+  function speak(key) {
+    const a = audios[key]; if (!a) return;
+    if (speaking) { speaking.pause(); speaking.currentTime = 0; }
+    ensureAudioGraph(a);
+    speaking = a; a.currentTime = 0;
+    const pr = a.play();
+    if (pr && pr.catch) pr.catch(() => { pendingLine = key; speaking = null; });
+    say.textContent = LINES[key]; say.classList.add('on');
+    a.onended = () => { speaking = null; say.classList.remove('on'); };
+  }
+  // Débloque l'audio au premier geste (règle des navigateurs)
+  function unlock() {
+    if (unlocked) return; unlocked = true;
+    if (pendingLine) { const k = pendingLine; pendingLine = null; speak(k); }
+  }
+  ['pointerdown', 'touchstart', 'keydown'].forEach(ev => window.addEventListener(ev, unlock, { once: true, passive: true }));
+
+  // ---------- Œil (matériau émissif) ----------
+  let eyeMat = null;
+  let eyeBase = [0, 0, 0];        // couleur d'état (vert, rouge...)
+  let eyeGlow = 0;                // pulsation de parole 0..1
+  const data = new Uint8Array(128);
+  function eyeTick() {
+    if (eyeMat) {
+      let amp = 0;
+      if (speaking && !speaking.paused) {
+        if (analyser) { analyser.getByteFrequencyData(data); let s = 0; for (let i = 2; i < 40; i++) s += data[i]; amp = Math.min(1, s / (38 * 140)); }
+        else amp = 0.5 + 0.5 * Math.sin(performance.now() / 70);
+      }
+      eyeGlow += (amp - eyeGlow) * 0.35;
+      const g = eyeGlow;
+      const e = [eyeBase[0] + 0.15 * g, eyeBase[1] + 0.55 * g, eyeBase[2] + 1.0 * g];
+      eyeMat.setEmissiveFactor(e.map(x => Math.min(1, x)));
+    }
+    requestAnimationFrame(eyeTick);
+  }
+  function setEyeState(rgb) { eyeBase = rgb; }
+  function eyeFlash(rgb, ms = 500) {
+    const prev = eyeBase; eyeBase = rgb; setTimeout(() => { if (eyeBase === rgb) eyeBase = prev; }, ms);
+  }
+
+  // ---------- Animations glTF ----------
+  function anim(name, loop = false) {
+    if (!mv.availableAnimations || !mv.availableAnimations.includes(name)) return;
+    mv.animationName = name; mv.currentTime = 0; mv.play({ repetitions: loop ? Infinity : 1 });
+  }
+  let idleWanted = true;
+  mv.addEventListener('finished', () => { if (idleWanted && !asleep) anim('idle', true); });
+
+  // ---------- Regard (la caméra suit la souris, donc le robot semble se tourner) ----------
+  let lookTarget = { theta: -30, phi: 82 }, lookCur = { theta: -30, phi: 82 };
+  let lastPointer = 0;
+  if (F.look) {
+    mv.removeAttribute('auto-rotate');
+    const onMove = (x, y) => {
+      const r = stage.getBoundingClientRect();
+      const nx = ((x - r.left) / r.width) * 2 - 1, ny = ((y - r.top) / r.height) * 2 - 1;
+      lookTarget.theta = -nx * 40; lookTarget.phi = 82 - ny * 12;
+      lastPointer = performance.now();
+      if (F.talk && !saidSeen && !asleep) { saidSeen = true; speak('vois'); }
+    };
+    window.addEventListener('pointermove', e => onMove(e.clientX, e.clientY), { passive: true });
+    window.addEventListener('touchmove', e => { const t = e.touches[0]; if (t) onMove(t.clientX, t.clientY); }, { passive: true });
+    // La page peut recevoir la position de la souris du parent (Genially) via postMessage
+    window.addEventListener('message', e => { if (e.data && e.data.type === 'robot:look') onMove(e.data.x, e.data.y); });
+    (function lookTick() {
+      if (performance.now() - lastPointer > 4000) { lookTarget.theta += (-30 - lookTarget.theta) * 0.02; lookTarget.phi += (82 - lookTarget.phi) * 0.02; }
+      lookCur.theta += (lookTarget.theta - lookCur.theta) * 0.08;
+      lookCur.phi += (lookTarget.phi - lookCur.phi) * 0.08;
+      if (!dragging) mv.cameraOrbit = `${lookCur.theta.toFixed(2)}deg ${lookCur.phi.toFixed(2)}deg 112%`;
+      requestAnimationFrame(lookTick);
+    })();
+  }
+
+  // ---------- Déplacement ----------
+  let pos = { x: 0, y: 0 };
+  function moveTo(x, y) { pos = { x, y }; rig.style.transform = `translate(${x}%, ${y}%)`; }
+  let wanderTimer = null;
+  function wander() {
+    if (asleep) return;
+    const x = (Math.random() * 2 - 1) * 22, y = (Math.random() * 2 - 1) * 8;
+    moveTo(x, y);
+  }
+  if (F.move) {
+    rig.style.transition = 'none'; moveTo(-70, 25);          // hors champ, en bas à gauche
+    setTimeout(() => { rig.style.transition = ''; moveTo(0, 0); }, 80);
+    wanderTimer = setInterval(wander, 7000);
+  }
+  function takeOff() {
+    if (!F.move) return;
+    const dir = pos.x > 0 ? -1 : 1;
+    moveTo(dir * 28, -14);
+    setTimeout(() => moveTo(dir * -10, 4), 1700);
+    setTimeout(() => moveTo(0, 0), 3400);
+  }
+
+  // ---------- États ----------
+  function armSleep() {
+    if (!F.state) return;
+    clearTimeout(sleepTimer);
+    sleepTimer = setTimeout(sleep, 25000);
+  }
+  function sleep() {
+    if (asleep) return; asleep = true;
+    stage.classList.add('sleeping');
+    idleWanted = false; mv.pause();
+    setEyeState([0, 0, 0]);
+    if (eyeMat) eyeMat.pbrMetallicRoughness.setBaseColorFactor([0.35, 0.35, 0.4, 1]);
+    mv.removeAttribute('auto-rotate');
+  }
+  function wake(withVoice = true) {
+    if (!asleep) return; asleep = false;
+    stage.classList.remove('sleeping');
+    if (eyeMat) eyeMat.pbrMetallicRoughness.setBaseColorFactor([1, 1, 1, 1]);
+    if (!F.look) mv.setAttribute('auto-rotate', '');
+    idleWanted = true;
+    anim('antenna');
+    if (withVoice) speak('dodo');
+    armSleep();
+  }
+  function happy() {
+    wake(false); armSleep();
+    setEyeState([0.05, 0.62, 0.2]); setTimeout(() => setEyeState([0, 0, 0]), 2600);
+    rig.classList.remove('jump'); void rig.offsetWidth; rig.classList.add('jump');
+    anim('cheer'); speak('bravo');
+  }
+  function wrong() {
+    wake(false); armSleep();
+    setEyeState([0.85, 0.05, 0.05]); setTimeout(() => setEyeState([0, 0, 0]), 2600);
+    rig.classList.remove('shake'); void rig.offsetWidth; rig.classList.add('shake');
+    anim('shrug'); speak('faux');
+  }
+  if (F.state) {
+    bar.hidden = false;
+    bar.addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      ({ happy, wrong, sleep }[b.dataset.state])();
+    });
+    armSleep();
+    ['pointerdown', 'pointermove', 'keydown'].forEach(ev => window.addEventListener(ev, () => { if (!asleep) armSleep(); }, { passive: true }));
+  }
+  const initial = p.get('state');
+  window.addEventListener('message', e => {           // pilotage externe éventuel
+    const d = e.data || {}; if (d.type !== 'robot:state') return;
+    ({ happy, wrong, sleep, wake }[d.state] || (() => {}))();
+  });
+
+  // ---------- Toucher ----------
+  const TOUCH_LINES = ['hey', 'oui', 'ok', 'chatouille', 'coucou'];
+  const TOUCH_ANIMS = ['hello', 'hello_left', 'cheer', 'hello'];
+  let touchN = 0;
+  function onTouch() {
+    if (asleep) { wake(true); return; }
+    mv.classList.remove('pop'); void mv.offsetWidth; mv.classList.add('pop');
+    eyeFlash([0.2, 0.6, 1.0], 450);
+    anim(TOUCH_ANIMS[touchN % TOUCH_ANIMS.length]);
+    if (F.move && touchN % 2 === 1) { takeOff(); if (F.talk) speak('decolle'); else speak('decolle'); }
+    else speak(touchN === 0 ? 'hey' : TOUCH_LINES[touchN % TOUCH_LINES.length]);
+    touchN++;
+  }
+  let downAt = 0, downXY = [0, 0];
+  if (F.touch) {
+    mv.addEventListener('pointerdown', e => { dragging = true; downAt = performance.now(); downXY = [e.clientX, e.clientY]; });
+    window.addEventListener('pointerup', e => {
+      if (!dragging) return; dragging = false;
+      const dt = performance.now() - downAt, dx = Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]);
+      if (dt < 450 && dx < 8) {
+        const hit = mv.positionAndNormalFromPoint(e.clientX, e.clientY);
+        if (hit) onTouch();
+      }
+    });
+  } else {
+    mv.addEventListener('pointerdown', () => { dragging = true; });
+    window.addEventListener('pointerup', () => { dragging = false; });
+  }
+
+  // ---------- Chargement ----------
+  mv.addEventListener('load', () => {
+    eyeMat = mv.model.materials.find(m => m.name === 'eye_material') || null;
+    eyeTick();
+    if (mv.availableAnimations.includes('idle')) anim('idle', true);
+    if (F.talk) { setTimeout(() => { if (!asleep) speak('coucou'); }, 900); }
+    if (initial === 'happy') setTimeout(happy, 1200);
+    if (initial === 'wrong') setTimeout(wrong, 1200);
+    if (initial === 'sleep') setTimeout(sleep, 300);
+  });
+})();
+</script>
+</body>
+</html>

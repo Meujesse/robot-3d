@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Robot 3D : points d’intérêt</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root { --hud: #7fe3ff; --hud-dim: rgba(127,227,255,.45); }
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
+    font-family: "Share Tech Mono", ui-monospace, Menlo, monospace; -webkit-tap-highlight-color: transparent; }
+  .stage { position: relative; width: 100%; height: 100%; }
+  .shadow {
+    position: absolute; left: 50%; bottom: 2%; width: 42%; height: 9%; transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.40) 0%, rgba(0,0,0,.22) 35%, rgba(0,0,0,0) 70%);
+    animation: shadow-breathe 3.2s ease-in-out infinite; pointer-events: none;
+  }
+  model-viewer {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    background: transparent; --poster-color: transparent; --progress-bar-color: transparent;
+    animation: hover-float 3.2s ease-in-out infinite; cursor: grab;
+  }
+  model-viewer:active { cursor: grabbing; }
+  @keyframes hover-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2.5%); } }
+  @keyframes shadow-breathe { 0%,100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.86); opacity: .75; } }
+
+  .tag {
+    position: absolute; top: 12px; left: 14px; z-index: 5; color: var(--hud); font-size: 12px; letter-spacing: .12em;
+    text-transform: uppercase; background: rgba(6,14,24,.6); border: 1px solid var(--hud-dim); padding: 6px 10px; pointer-events: none;
+  }
+  .hint { position: absolute; top: 12px; right: 14px; z-index: 5; color: var(--hud); font-size: 12px; background: rgba(6,14,24,.6);
+    border: 1px solid var(--hud-dim); padding: 6px 10px; pointer-events: none; transition: opacity .5s; }
+  .hint.off { opacity: 0; }
+
+  /* ---- Point d'intérêt (hotspot) ---- */
+  .hs { position: relative; width: 0; height: 0; }
+  .hs .dot {
+    position: absolute; left: -7px; top: -7px; width: 14px; height: 14px; border-radius: 50%;
+    background: rgba(6,14,24,.75); border: 2px solid var(--hud); box-shadow: 0 0 10px var(--hud);
+    cursor: pointer; transition: transform .2s, opacity .3s; z-index: 2;
+  }
+  .hs .dot::after {
+    content: ""; position: absolute; inset: -8px; border-radius: 50%; border: 1px solid var(--hud); opacity: .8;
+    animation: ping 1.8s ease-out infinite;
+  }
+  @keyframes ping { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(1.9); opacity: 0; } }
+  .hs .dot:hover { transform: scale(1.2); }
+  .hs.open .dot::after { animation: none; opacity: 0; }
+  .hs.open .dot { background: var(--hud); }
+
+  /* Ligne de rappel + étiquette, façon HUD */
+  .hs .lead { position: absolute; top: 0; left: 0; height: 1px; background: var(--hud); box-shadow: 0 0 6px var(--hud);
+    width: 0; transform-origin: 0 0; transition: width .35s cubic-bezier(.2,.8,.2,1); z-index: 1; }
+  .hs .lead::after { content: ""; position: absolute; right: 0; top: 0; width: 0; height: 1px; background: var(--hud); }
+  .hs.open .lead { width: var(--len, 110px); }
+  .hs .label {
+    position: absolute; top: 0; left: var(--len, 110px); transform: translateY(-50%);
+    min-width: 150px; max-width: 220px; color: #e8fbff; background: rgba(6,14,24,.82); border: 1px solid var(--hud);
+    border-left: 3px solid var(--hud); padding: 8px 10px; box-shadow: 0 0 14px rgba(127,227,255,.25);
+    opacity: 0; clip-path: inset(0 100% 0 0); transition: opacity .25s .3s, clip-path .45s .3s cubic-bezier(.2,.8,.2,1);
+    pointer-events: none; z-index: 3;
+  }
+  .hs.open .label { opacity: 1; clip-path: inset(0 0 0 0); }
+  .hs .label b { display: block; color: var(--hud); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 3px; }
+  .hs .label span { display: block; font-size: 12px; line-height: 1.35; color: rgba(232,251,255,.85); }
+  .hs .label i { display: block; font-style: normal; font-size: 10px; color: var(--hud-dim); margin-top: 4px; letter-spacing: .08em; }
+  /* Étiquettes vers la gauche */
+  .hs.left .lead { transform: rotate(180deg); }
+  .hs.left .label { left: auto; right: var(--len, 110px); border-left: 1px solid var(--hud); border-right: 3px solid var(--hud); text-align: right; }
+  /* Légère inclinaison pour la ligne (style HUD) */
+  .hs.up .lead { transform: rotate(-28deg); } .hs.up .label { top: calc(var(--len, 110px) * -0.47); left: calc(var(--len, 110px) * 0.88); }
+  .hs.left.up .lead { transform: rotate(208deg); } .hs.left.up .label { left: auto; right: calc(var(--len, 110px) * 0.88); }
+  .hs.down .lead { transform: rotate(28deg); } .hs.down .label { top: calc(var(--len, 110px) * 0.47); left: calc(var(--len, 110px) * 0.88); }
+  .hs.left.down .lead { transform: rotate(152deg); } .hs.left.down .label { left: auto; right: calc(var(--len, 110px) * 0.88); }
+  /* Masqué quand le point est derrière le robot */
+  .hs[data-visible="false"] .dot, .hs:not([data-visible]) .dot { opacity: 0; pointer-events: none; }
+  .hs[data-visible="false"] .lead, .hs[data-visible="false"] .label { opacity: 0; }
+  .hs:not([data-visible]) .lead, .hs:not([data-visible]) .label { opacity: 0; }
+
+  .bar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 6; display: flex; gap: 8px; }
+  .bar button { font-family: inherit; border: 1px solid var(--hud); background: rgba(6,14,24,.7); color: var(--hud); padding: 8px 14px;
+    font-size: 12px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+  .bar button:hover { background: rgba(127,227,255,.15); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="tag">V7 · points d’intérêt</div>
+  <div class="hint" id="hint">Clique sur les points lumineux</div>
+  <div class="shadow"></div>
+  <model-viewer id="robot" src="robot-parts.glb" alt="Petit robot volant"
+    auto-rotate auto-rotate-delay="0" rotation-per-second="8deg"
+    camera-controls disable-zoom disable-pan interaction-prompt="none"
+    camera-orbit="-20deg 84deg 118%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
+    environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto">
+
+    <div class="hs up" slot="hotspot-eye" data-position="0.03 0.47 0.335" data-normal="0 0 1" data-visibility-attribute="visible" style="--len:120px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Capteur optique</b><span>Objectif grand angle à iris variable. Il reconnaît les visages et les gestes.</span><i>OPT-01 · ONLINE</i></div>
+    </div>
+    <div class="hs left up" slot="hotspot-antenna" data-position="0.255 0.86 -0.21" data-normal="0 1 0" data-visibility-attribute="visible" style="--len:110px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Antenne de liaison</b><span>Relie le robot au réseau du module. Elle frétille quand il reçoit un message.</span><i>COM-07 · 5 GHz</i></div>
+    </div>
+    <div class="hs down" slot="hotspot-thruster" data-position="0.02 0.03 0.06" data-normal="0 -1 0" data-visibility-attribute="visible" style="--len:120px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Turbine de sustentation</b><span>Un flux d’air ionisé le maintient en vol stationnaire, sans bruit.</span><i>LIFT-03 · 100 %</i></div>
+    </div>
+    <div class="hs down" slot="hotspot-clawR" data-position="0.45 0.10 0.13" data-normal="1 0 0" data-visibility-attribute="visible" style="--len:100px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Pince articulée</b><span>Trois doigts, prise délicate. Elle sert surtout à saluer.</span><i>ARM-R · 3 AXES</i></div>
+    </div>
+    <div class="hs left" slot="hotspot-ear" data-position="-0.43 0.50 -0.02" data-normal="-1 0 0" data-visibility-attribute="visible" style="--len:110px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Module auditif</b><span>Deux micros directionnels. Il entend d’où tu lui parles.</span><i>AUD-02 · STEREO</i></div>
+    </div>
+    <div class="hs down" slot="hotspot-lights" data-position="0.17 0.26 0.29" data-normal="0.3 -0.3 1" data-visibility-attribute="visible" style="--len:130px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Voyants d’état</b><span>Ambre : il réfléchit. Vert : c’est bon. Rouge : il a un doute.</span><i>LED-12 · AMBRE</i></div>
+    </div>
+  </model-viewer>
+  <div class="bar">
+    <button id="all">Tout afficher</button>
+    <button id="none">Tout masquer</button>
+  </div>
+</div>
+<script>
+  const mv = document.getElementById('robot');
+  const hs = [...document.querySelectorAll('.hs')];
+  const hint = document.getElementById('hint');
+  let opened = 0;
+  function setOpen(el, on) { el.classList.toggle('open', on); }
+  hs.forEach(el => {
+    el.querySelector('.dot').addEventListener('click', e => {
+      e.stopPropagation();
+      setOpen(el, !el.classList.contains('open'));
+      if (++opened >= 1) hint.classList.add('off');
+    });
+  });
+  document.getElementById('all').addEventListener('click', () => { hs.forEach(el => setOpen(el, true)); hint.classList.add('off'); });
+  document.getElementById('none').addEventListener('click', () => hs.forEach(el => setOpen(el, false)));
+  // Pause de la rotation quand la souris est sur le robot, pour lire tranquillement
+  mv.addEventListener('pointerenter', () => mv.removeAttribute('auto-rotate'));
+  mv.addEventListener('pointerleave', () => mv.setAttribute('auto-rotate', ''));
+  const p = new URLSearchParams(location.search);
+  if (p.get('open') === 'all') mv.addEventListener('load', () => setTimeout(() => hs.forEach(el => setOpen(el, true)), 600));
+  if (p.get('rotate') === '0') mv.removeAttribute('auto-rotate');
+</script>
+</body>
+</html>
