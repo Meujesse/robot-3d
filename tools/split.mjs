@@ -24,7 +24,7 @@ const PARTS = {
   armR:    { test: c => c[0] > 0.29 && c[1] < 0.275,  pivot: [0.425, 0.275, 0.055] },
   armL:    { test: c => c[0] < -0.29 && c[1] < 0.33,  pivot: [-0.40, 0.33, -0.02] },
   antenna: { test: c => c[1] > 0.755,                 pivot: [0.255, 0.755, -0.205] },
-  eye:     { test: c => c[2] > 0.22 && Math.hypot(c[0] + 0.006, c[1] - 0.46) < 0.17, pivot: [0, 0.453, 0.276] },
+  eye:     { test: c => c[2] > 0.22 && Math.hypot(c[0] + 0.006, c[1] - 0.46) < 0.105, pivot: [0, 0.453, 0.276] },
   body:    { test: () => true,                        pivot: [0, 0, 0] },
 };
 const order = ['armR', 'armL', 'antenna', 'eye', 'body'];
@@ -130,6 +130,14 @@ const rest = [0, 0, 0, 1];
   addChannel(a, nodes.armR, t, [rest, quatAxis(Z, 6), rest]);
   addChannel(a, nodes.armL, t, [rest, quatAxis(Z, -6), rest]);
   addChannel(a, nodes.antenna, [0, 0.75, 1.5, 2.25, 3.0], [rest, quatAxis(X, 3), rest, quatAxis(X, -3), rest]);
+}
+
+// talk : petits mouvements de bras pendant la parole (boucle)
+{
+  const a = doc.createAnimation('talk');
+  addChannel(a, nodes.armR, [0, 0.5, 1.0, 1.6, 2.2, 2.8], [rest, quatAxis(Z, 9), quatAxis(Z, 3), quatAxis(Z, 12), quatAxis(Z, 4), rest]);
+  addChannel(a, nodes.armL, [0, 0.4, 0.9, 1.5, 2.1, 2.8], [rest, quatAxis(Z, -4), quatAxis(Z, -11), quatAxis(Z, -3), quatAxis(Z, -9), rest]);
+  addChannel(a, nodes.antenna, [0, 0.35, 0.7, 1.4, 2.1, 2.8], [rest, quatAxis(X, 6), quatAxis(X, -5), quatAxis(X, 4), quatAxis(X, -6), rest]);
 }
 
 await io.write('../robot-parts-full.glb', doc);

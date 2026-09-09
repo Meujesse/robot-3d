@@ -28,7 +28,12 @@
       if (!ready || !mv.availableAnimations || !mv.availableAnimations.includes(name)) return false;
       mv.animationName = name; mv.currentTime = 0; mv.play({ repetitions: loop ? Infinity : 1 }); return true;
     }
-    mv.addEventListener('finished', () => { if (idleWanted && state !== 'sleeping') anim('idle', true); });
+    function restPose() { if (!ready) return; mv.animationName = 'idle'; mv.currentTime = 0; mv.pause(); }
+    function afterGesture() {
+      if (!idleWanted || state === 'sleeping') return;
+      if (state === 'speaking') anim('talk', true); else restPose();
+    }
+    mv.addEventListener('finished', afterGesture);
 
     function tick() {
       const now = performance.now(), t = (now - t0) / 1000;
@@ -48,7 +53,7 @@
         // teinte persistante si une couleur a été demandée explicitement
         if (eyeSet && eyeSet !== 'eteint') {
           const cs = COLORS[eyeSet]; const k = eyeBlink ? (0.5 + 0.5 * Math.sin(t * 8)) : 1;
-          const base = 0.45 * k;
+          const base = 0.5 * k;
           e = [Math.max(e[0], cs[0] * base), Math.max(e[1], cs[1] * base), Math.max(e[2], cs[2] * base)];
         }
         if (state === 'sleeping') e = [0, 0, 0];
@@ -64,7 +69,7 @@
     mv.addEventListener('load', () => {
       eyeMat = mv.model.materials.find(m => m.name === 'eye_material') || null;
       ready = true;
-      anim('idle', true);
+      restPose();
       tick();
     });
 
@@ -78,7 +83,7 @@
     }
     function glintColor(name) { if (glint) glint.style.setProperty('--c', GLINT_RGB[name] || GLINT_RGB.bleu); }
 
-    let speakTimer = null;
+    let speakTimer = null, eyeTimer = null;
     const api = {
       setAmpSource(fn) { ampSource = fn || (() => 0); },
       gesture(name) { idleWanted = true; return anim(name); },
@@ -88,9 +93,10 @@
         state = next;
         if (glint) { glint.classList.toggle('on', next === 'thinking' || (!!eyeSet && eyeSet !== 'eteint')); }
         if (next === 'thinking') api.gesture('antenna');
-        if (next === 'speaking') { const g = ['antenna', 'hello', 'hello_left', 'antenna'][Math.floor(Math.random() * 4)]; api.gesture(g); }
-        if (next === 'sleeping') { idleWanted = false; mv.pause(); }
-        else if (!idleWanted) { idleWanted = true; anim('idle', true); }
+        if (next === 'speaking') { const g = ['antenna', 'talk', 'hello', 'talk'][Math.floor(Math.random() * 4)]; if (g === 'talk') anim('talk', true); else api.gesture(g); }
+        if (next === 'sleeping') { idleWanted = false; restPose(); }
+        else if (!idleWanted) { idleWanted = true; restPose(); }
+        if (next === 'idle' || next === 'listening') { if (mv.animationName === 'talk') restPose(); }
         mv.parentElement.dataset.state = next;
       },
       getState() { return state; },
@@ -134,7 +140,9 @@
       eye(couleur, mode) {
         const c = String(couleur || 'bleu').toLowerCase();
         if (!(c in COLORS)) return false;
+        clearTimeout(eyeTimer);
         eyeBlink = mode === 'clignote';
+        if (mode === 'bref' && c !== 'bleu' && c !== 'eteint') eyeTimer = setTimeout(() => api.eye('bleu', 'fixe'), 6000);
         if (c === 'eteint' || c === 'bleu') { eyeSet = c === 'eteint' ? 'eteint' : null; eyeColor = 'bleu'; }
         else { eyeSet = c; eyeColor = c; }
         glintColor(c);

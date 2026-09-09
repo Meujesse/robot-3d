@@ -225,7 +225,7 @@
     mv.animationName = name; mv.currentTime = 0; mv.play({ repetitions: loop ? Infinity : 1 });
   }
   let idleWanted = true;
-  mv.addEventListener('finished', () => { if (idleWanted && !asleep) anim('idle', true); });
+  mv.addEventListener('finished', () => { if (idleWanted && !asleep) { mv.animationName = 'idle'; mv.currentTime = 0; mv.pause(); } });
 
   // ---------- Regard (la caméra suit la souris, donc le robot semble se tourner) ----------
   let lookTarget = { theta: -30, phi: 82 }, lookCur = { theta: -30, phi: 82 };
@@ -358,7 +358,7 @@
   mv.addEventListener('load', () => {
     eyeMat = mv.model.materials.find(m => m.name === 'eye_material') || null;
     eyeTick();
-    if (mv.availableAnimations.includes('idle')) anim('idle', true);
+    mv.animationName = 'idle'; mv.currentTime = 0; mv.pause();
     if (F.talk) { setTimeout(() => { if (!asleep) speak('coucou'); }, 900); }
     if (initial === 'happy') setTimeout(happy, 1200);
     if (initial === 'wrong') setTimeout(wrong, 1200);
