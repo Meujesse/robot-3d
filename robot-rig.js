@@ -28,7 +28,8 @@
       if (!ready || !mv.availableAnimations || !mv.availableAnimations.includes(name)) return false;
       mv.animationName = name; mv.currentTime = 0; mv.play({ repetitions: loop ? Infinity : 1 }); return true;
     }
-    function restPose() { if (!ready) return; mv.animationName = 'idle'; mv.currentTime = 0; mv.pause(); }
+    // Pose de repos : on fige l'animation en cours à son image 0 (toutes commencent bras ballants), sans fondu ni changement d'animation.
+    function restPose() { if (!ready) return; mv.pause(); mv.currentTime = 0; }
     function afterGesture() {
       if (!idleWanted || state === 'sleeping') return;
       if (state === 'speaking') anim('talk', true); else restPose();
