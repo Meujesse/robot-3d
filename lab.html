@@ -63,13 +63,13 @@
   .glint.on { opacity: 1; }
   .glint[data-visible="false"] { opacity: 0 !important; }
   .glint.ko { --c: 255,120,110; }
-  .glint i { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%;
+  .glint i { position: absolute; left: -12px; top: -12px; width: 24px; height: 24px; border-radius: 50%;
     background: radial-gradient(circle, rgba(var(--c),.95) 0%, rgba(var(--c),.45) 40%, rgba(var(--c),0) 70%);
     box-shadow: 0 0 14px 4px rgba(var(--c),.45); animation: glint-pulse 1.1s ease-in-out infinite; }
-  .glint b { position: absolute; left: 0; top: -1px; height: 2px; width: 54px; transform-origin: 0 50%; transform: rotate(-32deg);
+  .glint b { position: absolute; left: 0; top: -1px; height: 3px; width: 70px; transform-origin: 0 50%; transform: rotate(-32deg);
     background: linear-gradient(90deg, rgba(var(--c),.9), rgba(var(--c),0)); animation: glint-ray 1.1s ease-in-out infinite; }
   @keyframes glint-pulse { 0%,100% { transform: scale(.8); } 50% { transform: scale(1.15); } }
-  @keyframes glint-ray { 0%,100% { opacity: .5; width: 40px; } 50% { opacity: 1; width: 60px; } }
+  @keyframes glint-ray { 0%,100% { opacity: .55; width: 55px; } 50% { opacity: 1; width: 85px; } }
 
   /* Zzz */
   .zzz { position: absolute; left: 62%; top: 22%; z-index: 5; font-size: 22px; color: rgba(255,255,255,.9); opacity: 0; pointer-events: none; }
@@ -207,7 +207,7 @@
       }
       eyeGlow += (amp - eyeGlow) * 0.35;
       const g = eyeGlow;
-      const e = [eyeBase[0] + 0.08 * g, eyeBase[1] + 0.32 * g, eyeBase[2] + 0.65 * g];
+      const e = [eyeBase[0] + 0.02 * g, eyeBase[1] + 0.10 * g, eyeBase[2] + 0.28 * g];
       eyeMat.setEmissiveFactor(e.map(x => Math.min(1, x)));
     }
     requestAnimationFrame(eyeTick);
@@ -300,13 +300,13 @@
   }
   function happy() {
     wake(false); armSleep();
-    setEyeState([0.0, 0.16, 0.05]); glint('ok'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
+    setEyeState([0.0, 0.05, 0.015]); glint('ok'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
     rig.classList.remove('jump'); void rig.offsetWidth; rig.classList.add('jump');
     anim('cheer'); speak('bravo');
   }
   function wrong() {
     wake(false); armSleep();
-    setEyeState([0.22, 0.02, 0.02]); glint('ko'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
+    setEyeState([0.07, 0.01, 0.01]); glint('ko'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
     rig.classList.remove('shake'); void rig.offsetWidth; rig.classList.add('shake');
     anim('shrug'); speak('faux');
   }

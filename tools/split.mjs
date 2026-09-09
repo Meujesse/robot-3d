@@ -24,7 +24,7 @@ const PARTS = {
   armR:    { test: c => c[0] > 0.29 && c[1] < 0.275,  pivot: [0.425, 0.275, 0.055] },
   armL:    { test: c => c[0] < -0.29 && c[1] < 0.33,  pivot: [-0.40, 0.33, -0.02] },
   antenna: { test: c => c[1] > 0.755,                 pivot: [0.255, 0.755, -0.205] },
-  eye:     { test: c => c[2] > 0.22 && Math.hypot(c[0] + 0.006, c[1] - 0.453) < 0.195, pivot: [0, 0.453, 0.276] },
+  eye:     { test: c => c[2] > 0.22 && Math.hypot(c[0] + 0.006, c[1] - 0.46) < 0.17, pivot: [0, 0.453, 0.276] },
   body:    { test: () => true,                        pivot: [0, 0, 0] },
 };
 const order = ['armR', 'armL', 'antenna', 'eye', 'body'];
