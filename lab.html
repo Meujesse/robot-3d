@@ -58,6 +58,19 @@
   }
   .say.on { opacity: 1; }
 
+  /* Petite lueur dans l'œil (bonne / mauvaise réponse) */
+  .glint { position: relative; width: 0; height: 0; pointer-events: none; opacity: 0; transition: opacity .35s; --c: 120,255,170; }
+  .glint.on { opacity: 1; }
+  .glint[data-visible="false"] { opacity: 0 !important; }
+  .glint.ko { --c: 255,120,110; }
+  .glint i { position: absolute; left: -9px; top: -9px; width: 18px; height: 18px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(var(--c),.95) 0%, rgba(var(--c),.45) 40%, rgba(var(--c),0) 70%);
+    box-shadow: 0 0 14px 4px rgba(var(--c),.45); animation: glint-pulse 1.1s ease-in-out infinite; }
+  .glint b { position: absolute; left: 0; top: -1px; height: 2px; width: 54px; transform-origin: 0 50%; transform: rotate(-32deg);
+    background: linear-gradient(90deg, rgba(var(--c),.9), rgba(var(--c),0)); animation: glint-ray 1.1s ease-in-out infinite; }
+  @keyframes glint-pulse { 0%,100% { transform: scale(.8); } 50% { transform: scale(1.15); } }
+  @keyframes glint-ray { 0%,100% { opacity: .5; width: 40px; } 50% { opacity: 1; width: 60px; } }
+
   /* Zzz */
   .zzz { position: absolute; left: 62%; top: 22%; z-index: 5; font-size: 22px; color: rgba(255,255,255,.9); opacity: 0; pointer-events: none; }
   .stage.sleeping .zzz { animation: zzz 2.6s ease-in-out infinite; }
@@ -84,7 +97,9 @@
       auto-rotate auto-rotate-delay="0" rotation-per-second="22deg"
       camera-controls disable-zoom disable-pan interaction-prompt="none"
       camera-orbit="-30deg 82deg 112%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
-      environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto"></model-viewer>
+      environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto">
+      <div class="glint" id="glint" slot="hotspot-glint" data-position="0.0 0.455 0.345" data-normal="0 0 1" data-visibility-attribute="visible"><i></i><b></b></div>
+    </model-viewer>
     <div class="zzz">z<small>z</small><small><small>z</small></small></div>
   </div>
   <div class="say" id="say"></div>
@@ -192,12 +207,14 @@
       }
       eyeGlow += (amp - eyeGlow) * 0.35;
       const g = eyeGlow;
-      const e = [eyeBase[0] + 0.15 * g, eyeBase[1] + 0.55 * g, eyeBase[2] + 1.0 * g];
+      const e = [eyeBase[0] + 0.08 * g, eyeBase[1] + 0.32 * g, eyeBase[2] + 0.65 * g];
       eyeMat.setEmissiveFactor(e.map(x => Math.min(1, x)));
     }
     requestAnimationFrame(eyeTick);
   }
   function setEyeState(rgb) { eyeBase = rgb; }
+  const glintEl = document.getElementById('glint');
+  function glint(kind) { glintEl.classList.toggle('on', !!kind); glintEl.classList.toggle('ko', kind === 'ko'); }
   function eyeFlash(rgb, ms = 500) {
     const prev = eyeBase; eyeBase = rgb; setTimeout(() => { if (eyeBase === rgb) eyeBase = prev; }, ms);
   }
@@ -283,13 +300,13 @@
   }
   function happy() {
     wake(false); armSleep();
-    setEyeState([0.05, 0.62, 0.2]); setTimeout(() => setEyeState([0, 0, 0]), 2600);
+    setEyeState([0.0, 0.16, 0.05]); glint('ok'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
     rig.classList.remove('jump'); void rig.offsetWidth; rig.classList.add('jump');
     anim('cheer'); speak('bravo');
   }
   function wrong() {
     wake(false); armSleep();
-    setEyeState([0.85, 0.05, 0.05]); setTimeout(() => setEyeState([0, 0, 0]), 2600);
+    setEyeState([0.22, 0.02, 0.02]); glint('ko'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
     rig.classList.remove('shake'); void rig.offsetWidth; rig.classList.add('shake');
     anim('shrug'); speak('faux');
   }
