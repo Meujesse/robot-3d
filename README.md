@@ -55,6 +55,10 @@ Version retenue (10 sept. 2026) : le rendu Tripo dans model-viewer, comme Noki.
 | Lisa 3D · on discute | `lisa3d-chat.html` | Conversation écrite + micro, gestes commandés par l'agent (`lisa3d-mv-rig.js`), plans de caméra. Pas de bouche animée dans cette version. |
 | Lisa 3D · on parle | `lisa3d-voice.html` | Conversation vocale seule. |
 
+### Variante bouche synchronisée
+
+`lisa3d-sync-chat.html` et `lisa3d-sync-voice.html` : même conversation, mais rendue en three.js avec un éclairage studio neutre proche de model-viewer, et les calques 2D (bouche, paupières) projetés sur le visage 3D. C'est la seule version 3D où les lèvres bougent avec la voix.
+
 ## Lisa 3D, essai three.js + Blender (mis de côté)
 
 | Page | Fichier | Ce qu'elle fait |
