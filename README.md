@@ -45,7 +45,17 @@ Moteur commun `lisa-rig.js` :
 
 Fabrication des postures : `~/Downloads/lisa-2d/tools/montage.py` (boîte du visage par les iris, yeux, masque de bouche sous le nez, mesure de l'ouverture, calque paupières), `dbg_masque.py` pour la planche de vérification. Deux poses yeux fermés (joie, rire) ne passent pas la détection et sont laissées de côté.
 
-## Lisa 3D (Tripo Pro + Blender + three.js)
+## Lisa 3D (Tripo Pro, rendu model-viewer)
+
+Version retenue (10 sept. 2026) : le rendu Tripo dans model-viewer, comme Noki.
+
+| Page | Fichier | Ce qu'elle fait |
+|---|---|---|
+| Lisa 3D · elle réagit au toucher | `lisa3d-clic.html` | Clic sur la tête, un bras, une jambe ou le corps → une animation Tripo ; boutons marcher, courir, sauter, danser, tourner, coup de pied, s'asseoir. |
+| Lisa 3D · on discute | `lisa3d-chat.html` | Conversation écrite + micro, gestes commandés par l'agent (`lisa3d-mv-rig.js`), plans de caméra. Pas de bouche animée dans cette version. |
+| Lisa 3D · on parle | `lisa3d-voice.html` | Conversation vocale seule. |
+
+## Lisa 3D, essai three.js + Blender (mis de côté)
 
 | Page | Fichier | Ce qu'elle fait |
 |---|---|---|
