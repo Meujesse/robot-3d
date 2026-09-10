@@ -20,7 +20,7 @@ const ATTITUDES = {
   designe: 'wait', invitation: 'greet_02', neutre: 'idle', rire: 'laugh_01', au_revoir: 'wave_goodbye_01', danse: 'dance_01', applaudir: 'clap',
 };
 const BOUCLES = ['idle', 'wait'];      // animations d'attente (en boucle)
-const PLANS = { pied: { y: 0.50, d: 2.6, ty: 0.50 }, americain: { y: 0.62, d: 1.6, ty: 0.64 }, buste: { y: 0.74, d: 0.95, ty: 0.75 }, gros: { y: 0.79, d: 0.55, ty: 0.79 } };
+const PLANS = { pied: { y: 0.50, d: 2.6, ty: 0.50 }, americain: { y: 0.62, d: 1.7, ty: 0.62 }, buste: { y: 0.74, d: 1.08, ty: 0.71 }, gros: { y: 0.80, d: 0.64, ty: 0.79 } };
 
 export function create({ stage, onPose }) {
   const W = () => stage.clientWidth, H = () => stage.clientHeight;
@@ -145,7 +145,7 @@ export function create({ stage, onPose }) {
     const a = angle + look.x * 0.22;
     const d = P.d * pushK;
     // la caméra suit le personnage (les animations déplacent le bassin)
-    if (hips) { hips.getWorldPosition(_hp); suivi.x += (_hp.x - suivi.x) * 0.05; suivi.z += (_hp.z - suivi.z) * 0.05; }
+    if (hips) { hips.getWorldPosition(_hp); if (isFinite(_hp.x) && isFinite(_hp.z)) { suivi.x += (Math.max(-0.5, Math.min(0.5, _hp.x)) - suivi.x) * 0.05; suivi.z += (Math.max(-0.5, Math.min(0.5, _hp.z)) - suivi.z) * 0.05; } }
     const px = suivi.x + Math.sin(a) * d, pz = suivi.z + Math.cos(a) * d, py = P.y + 0.02 - look.y * 0.05;
     camera.position.lerp(new THREE.Vector3(px, py, pz), 0.06);
     const lk = new THREE.Vector3(suivi.x, P.ty - look.y * 0.02, suivi.z);

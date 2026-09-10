@@ -72,7 +72,7 @@
   </div>
 </div>
 <script type="module">
-  const { create } = await import('./lisa3d-rig.js?v=4');
+  const { create } = await import('./lisa3d-rig.js?v=5');
   const p = new URLSearchParams(location.search);
   if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
   else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
@@ -84,6 +84,7 @@
   if (embedded) { openBtn.href = location.href; openBtn.hidden = false; }
   const lisa = create({ stage: document.getElementById('stage') });
   await lisa.init(p.get('glb') || 'lisa.glb');
+  window.lisa = lisa;
 
   function bubble(role, text = '', cls = '') {
     const el = document.createElement('div'); el.className = 'b ' + (role === 'me' ? 'me' : 'bot') + (cls ? ' ' + cls : '');
