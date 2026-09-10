@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lisa 3D : on parle</title>
+<script src="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/dist/lib.iife.js"></script>
+<script src="lisa-bouche.js?v=2"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
+  .scene { position: relative; width: 100%; height: 100%; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
+  .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
+  .open { position: absolute; top: 12px; right: 14px; z-index: 7; font-size: 12px; color: #1b1b1b; background: #f5b400; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
+  .open[hidden] { display: none; }
+  .ui { position: absolute; left: 0; right: 0; bottom: 16px; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; }
+  .ui > * { pointer-events: auto; }
+  .state { font-size: 12px; color: rgba(255,255,255,.9); background: rgba(20,24,34,.55); padding: 5px 12px; border-radius: 999px; display: flex; align-items: center; gap: 8px; }
+  .state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #999; }
+  .scene[data-state="listening"] .state::before { background: #4ade80; animation: pulse 1.4s infinite; }
+  .scene[data-state="thinking"] .state::before { background: #f5b400; animation: blink 1s infinite; }
+  .scene[data-state="speaking"] .state::before { background: #7fe3ff; animation: pulse .7s infinite; }
+  .scene[data-state="connecting"] .state::before { background: #f5b400; animation: blink 1s infinite; }
+  @keyframes pulse { 50% { transform: scale(1.5); opacity: .6; } } @keyframes blink { 50% { opacity: .3; } }
+  .cap { max-width: 78%; font-size: 15px; line-height: 1.35; background: rgba(20,24,34,.62); padding: 10px 14px; border-radius: 14px; opacity: 0; transition: opacity .3s; text-align: center; backdrop-filter: blur(6px); }
+  .cap.on { opacity: 1; } .cap.me { color: #ffd28a; font-style: italic; }
+  .big { border: 0; border-radius: 999px; padding: 14px 26px; font-size: 16px; font-weight: 600; cursor: pointer; color: #1b1b1b; background: #f5b400; box-shadow: 0 6px 20px rgba(0,0,0,.3); display: flex; align-items: center; gap: 10px; transition: transform .1s; }
+  .big:active { transform: scale(.96); } .big[hidden] { display: none; } .big:disabled { opacity: .6; cursor: default; }
+  .big.stop { background: rgba(255,255,255,.18); color: #fff; } .big svg { width: 22px; height: 22px; fill: currentColor; }
+  .help { max-width: 78%; font-size: 12px; color: #ffd28a; background: rgba(20,24,34,.62); padding: 8px 12px; border-radius: 10px; text-align: center; } .help[hidden] { display: none; }
+</style>
+</head>
+<body>
+<div class="scene" id="scene" data-state="idle">
+  <div id="stage"></div>
+  <div class="tag" id="tag">Lisa 3D · on parle</div>
+  <a class="open" id="open" href="#" target="_blank" rel="noopener" hidden>Ouvrir en grand ↗</a>
+  <div class="ui">
+    <div class="cap" id="cap"></div>
+    <div class="help" id="help" hidden></div>
+    <div class="state" id="state">Chargement…</div>
+    <button class="big" id="start" disabled><svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm5-4a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>Parler à Lisa</button>
+    <button class="big stop" id="stop" hidden>Terminer</button>
+  </div>
+</div>
+<script type="module">
+  const { create } = await import('./lisa3d-rig.js?v=2');
+  const p = new URLSearchParams(location.search);
+  if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
+  else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
+  const scene = document.getElementById('scene'), stateEl = document.getElementById('state'), cap = document.getElementById('cap');
+  const startBtn = document.getElementById('start'), stopBtn = document.getElementById('stop');
+  const embedded = (() => { try { return window.self !== window.top; } catch { return true; } })();
+  const openBtn = document.getElementById('open'), help = document.getElementById('help');
+  if (embedded) { openBtn.href = location.href; openBtn.hidden = false; }
+  const lisa = create({ stage: document.getElementById('stage') });
+  await lisa.init(p.get('glb') || 'lisa.glb');
+  const LABEL = { idle: 'Prête', connecting: 'Connexion…', listening: 'Elle t’écoute', thinking: 'Elle réfléchit…', speaking: 'Elle parle' };
+  function setState(s, label) { lisa.setState(s === 'connecting' ? 'thinking' : s); scene.dataset.state = s; stateEl.textContent = label || LABEL[s] || s; }
+  setState('idle'); startBtn.disabled = false;
+  let conv = null, capTimer = null;
+  function caption(text, me = false) { clearTimeout(capTimer); cap.textContent = text; cap.classList.toggle('me', me); cap.classList.add('on'); capTimer = setTimeout(() => cap.classList.remove('on'), me ? 3500 : 9000); }
+  function outputAmp() {
+    if (!conv || !conv.getOutputByteFrequencyData) return 0;
+    try { const d = conv.getOutputByteFrequencyData(); let s = 0; const n = Math.min(40, d.length); for (let i = 1; i < n; i++) s += d[i]; return Math.min(1, s / (n * 120)); } catch { return 0; }
+  }
+  async function start() {
+    startBtn.disabled = true; setState('connecting'); help.hidden = true;
+    try { const st = await navigator.mediaDevices.getUserMedia({ audio: true }); st.getTracks().forEach(t => t.stop()); }
+    catch (e) {
+      setState('idle', 'Micro refusé'); startBtn.disabled = false;
+      help.textContent = embedded ? 'Le micro est bloqué dans la page intégrée à Genially. Clique sur « Ouvrir en grand » en haut à droite : Lisa s’ouvre dans un onglet où ton navigateur te demandera l’autorisation.' : 'Le micro est refusé. Clique sur l’icône à gauche de l’adresse (cadenas ou caméra), mets le micro sur « Autoriser », puis recharge la page.';
+      help.hidden = false; return;
+    }
+    try {
+      conv = await ElevenLabsClient.Conversation.startSession({
+        agentId: lisa.agentId(), clientTools: lisa.clientTools(), connectionType: 'webrtc',
+        onConnect: () => { setState('listening'); startBtn.hidden = true; stopBtn.hidden = false; lisa.setAmpSource(outputAmp); },
+        onDisconnect: () => { conv = null; setState('idle', 'Conversation terminée'); startBtn.hidden = false; startBtn.disabled = false; stopBtn.hidden = true; lisa.setAmpSource(null); },
+        onError: (m) => { console.error(m); setState('idle', 'Erreur : ' + m); },
+        onModeChange: ({ mode }) => { setState(mode === 'speaking' ? 'speaking' : 'listening'); },
+        onMessage: ({ message, role, source }) => {
+          const r = role || (source === 'ai' ? 'agent' : 'user');
+          if (r === 'user') { caption(message, true); setState('thinking'); } else { caption(message, false); lisa.nourrit(message); }
+        },
+      });
+    } catch (e) { console.error(e); setState('idle', 'Connexion impossible'); startBtn.disabled = false; }
+  }
+  async function stop() { if (conv) { try { await conv.endSession(); } catch {} } }
+  startBtn.addEventListener('click', start); stopBtn.addEventListener('click', stop);
+</script>
+</body>
+</html>

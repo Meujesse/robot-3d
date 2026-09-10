@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lisa 3D : modèle Tripo</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .stage { position: relative; width: 100%; height: 100%; }
+  .shadow { position: absolute; left: 50%; bottom: 3%; width: 30%; height: 6%; transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,.18) 40%, rgba(0,0,0,0) 70%); pointer-events: none; }
+  model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; --poster-color: transparent; --progress-bar-color: transparent; cursor: grab; }
+  .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="tag" id="tag">Lisa 3D · modèle Tripo v3.1, sans retouche</div>
+  <div class="shadow"></div>
+  <model-viewer src="lisa3d/lisa-tripo.glb?v=1" alt="Lisa en 3D" auto-rotate auto-rotate-delay="1500" rotation-per-second="10deg"
+    camera-controls disable-zoom disable-pan interaction-prompt="none" camera-orbit="0deg 85deg 2.4m" min-camera-orbit="auto 60deg auto" max-camera-orbit="auto 100deg auto"
+    camera-target="0m 0.5m 0m" environment-image="neutral" exposure="1.0" shadow-intensity="0" loading="eager"></model-viewer>
+</div>
+<script>
+  const p = new URLSearchParams(location.search);
+  if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
+  else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
+</script>
+</body>
+</html>
