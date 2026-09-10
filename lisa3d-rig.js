@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const AGENT_ID_DEFAULT = 'agent_2701m25dand9fq5rb32gndx037je';
 const BASE = 'lisa3d/';
@@ -26,22 +27,18 @@ export function create({ stage, onPose }) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(2, window.devicePixelRatio)); renderer.setSize(W(), H());
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
-  renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.enabled = false;
   renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;';
   stage.appendChild(renderer.domElement);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, W() / H(), 0.05, 20);
   camera.position.set(0, 0.74, 0.95);
-  // lumières : ambiance douce + clé chaude + contre-jour froid
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 1.1));
-  const key = new THREE.DirectionalLight(0xfff1e0, 2.2); key.position.set(0.8, 1.8, 1.2); key.castShadow = true;
-  key.shadow.mapSize.set(2048, 2048); key.shadow.camera.near = 0.5; key.shadow.camera.far = 6;
-  key.shadow.camera.left = key.shadow.camera.bottom = -0.8; key.shadow.camera.right = key.shadow.camera.top = 0.8; key.shadow.bias = -0.0005; key.shadow.radius = 4;
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0xbfe3ff, 1.0); rim.position.set(-1.2, 1.2, -1.0); scene.add(rim);
-  const fill = new THREE.DirectionalLight(0xffffff, 0.5); fill.position.set(-1, 0.6, 1.4); scene.add(fill);
-  const sol = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.ShadowMaterial({ opacity: 0.28 }));
-  sol.rotation.x = -Math.PI / 2; sol.receiveShadow = true; scene.add(sol);
+  // éclairage « studio neutre », comme model-viewer : environnement doux, pas de lumière dure ni d'ombre portée
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environmentIntensity = 1.15;
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xbfc8d0, 0.35));
+  const fill = new THREE.DirectionalLight(0xffffff, 0.6); fill.position.set(0.3, 1.2, 1.6); scene.add(fill);
 
   const rig = new THREE.Group(); scene.add(rig);           // racine du personnage (déplacements)
   let mixer = null, clips = {}, current = null, idleName = 'inactif', head = null, hips = null, model = null;
@@ -171,7 +168,7 @@ export function create({ stage, onPose }) {
       const draco = new DRACOLoader(); draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/'); loader.setDRACOLoader(draco);
       const gltf = await loader.loadAsync(BASE + file);
       model = gltf.scene; rig.add(model);
-      model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; if (o.material) { o.material.side = THREE.FrontSide; } } if (o.isBone && !head && /head/i.test(o.name)) head = o; if (o.isBone && !hips && /^(hip|hips|pelvis)$/i.test(o.name)) hips = o; });
+      model.traverse(o => { if (o.isMesh) { o.castShadow = false; o.receiveShadow = false; if (o.material) { o.material.side = THREE.FrontSide; } } if (o.isBone && !head && /head/i.test(o.name)) head = o; if (o.isBone && !hips && /^(hip|hips|pelvis)$/i.test(o.name)) hips = o; });
       if (!head) model.traverse(o => { if (o.isBone && !head && /neck|tete|t.te/i.test(o.name)) head = o; });
       mixer = new THREE.AnimationMixer(model);
       for (const c of gltf.animations) clips[c.name.split(':').pop().replace(/[^a-z0-9_]/gi, '').toLowerCase()] = c;
