@@ -72,7 +72,7 @@
   </div>
 </div>
 <script type="module">
-  const { create } = await import('./lisa3d-rig.js?v=2');
+  const { create } = await import('./lisa3d-rig.js?v=3');
   const p = new URLSearchParams(location.search);
   if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
   else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');

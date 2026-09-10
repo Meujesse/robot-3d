@@ -11,13 +11,14 @@ const BASE = 'lisa3d/';
 // Rendu ortho de face : 2000 px pour 0,20 m, centré sur (0, 0.79) → 10 000 px/m
 const PXM = 10000, CX = 1000, CY = 1000, ZC = 0.79;
 // Posture (outil lisa_attitude) → animation Tripo
+// (noms Tripo : greet_01, greet_02, wave_goodbye_01, agree, clap, heart_pose, laugh_01, scratch, look_around, fold_arms, depressed, dance_01, idle, wait)
 const ATTITUDES = {
-  salut: 'saluer_01', presentation: 'attendre', accueil: 'debout_relax', index: 'approuver', decompte: 'attendre', question: 'se_gratter',
-  curiosite: 'regarder_autour', reflexion: 'se_gratter', haussement: 'se_gratter', pouce: 'approuver', enthousiasme: 'acclamer',
-  emerveillement: 'pose_coeur', perplexite: 'regarder_autour', deception: 'deprime', reveuse: 'attendre', hanches: 'croiser_les_bras',
-  designe: 'attendre', invitation: 'saluer_02', neutre: 'inactif', rire: 'rire_01', au_revoir: 'au_revoir_01', danse: 'danse_01', applaudir: 'applaudir',
+  salut: 'greet_01', presentation: 'wait', accueil: 'idle', index: 'agree', decompte: 'wait', question: 'scratch',
+  curiosite: 'look_around', reflexion: 'scratch', haussement: 'scratch', pouce: 'agree', enthousiasme: 'clap',
+  emerveillement: 'heart_pose', perplexite: 'look_around', deception: 'depressed', reveuse: 'wait', hanches: 'fold_arms',
+  designe: 'wait', invitation: 'greet_02', neutre: 'idle', rire: 'laugh_01', au_revoir: 'wave_goodbye_01', danse: 'dance_01', applaudir: 'clap',
 };
-const BOUCLES = ['inactif', 'attendre', 'debout_relax'];      // animations d'attente (en boucle)
+const BOUCLES = ['idle', 'wait'];      // animations d'attente (en boucle)
 const PLANS = { pied: { y: 0.50, d: 2.6, ty: 0.50 }, americain: { y: 0.62, d: 1.6, ty: 0.64 }, buste: { y: 0.74, d: 0.95, ty: 0.75 }, gros: { y: 0.79, d: 0.55, ty: 0.79 } };
 
 export function create({ stage, onPose }) {
@@ -169,11 +170,11 @@ export function create({ stage, onPose }) {
       model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; if (o.material) { o.material.side = THREE.FrontSide; } } if (o.isBone && !head && /head/i.test(o.name)) head = o; });
       if (!head) model.traverse(o => { if (o.isBone && !head && /neck|tete|t.te/i.test(o.name)) head = o; });
       mixer = new THREE.AnimationMixer(model);
-      for (const c of gltf.animations) clips[c.name.replace(/[^a-z0-9_]/gi, '').toLowerCase()] = c;
+      for (const c of gltf.animations) clips[c.name.split(':').pop().replace(/[^a-z0-9_]/gi, '').toLowerCase()] = c;
       idleName = BOUCLES.find(n => clips[n]) || Object.keys(clips)[0];
       mixer.addEventListener('finished', () => { if (state !== 'sleeping') idle(); });
+      await prepareVisage();           // décalcomanies calculées sur la pose de repos, avant toute animation
       idle();
-      await prepareVisage();
       cadre('buste', false);
       ready = true; planifieClignement(); tick();
       return api;
@@ -191,7 +192,7 @@ export function create({ stage, onPose }) {
       state = next; stage.dataset.state = next;
       bouche.setSpeaking(next === 'speaking');
       if (next === 'speaking') { hoche(0.35); }
-      if (next === 'thinking') play('regarder_autour') || play('se_gratter');
+      if (next === 'thinking') play('look_around') || play('scratch');
     },
     getState() { return state; },
     attitude(nom) {
