@@ -45,6 +45,22 @@ Moteur commun `lisa-rig.js` :
 
 Fabrication des postures : `~/Downloads/lisa-2d/tools/montage.py` (boîte du visage par les iris, yeux, masque de bouche sous le nez, mesure de l'ouverture, calque paupières), `dbg_masque.py` pour la planche de vérification. Deux poses yeux fermés (joie, rire) ne passent pas la détection et sont laissées de côté.
 
+## Lisa 3D (Tripo Pro + Blender + three.js)
+
+| Page | Fichier | Ce qu'elle fait |
+|---|---|---|
+| Lisa 3D · modèle brut | `lisa3d-base.html` | Le modèle Tripo v3.1 tel quel dans model-viewer (rotation, fond transparent). Référence « sans retouche ». |
+| Lisa 3D · on discute | `lisa3d-chat.html` | Même conversation que la 2D (bulles + micro), avec la Lisa 3D riggée : gestes Tripo, bouche et paupières animées. |
+| Lisa 3D · on parle | `lisa3d-voice.html` | Conversation vocale seule. |
+| Banc d'essai | `lisa3d-test.html` | Toutes les animations, plans de caméra, curseur de bouche (`?glb=…`). |
+
+Comment c'est fait :
+- **Modèle** : image « rendu 3D » générée par ChatGPT → Tripo v3.1 (55 cr) → rig automatique (20 cr) + 14 animations retargetées (greet_01/02, wave_goodbye_01, agree, clap, heart_pose, laugh_01, scratch, look_around, fold_arms, depressed, dance_01, idle, wait) → export GLB squelette + animations (79 Mo) → `gltf-transform optimize` (draco, webp 2048, simplification 15 %) → `lisa3d/lisa.glb` **2,7 Mo**.
+- **Blender 5.2.1** (installé, piloté en ligne de commande, scripts dans `~/Downloads/lisa-3d/blender/`) sert d'atelier : analyse du maillage, repères du visage par échantillonnage de la texture, rendu orthographique du visage (`face_render.py`) qui alimente le pipeline 2D. L'essai de déformation du visage par formes (shape keys) a été abandonné : la bouche fermée n'a pas d'intérieur et la déformation faisait un bloc.
+- **Visage** : les yeux fermés et la bouche sont les calques 2D (même mesure `montage.py` que pour les 35 poses, sur le rendu de face) **projetés en décalcomanies sur le visage 3D** (three.js `DecalGeometry`), attachés à l'os de la tête : ils suivent les hochements et les animations. La bouche est redessinée en continu par `lisa-bouche.js`, avec `gmin` 0,19 pour une ouverture lisible.
+- **Caméra** : plans pied / américain / buste / gros plan, suit le bassin, léger suivi de la souris, coupe à chaque posture. Dans un onglet caché, la boucle passe en `setTimeout`.
+- Les postures de l'agent (`lisa_attitude`) sont traduites en animations dans `lisa3d-rig.js` (`ATTITUDES`).
+
 ## Code d'intégration Genially
 
 Insérer > Autres > coller :

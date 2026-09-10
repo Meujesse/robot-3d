@@ -44,7 +44,8 @@ export function create({ stage, onPose }) {
   sol.rotation.x = -Math.PI / 2; sol.receiveShadow = true; scene.add(sol);
 
   const rig = new THREE.Group(); scene.add(rig);           // racine du personnage (déplacements)
-  let mixer = null, clips = {}, current = null, idleName = 'inactif', head = null, model = null;
+  let mixer = null, clips = {}, current = null, idleName = 'inactif', head = null, hips = null, model = null;
+  const suivi = { x: 0, z: 0 }, _hp = new THREE.Vector3();
   let state = 'idle', ready = false;
   const clock = new THREE.Clock();
   // regard : la caméra suit un peu la souris
@@ -132,10 +133,10 @@ export function create({ stage, onPose }) {
   function idle() { play(idleName, { loop: true, fade: 0.5 }); }
   if (typeof THREE.AnimationMixer !== 'undefined') { /* noop */ }
 
-  let nTicks = 0;
-  function tick() {
+  let nTicks = 0, forceDt = null;
+  function tick(manual) {
     nTicks++;
-    const dt = Math.min(0.05, clock.getDelta());
+    const dt = forceDt != null ? forceDt : Math.min(0.05, clock.getDelta());
     if (mixer) mixer.update(dt);
     // retour à l'attente quand un geste se termine
     if (current && !current.loop === false) { /* géré par l'événement finished */ }
@@ -146,9 +147,11 @@ export function create({ stage, onPose }) {
     const P = PLANS[plan] || PLANS.buste;
     const a = angle + look.x * 0.22;
     const d = P.d * pushK;
-    const px = Math.sin(a) * d, pz = Math.cos(a) * d, py = P.y + 0.02 - look.y * 0.05;
+    // la caméra suit le personnage (les animations déplacent le bassin)
+    if (hips) { hips.getWorldPosition(_hp); suivi.x += (_hp.x - suivi.x) * 0.05; suivi.z += (_hp.z - suivi.z) * 0.05; }
+    const px = suivi.x + Math.sin(a) * d, pz = suivi.z + Math.cos(a) * d, py = P.y + 0.02 - look.y * 0.05;
     camera.position.lerp(new THREE.Vector3(px, py, pz), 0.06);
-    const lk = camTarget.look.clone(); lk.y -= look.y * 0.02;
+    const lk = new THREE.Vector3(suivi.x, P.ty - look.y * 0.02, suivi.z);
     camera.lookAt(lk);
     // hochement
     if (head && nod) { const k = (performance.now() - nodT) / 900; if (k >= 1) nod = 0; else head.rotation.x += Math.sin(k * Math.PI) * nod * 0.25 * (k < .5 ? 1 : 1) * 0.06; }
@@ -157,6 +160,7 @@ export function create({ stage, onPose }) {
     if (decalBouche) { decalBouche.visible = montre; if (montre) { adoucitBords(); decalBouche.material.opacity = 1; texBouche.needsUpdate = true; } }
     if (blinkAnim) blinkAnim();
     renderer.render(scene, camera);
+    if (manual) return;
     if (document.hidden) setTimeout(tick, 50); else requestAnimationFrame(tick);   // onglet caché : rAF s'arrête
   }
   window.addEventListener('resize', () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.updateProjectionMatrix(); });
@@ -167,7 +171,7 @@ export function create({ stage, onPose }) {
       const draco = new DRACOLoader(); draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/libs/draco/'); loader.setDRACOLoader(draco);
       const gltf = await loader.loadAsync(BASE + file);
       model = gltf.scene; rig.add(model);
-      model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; if (o.material) { o.material.side = THREE.FrontSide; } } if (o.isBone && !head && /head/i.test(o.name)) head = o; });
+      model.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = false; if (o.material) { o.material.side = THREE.FrontSide; } } if (o.isBone && !head && /head/i.test(o.name)) head = o; if (o.isBone && !hips && /^(hip|hips|pelvis)$/i.test(o.name)) hips = o; });
       if (!head) model.traverse(o => { if (o.isBone && !head && /neck|tete|t.te/i.test(o.name)) head = o; });
       mixer = new THREE.AnimationMixer(model);
       for (const c of gltf.animations) clips[c.name.split(':').pop().replace(/[^a-z0-9_]/gi, '').toLowerCase()] = c;
@@ -207,7 +211,8 @@ export function create({ stage, onPose }) {
     agentId() { return new URLSearchParams(location.search).get('agent') || AGENT_ID_DEFAULT; },
     clientTools() { return { lisa_attitude: async ({ attitude }) => api.attitude(attitude) ? 'posture : ' + attitude : 'posture inconnue : ' + attitude }; },
     _bouche(o, l, b) { bouche.speaking = true; bouche.scriptEnCours = true; bouche.cible.ouv = o; bouche.cible.larg = l || 0; bouche.cible.biais = b || 0; },
-    _moteur: bouche, _debug() { return { nTicks, plan, pushK, angle, state, head: head && head.name, cam: camera.position.toArray() }; }, _clignote: clignote, _yeux(op) { if (decalYeux) decalYeux.material.opacity = op; }, scene, camera, renderer,
+    _step(n = 60, dt = 1 / 60) { forceDt = dt; for (let i = 0; i < n; i++) tick(true); forceDt = null; },
+    _moteur: bouche, _debug() { return { nTicks, anim: current && current.getClip().name, t: current && current.time, running: current && current.isRunning(), w: current && current.getEffectiveWeight(), plan, pushK, angle, state, head: head && head.name, cam: camera.position.toArray() }; }, _clignote: clignote, _yeux(op) { if (decalYeux) decalYeux.material.opacity = op; }, scene, camera, renderer,
   };
   return api;
 }
