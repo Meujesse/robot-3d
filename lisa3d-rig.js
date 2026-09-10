@@ -161,6 +161,15 @@ export function create({ stage, onPose }) {
     if (manual) return;
     if (document.hidden) setTimeout(tick, 50); else requestAnimationFrame(tick);   // onglet caché : rAF s'arrête
   }
+  // Chien de garde : chez Jyn, requestAnimationFrame ne se déclenchait plus alors que la page était visible.
+  // Si aucune image n'a été rendue depuis 120 ms, on avance nous-mêmes (≈30 images/s), puis on relance rAF.
+  let rafMort = 0;
+  setInterval(() => {
+    if (!ready || document.hidden) return;
+    if (performance.now() - lastTick > 120) { rafMort++; tick(true); requestAnimationFrame(tick); }
+  }, 33);
+  function _unused() {
+  }
   window.addEventListener('resize', () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.updateProjectionMatrix(); });
 
   // HUD de diagnostic (?debug=1) : lisible par Jyn sans console
@@ -173,7 +182,7 @@ export function create({ stage, onPose }) {
     window.addEventListener('unhandledrejection', e => { err = 'promesse : ' + (e.reason && (e.reason.message || e.reason)); });
     setInterval(() => {
       const gl = renderer.getContext(); const dbg = gl.getExtension('WEBGL_debug_renderer_info');
-      hud.textContent = 'images/s : ' + (nTicks - lastN) + '   visible : ' + (document.hidden ? 'non' : 'oui') + '   état : ' + state + '   anim : ' + (current ? current.getClip().name.split(':').pop() : '-') +
+      hud.textContent = 'images/s : ' + (nTicks - lastN) + '   rAF mort : ' + rafMort + '   visible : ' + (document.hidden ? 'non' : 'oui') + '   état : ' + state + '   anim : ' + (current ? current.getClip().name.split(':').pop() : '-') +
         '\ntête : ' + (head ? head.name : 'aucune') + '   GPU : ' + (dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : '?') + '   ' + navigator.userAgent.replace(/.*\) /, '').slice(0, 60) +
         (err ? '\nERREUR : ' + err : '');
       lastN = nTicks;
