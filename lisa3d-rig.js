@@ -163,6 +163,22 @@ export function create({ stage, onPose }) {
   }
   window.addEventListener('resize', () => { renderer.setSize(W(), H()); camera.aspect = W() / H(); camera.updateProjectionMatrix(); });
 
+  // HUD de diagnostic (?debug=1) : lisible par Jyn sans console
+  if (new URLSearchParams(location.search).get('debug')) {
+    const hud = document.createElement('div');
+    hud.style.cssText = 'position:absolute;left:8px;bottom:8px;z-index:99;font:12px/1.4 monospace;background:rgba(0,0,0,.75);color:#7fffb0;padding:8px 10px;border-radius:8px;max-width:90%;white-space:pre-wrap;pointer-events:none';
+    stage.appendChild(hud);
+    let lastN = 0, err = '';
+    window.addEventListener('error', e => { err = (e.message || '') + ' @' + (e.filename || '').split('/').pop() + ':' + e.lineno; });
+    window.addEventListener('unhandledrejection', e => { err = 'promesse : ' + (e.reason && (e.reason.message || e.reason)); });
+    setInterval(() => {
+      const gl = renderer.getContext(); const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      hud.textContent = 'images/s : ' + (nTicks - lastN) + '   visible : ' + (document.hidden ? 'non' : 'oui') + '   état : ' + state + '   anim : ' + (current ? current.getClip().name.split(':').pop() : '-') +
+        '\ntête : ' + (head ? head.name : 'aucune') + '   GPU : ' + (dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : '?') + '   ' + navigator.userAgent.replace(/.*\) /, '').slice(0, 60) +
+        (err ? '\nERREUR : ' + err : '');
+      lastN = nTicks;
+    }, 1000);
+  }
   const api = {
     async init(file = 'lisa.glb') {
       const loader = new GLTFLoader();
