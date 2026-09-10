@@ -8,7 +8,7 @@
     curiosite: 'look_around', reflexion: 'scratch', haussement: 'scratch', pouce: 'agree', enthousiasme: 'clap',
     emerveillement: 'heart_pose', perplexite: 'look_around', deception: 'depressed', reveuse: 'wait', hanches: 'fold_arms',
     designe: 'wait', invitation: 'greet_02', neutre: 'idle', rire: 'laugh_01', au_revoir: 'wave_goodbye_01', danse: 'dance_01', danser: 'dance_01', applaudir: 'clap',
-    marcher: 'walk', courir: 'run', sauter: 'jump', tourner: 'turn', asseoir: 'sit', coup_de_pied: 'kick_01',
+    marcher: 'walk', courir: 'run', sauter: 'jump', tourner: 'turn', asseoir: 'sit', coup_de_pied: 'front_kick_01',
   };
   const BOUCLES = ['idle', 'wait', 'walk', 'run'];
   const PARLE = ['agree', 'wait', 'idle', 'greet_02', 'scratch'];

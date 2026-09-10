@@ -46,14 +46,14 @@
   // Animations Tripo (préfixe preset:biped:) → libellés
   const LIB = { idle: 'Repos', wait: 'Attente', greet_01: 'Saluer', greet_02: 'Saluer 2', wave_goodbye_01: 'Au revoir', agree: 'Approuver', clap: 'Applaudir',
     heart_pose: 'Cœur', laugh_01: 'Rire', scratch: 'Se gratter', look_around: 'Regarder autour', fold_arms: 'Bras croisés', depressed: 'Déprimée',
-    dance_01: 'Danser', walk: 'Marcher', run: 'Courir', jump: 'Sauter', kick_01: 'Coup de pied', turn: 'Tourner', sit: 'S’asseoir' };
+    dance_01: 'Danser', walk: 'Marcher', run: 'Courir', jump: 'Sauter', front_kick_01: 'Coup de pied', turn: 'Tourner', sit: 'S’asseoir' };
   const BOUCLES = ['idle', 'wait', 'walk', 'run'];
   // zones du corps → animations (on tire au sort parmi celles qui existent)
   const ZONES = {
     tete: { label: 'la tête', anims: ['agree', 'look_around', 'laugh_01', 'scratch'] },
     brasG: { label: 'le bras gauche', anims: ['greet_01', 'wave_goodbye_01', 'clap', 'heart_pose'] },
     brasD: { label: 'le bras droit', anims: ['greet_02', 'greet_01', 'clap', 'fold_arms'] },
-    jambe: { label: 'la jambe', anims: ['kick_01', 'jump', 'walk', 'dance_01', 'turn'] },
+    jambe: { label: 'la jambe', anims: ['front_kick_01', 'jump', 'walk', 'dance_01', 'turn'] },
     corps: { label: 'le corps', anims: ['dance_01', 'depressed', 'heart_pose', 'jump', 'turn'] },
   };
   let clips = {}, idleName = 'idle', current = null, ready = false, lastByZone = {};
@@ -72,7 +72,7 @@
     idleName = BOUCLES.find(n => clips[n]) || Object.keys(clips)[0];
     idle();
     // boutons : animations de corps entier
-    for (const n of ['walk', 'run', 'jump', 'dance_01', 'turn', 'kick_01', 'greet_01', 'clap', 'heart_pose', 'laugh_01', 'fold_arms', 'look_around', 'depressed', 'sit', 'idle']) {
+    for (const n of ['walk', 'run', 'jump', 'dance_01', 'turn', 'front_kick_01', 'greet_01', 'clap', 'heart_pose', 'laugh_01', 'fold_arms', 'look_around', 'depressed', 'sit', 'idle']) {
       if (!clips[n]) continue;
       const b = document.createElement('button'); b.textContent = LIB[n] || n; b.dataset.a = n;
       b.addEventListener('click', e => { e.stopPropagation(); if (BOUCLES.includes(n)) { idleName = n === 'idle' ? 'idle' : n; anim(n, true); } else anim(n); hint.classList.add('off'); });
