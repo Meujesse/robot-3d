@@ -107,8 +107,9 @@ export function create({ stage, onPose }) {
   }
   // clignement
   let blinkTimer = null, blinkAnim = null;
+  let lastTick = 0;
   function clignote() {
-    if (!decalYeux) return;
+    if (!decalYeux || performance.now() - lastTick > 120) return;   // boucle au ralenti (onglet caché) : pas de clignement figé
     const t0 = performance.now(), dur = 195 + Math.random() * 45;
     blinkAnim = () => { const k = (performance.now() - t0) / dur; if (k >= 1) { decalYeux.material.opacity = 0; blinkAnim = null; return; }
       decalYeux.material.opacity = k < .19 ? Math.pow(k / .19, 1.6) : k < .55 ? 1 : 1 - Math.pow((k - .55) / .45, 0.7); };
@@ -132,7 +133,7 @@ export function create({ stage, onPose }) {
 
   let nTicks = 0, forceDt = null;
   function tick(manual) {
-    nTicks++;
+    nTicks++; lastTick = performance.now();
     const dt = forceDt != null ? forceDt : Math.min(0.05, clock.getDelta());
     if (mixer) mixer.update(dt);
     // retour à l'attente quand un geste se termine
