@@ -7,7 +7,7 @@
     salut: 'greet_01', presentation: 'wait', accueil: 'idle', index: 'agree', decompte: 'wait', question: 'scratch',
     curiosite: 'look_around', reflexion: 'scratch', haussement: 'scratch', pouce: 'agree', enthousiasme: 'clap',
     emerveillement: 'heart_pose', perplexite: 'look_around', deception: 'depressed', reveuse: 'wait', hanches: 'fold_arms',
-    designe: 'wait', invitation: 'greet_02', neutre: 'idle', rire: 'laugh_01', au_revoir: 'wave_goodbye_01', danse: 'dance_01', applaudir: 'clap',
+    designe: 'wait', invitation: 'greet_02', neutre: 'idle', rire: 'laugh_01', au_revoir: 'wave_goodbye_01', danse: 'dance_01', danser: 'dance_01', applaudir: 'clap',
     marcher: 'walk', courir: 'run', sauter: 'jump', tourner: 'turn', asseoir: 'sit', coup_de_pied: 'kick_01',
   };
   const BOUCLES = ['idle', 'wait', 'walk', 'run'];
@@ -16,7 +16,7 @@
   const PLANS = { pied: { r: 2.4, y: 0.50 }, americain: { r: 1.7, y: 0.60 }, buste: { r: 0.95, y: 0.75 }, gros: { r: 0.6, y: 0.80 } };
   const DEFAUT = { salut: 'americain', presentation: 'americain', accueil: 'buste', index: 'buste', decompte: 'buste', question: 'buste', curiosite: 'gros',
     reflexion: 'buste', haussement: 'americain', pouce: 'buste', enthousiasme: 'americain', emerveillement: 'buste', perplexite: 'gros', deception: 'buste',
-    reveuse: 'gros', hanches: 'americain', designe: 'americain', invitation: 'americain', neutre: 'buste', rire: 'buste', au_revoir: 'americain', danse: 'pied',
+    reveuse: 'gros', hanches: 'americain', designe: 'americain', invitation: 'americain', neutre: 'buste', rire: 'buste', au_revoir: 'americain', danse: 'pied', danser: 'pied',
     marcher: 'pied', courir: 'pied', sauter: 'pied', tourner: 'pied', asseoir: 'pied', coup_de_pied: 'pied' };
 
   function create({ mv, rig }) {
