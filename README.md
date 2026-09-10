@@ -26,6 +26,25 @@ Paramètre commun à `chat.html` et `voice.html` : `agent=<id>` pour utiliser un
 
 Pilotage depuis une page parente (si un jour Genially le permet, ou depuis une page HTML maison) : `iframe.contentWindow.postMessage({type:'robot:state', state:'happy'}, '*')` et `{type:'robot:look', x, y}`.
 
+## Lisa (personnage 2D conversationnel)
+
+Lisa, la guide illustrée de Meujesse Learning, avec la même mécanique que Noki mais en dessin animé en direct (pas de 3D) :
+
+| Page | Fichier | Ce qu'elle fait |
+|---|---|---|
+| V11 · Lisa : on discute (écrit) | `lisa-chat.html` | Bulles à l'écrit ; la bouche suit les syllabes de la réponse. Le micro bascule sur une vraie conversation vocale (elle parle avec sa voix ElevenLabs), les bulles restent. |
+| V12 · Lisa : on parle (vocal) | `lisa-voice.html` | Conversation uniquement vocale, sous-titres discrets. |
+| Banc d'essai | `lisa-test.html` | Toutes les postures, les plans et un curseur d'ouverture de bouche (`?pose=accueil&plan=gros&ouv=0.6`). |
+
+Moteur commun `lisa-rig.js` :
+- **19 postures** (dossier `lisa/`, planches WebP + morceau HD de bouche + calque paupières), choisies par l'agent via l'outil client `lisa_attitude` (salut, presentation, accueil, index, decompte, question, curiosite, reflexion, haussement, pouce, enthousiasme, emerveillement, perplexite, deception, reveuse, hanches, designe, invitation, neutre) ou automatiquement selon l'état (écoute → neutre/curiosité, réflexion → réflexion/rêveuse, parole → posture parlante).
+- **Caméra** : plan pied / américain / buste / gros plan choisi selon la posture, coupe franche à chaque changement, léger décalage latéral et lent rapprochement pendant qu'elle parle.
+- **Bouche** : bas du visage redessiné en continu sur canvas (méthode Parcoursup'easy : ouverture proportionnelle à celle du dessin, vraies dents reprises quand il y en a). En vocal, l'ouverture suit l'énergie de la voix et la forme suit les syllabes du texte reçu ; à l'écrit, rythme syllabique (≈170 ms).
+- **Vie** : clignement reconstruit depuis le dessin (1,9 à 6,5 s, double une fois sur cinq), respiration (champ de déplacement, 4,8 s, éteinte au-dessus du menton), balancement 13 s, hochement à la prise de parole.
+- Agent ElevenLabs « Lisa (Meujesse) » `agent_2701m25dand9fq5rb32gndx037je`, voix Lisa `aXeX06kNUkBCrYoK0UVs`, mêmes réglages de latence que Noki. Paramètre `?agent=` pour en changer.
+
+Fabrication des postures : `~/Downloads/lisa-2d/tools/montage.py` (boîte du visage par les iris, yeux, masque de bouche sous le nez, mesure de l'ouverture, calque paupières), `dbg_masque.py` pour la planche de vérification. Deux poses yeux fermés (joie, rire) ne passent pas la détection et sont laissées de côté.
+
 ## Code d'intégration Genially
 
 Insérer > Autres > coller :
