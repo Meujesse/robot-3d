@@ -4,16 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lisa 3D : on parle</title>
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/dist/lib.iife.js"></script>
-<script src="lisa3d-mv-rig.js?v=1"></script>
+<script src="lisa-bouche.js?v=2"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <style>
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
-  .stage { position: relative; width: 100%; height: 100%; }
-  .rig { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 90%; }
-  .shadow { position: absolute; left: 50%; bottom: 4%; width: 26%; height: 5%; transform: translateX(-50%);
-    background: radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,.18) 40%, rgba(0,0,0,0) 70%); pointer-events: none; }
-  model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; --poster-color: transparent; --progress-bar-color: transparent; cursor: grab; }
+  .scene { position: relative; width: 100%; height: 100%; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
   .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
   .open { position: absolute; top: 12px; right: 14px; z-index: 7; font-size: 12px; color: #1b1b1b; background: #f5b400; padding: 6px 10px; border-radius: 6px; text-decoration: none; font-weight: 600; box-shadow: 0 3px 10px rgba(0,0,0,.25); }
   .open[hidden] { display: none; }
@@ -21,10 +18,10 @@
   .ui > * { pointer-events: auto; }
   .state { font-size: 12px; color: rgba(255,255,255,.9); background: rgba(20,24,34,.55); padding: 5px 12px; border-radius: 999px; display: flex; align-items: center; gap: 8px; }
   .state::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #999; }
-  .stage[data-state="listening"] .state::before { background: #4ade80; animation: pulse 1.4s infinite; }
-  .stage[data-state="thinking"] .state::before { background: #f5b400; animation: blink 1s infinite; }
-  .stage[data-state="speaking"] .state::before { background: #7fe3ff; animation: pulse .7s infinite; }
-  .stage[data-state="connecting"] .state::before { background: #f5b400; animation: blink 1s infinite; }
+  .scene[data-state="listening"] .state::before { background: #4ade80; animation: pulse 1.4s infinite; }
+  .scene[data-state="thinking"] .state::before { background: #f5b400; animation: blink 1s infinite; }
+  .scene[data-state="speaking"] .state::before { background: #7fe3ff; animation: pulse .7s infinite; }
+  .scene[data-state="connecting"] .state::before { background: #f5b400; animation: blink 1s infinite; }
   @keyframes pulse { 50% { transform: scale(1.5); opacity: .6; } } @keyframes blink { 50% { opacity: .3; } }
   .cap { max-width: 78%; font-size: 15px; line-height: 1.35; background: rgba(20,24,34,.62); padding: 10px 14px; border-radius: 14px; opacity: 0; transition: opacity .3s; text-align: center; backdrop-filter: blur(6px); }
   .cap.on { opacity: 1; } .cap.me { color: #ffd28a; font-style: italic; }
@@ -35,37 +32,33 @@
 </style>
 </head>
 <body>
-<div class="stage" id="stage" data-state="idle">
+<div class="scene" id="scene" data-state="idle">
+  <div id="stage"></div>
   <div class="tag" id="tag">Lisa 3D · on parle</div>
-  <div class="rig" id="rig">
-    <div class="shadow"></div>
-    <model-viewer id="mv" src="lisa3d/lisa.glb?v=2" alt="Lisa en 3D"
-      camera-controls disable-zoom disable-pan interaction-prompt="none" touch-action="pan-y"
-      camera-orbit="0deg 86deg 0.95m" min-camera-orbit="auto 65deg auto" max-camera-orbit="auto 100deg auto" camera-target="0m 0.75m 0m"
-      environment-image="neutral" exposure="1.0" shadow-intensity="0" loading="eager" reveal="auto"></model-viewer>
-  </div>
   <a class="open" id="open" href="#" target="_blank" rel="noopener" hidden>Ouvrir en grand ↗</a>
   <div class="ui">
     <div class="cap" id="cap"></div>
     <div class="help" id="help" hidden></div>
-    <div class="state" id="state">Prête</div>
-    <button class="big" id="start"><svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm5-4a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>Parler à Lisa</button>
+    <div class="state" id="state">Chargement…</div>
+    <button class="big" id="start" disabled><svg viewBox="0 0 24 24"><path d="M12 15a4 4 0 0 0 4-4V6a4 4 0 1 0-8 0v5a4 4 0 0 0 4 4zm5-4a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>Parler à Lisa</button>
     <button class="big stop" id="stop" hidden>Terminer</button>
   </div>
 </div>
-<script>
-(() => {
+<script type="module">
+  const { create } = await import('./lisa3d-rig.js?v=3');
   const p = new URLSearchParams(location.search);
   if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
   else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
-  const stage = document.getElementById('stage'), stateEl = document.getElementById('state'), cap = document.getElementById('cap');
+  const scene = document.getElementById('scene'), stateEl = document.getElementById('state'), cap = document.getElementById('cap');
   const startBtn = document.getElementById('start'), stopBtn = document.getElementById('stop');
-  const lisa = LisaMV.create({ mv: document.getElementById('mv'), rig: document.getElementById('rig') });
   const embedded = (() => { try { return window.self !== window.top; } catch { return true; } })();
   const openBtn = document.getElementById('open'), help = document.getElementById('help');
   if (embedded) { openBtn.href = location.href; openBtn.hidden = false; }
+  const lisa = create({ stage: document.getElementById('stage') });
+  await lisa.init(p.get('glb') || 'lisa.glb');
   const LABEL = { idle: 'Prête', connecting: 'Connexion…', listening: 'Elle t’écoute', thinking: 'Elle réfléchit…', speaking: 'Elle parle' };
-  function setState(s, label) { lisa.setState(s === 'connecting' ? 'thinking' : s); stage.dataset.state = s; stateEl.textContent = label || LABEL[s] || s; }
+  function setState(s, label) { lisa.setState(s === 'connecting' ? 'thinking' : s); scene.dataset.state = s; stateEl.textContent = label || LABEL[s] || s; }
+  setState('idle'); startBtn.disabled = false;
   let conv = null, capTimer = null;
   function caption(text, me = false) { clearTimeout(capTimer); cap.textContent = text; cap.classList.toggle('me', me); cap.classList.add('on'); capTimer = setTimeout(() => cap.classList.remove('on'), me ? 3500 : 9000); }
   function outputAmp() {
@@ -89,14 +82,13 @@
         onModeChange: ({ mode }) => { setState(mode === 'speaking' ? 'speaking' : 'listening'); },
         onMessage: ({ message, role, source }) => {
           const r = role || (source === 'ai' ? 'agent' : 'user');
-          if (r === 'user') { caption(message, true); setState('thinking'); } else caption(message, false);
+          if (r === 'user') { caption(message, true); setState('thinking'); } else { caption(message, false); lisa.nourrit(message); }
         },
       });
     } catch (e) { console.error(e); setState('idle', 'Connexion impossible'); startBtn.disabled = false; }
   }
   async function stop() { if (conv) { try { await conv.endSession(); } catch {} } }
   startBtn.addEventListener('click', start); stopBtn.addEventListener('click', stop);
-})();
 </script>
 </body>
 </html>

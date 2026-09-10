@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lisa 3D : elle réagit au toucher</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
+  .stage { position: relative; width: 100%; height: 100%; }
+  .shadow { position: absolute; left: 50%; bottom: 4%; width: 26%; height: 5%; transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,.18) 40%, rgba(0,0,0,0) 70%); pointer-events: none; transition: transform .3s; }
+  model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; --poster-color: transparent; --progress-bar-color: transparent; cursor: pointer; }
+  .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
+  .hint { position: absolute; top: 12px; right: 14px; z-index: 5; color: rgba(255,255,255,.9); font-size: 12px; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; transition: opacity .5s; }
+  .hint.off { opacity: 0; }
+  .bar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 6; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 92%; }
+  .bar button { font-family: inherit; border: 0; background: rgba(20,24,34,.62); color: #fff; padding: 7px 12px; font-size: 12px; border-radius: 999px; cursor: pointer; backdrop-filter: blur(6px); transition: background .15s, transform .1s; }
+  .bar button:hover { background: rgba(245,180,0,.85); color: #1b1b1b; } .bar button:active { transform: scale(.95); }
+  .bar button.on { background: #f5b400; color: #1b1b1b; }
+  .zone { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; pointer-events: none; font-size: 13px; color: #1b1b1b; background: #f5b400; padding: 5px 10px; border-radius: 999px; opacity: 0; transition: opacity .25s; }
+  .zone.on { opacity: 1; }
+  /* petit sursaut à la touche */
+  model-viewer.pop { animation: pop .35s ease-out 1; }
+  @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.02); } 100% { transform: scale(1); } }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="tag" id="tag">Lisa 3D · elle réagit au toucher</div>
+  <div class="hint" id="hint">Clique sur sa tête, un bras ou une jambe</div>
+  <div class="shadow" id="shadow"></div>
+  <model-viewer id="mv" src="lisa3d/lisa.glb?v=2" alt="Lisa en 3D"
+    camera-controls disable-zoom disable-pan interaction-prompt="none" touch-action="pan-y"
+    camera-orbit="0deg 86deg 2.3m" min-camera-orbit="auto 65deg auto" max-camera-orbit="auto 100deg auto" camera-target="0m 0.5m 0m"
+    environment-image="neutral" exposure="1.0" shadow-intensity="0" loading="eager" reveal="auto"></model-viewer>
+  <div class="zone" id="zone"></div>
+  <div class="bar" id="bar"></div>
+</div>
+<script>
+  const p = new URLSearchParams(location.search);
+  if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
+  else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
+  const mv = document.getElementById('mv'), hint = document.getElementById('hint'), zone = document.getElementById('zone'), bar = document.getElementById('bar');
+  // Animations Tripo (préfixe preset:biped:) → libellés
+  const LIB = { idle: 'Repos', wait: 'Attente', greet_01: 'Saluer', greet_02: 'Saluer 2', wave_goodbye_01: 'Au revoir', agree: 'Approuver', clap: 'Applaudir',
+    heart_pose: 'Cœur', laugh_01: 'Rire', scratch: 'Se gratter', look_around: 'Regarder autour', fold_arms: 'Bras croisés', depressed: 'Déprimée',
+    dance_01: 'Danser', walk: 'Marcher', run: 'Courir', jump: 'Sauter', kick_01: 'Coup de pied', turn: 'Tourner', sit: 'S’asseoir' };
+  const BOUCLES = ['idle', 'wait', 'walk', 'run'];
+  // zones du corps → animations (on tire au sort parmi celles qui existent)
+  const ZONES = {
+    tete: { label: 'la tête', anims: ['agree', 'look_around', 'laugh_01', 'scratch'] },
+    brasG: { label: 'le bras gauche', anims: ['greet_01', 'wave_goodbye_01', 'clap', 'heart_pose'] },
+    brasD: { label: 'le bras droit', anims: ['greet_02', 'greet_01', 'clap', 'fold_arms'] },
+    jambe: { label: 'la jambe', anims: ['kick_01', 'jump', 'walk', 'dance_01', 'turn'] },
+    corps: { label: 'le corps', anims: ['dance_01', 'depressed', 'heart_pose', 'jump', 'turn'] },
+  };
+  let clips = {}, idleName = 'idle', current = null, ready = false, lastByZone = {};
+  function short(n) { return n.split(':').pop(); }
+  function anim(name, loop = false) {
+    const full = clips[name]; if (!full || !ready) return false;
+    mv.animationName = full; mv.currentTime = 0; mv.play({ repetitions: loop ? Infinity : 1 }); current = name;
+    [...bar.children].forEach(b => b.classList.toggle('on', b.dataset.a === name));
+    return true;
+  }
+  function idle() { anim(idleName, true); }
+  mv.addEventListener('finished', () => { if (!BOUCLES.includes(current)) idle(); });
+  mv.addEventListener('load', () => {
+    ready = true;
+    for (const n of mv.availableAnimations) clips[short(n)] = n;
+    idleName = BOUCLES.find(n => clips[n]) || Object.keys(clips)[0];
+    idle();
+    // boutons : animations de corps entier
+    for (const n of ['walk', 'run', 'jump', 'dance_01', 'turn', 'kick_01', 'greet_01', 'clap', 'heart_pose', 'laugh_01', 'fold_arms', 'look_around', 'depressed', 'sit', 'idle']) {
+      if (!clips[n]) continue;
+      const b = document.createElement('button'); b.textContent = LIB[n] || n; b.dataset.a = n;
+      b.addEventListener('click', e => { e.stopPropagation(); if (BOUCLES.includes(n)) { idleName = n === 'idle' ? 'idle' : n; anim(n, true); } else anim(n); hint.classList.add('off'); });
+      bar.appendChild(b);
+    }
+  });
+  // ---- toucher : on trouve le point 3D sous le clic et on décide de la zone ----
+  function zoneDe(pt) {
+    const y = pt.y, x = pt.x;              // le modèle fait ~0,98 m de haut, centré en x
+    if (y > 0.74) return 'tete';
+    if (Math.abs(x) > 0.12 && y > 0.36 && y < 0.74) return x < 0 ? 'brasG' : 'brasD';
+    if (y < 0.50) return 'jambe';
+    return 'corps';
+  }
+  let zoneTimer = null;
+  function touche(clientX, clientY) {
+    const hit = mv.positionAndNormalFromPoint(clientX, clientY);
+    if (!hit) return;
+    const z = zoneDe(hit.position), Z = ZONES[z];
+    // on évite de rejouer la même animation deux fois de suite sur la même zone
+    const choix = Z.anims.filter(a => clips[a] && a !== lastByZone[z]);
+    const a = (choix.length ? choix : Z.anims.filter(a => clips[a]))[Math.floor(Math.random() * Math.max(1, choix.length))];
+    if (!a) return;
+    lastByZone[z] = a;
+    anim(a);
+    mv.classList.remove('pop'); void mv.offsetWidth; mv.classList.add('pop');
+    zone.textContent = 'Tu as touché ' + Z.label + ' → ' + (LIB[a] || a); zone.classList.add('on');
+    clearTimeout(zoneTimer); zoneTimer = setTimeout(() => zone.classList.remove('on'), 1800);
+    hint.classList.add('off');
+  }
+  let down = null;
+  mv.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+  mv.addEventListener('pointerup', e => {
+    if (!down) return; const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    if (Math.hypot(dx, dy) < 8 && performance.now() - down.t < 600) touche(e.clientX, e.clientY);   // un clic, pas une rotation
+    down = null;
+  });
+  if (p.get('anim')) mv.addEventListener('load', () => setTimeout(() => anim(p.get('anim'), BOUCLES.includes(p.get('anim'))), 300));
+</script>
+</body>
+</html>

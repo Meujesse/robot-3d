@@ -4,32 +4,30 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lisa 3D : on discute</title>
-<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@elevenlabs/client@1.25.0/dist/lib.iife.js"></script>
-<script src="lisa3d-mv-rig.js?v=1"></script>
+<script src="lisa-bouche.js?v=2"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}</script>
 <style>
   :root { --panel: rgba(16,22,32,.72); --me: #f5b400; --bot: rgba(255,255,255,.14); }
   html, body { margin: 0; height: 100%; background: transparent; overflow: hidden;
     font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
   .wrap { display: grid; grid-template-columns: minmax(0, 50%) minmax(0, 50%); height: 100%; }
   @media (max-width: 640px) { .wrap { grid-template-columns: 1fr; grid-template-rows: 46% 54%; } }
-  .stage { position: relative; min-width: 0; }
-  .rig { position: absolute; inset: 0; will-change: transform; transform-origin: 50% 90%; }
-  .shadow { position: absolute; left: 50%; bottom: 4%; width: 30%; height: 5%; transform: translateX(-50%);
-    background: radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,.18) 40%, rgba(0,0,0,0) 70%); pointer-events: none; }
-  model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; --poster-color: transparent; --progress-bar-color: transparent; cursor: grab; }
+  .scene { position: relative; min-width: 0; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
   .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em;
     text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
   .status { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); z-index: 5; font-size: 12px; color: rgba(255,255,255,.85);
     background: rgba(20,24,34,.55); padding: 5px 10px; border-radius: 999px; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
   .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #999; }
-  .stage[data-conn="connected"] .status::before { background: #4ade80; }
-  .stage[data-conn="connecting"] .status::before { background: #f5b400; animation: blink 1s infinite; }
-  .stage[data-conn="error"] .status::before { background: #ef4444; }
+  .scene[data-conn="connected"] .status::before { background: #4ade80; }
+  .scene[data-conn="connecting"] .status::before { background: #f5b400; animation: blink 1s infinite; }
+  .scene[data-conn="error"] .status::before { background: #ef4444; }
   @keyframes blink { 50% { opacity: .3; } }
   .chat { display: flex; flex-direction: column; min-width: 0; padding: 14px 14px 14px 0; }
   @media (max-width: 640px) { .chat { padding: 0 10px 10px; } }
-  .card { flex: 1; display: flex; flex-direction: column; min-height: 0; background: var(--panel); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; backdrop-filter: blur(10px); overflow: hidden; }
+  .card { flex: 1; display: flex; flex-direction: column; min-height: 0; background: var(--panel); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px; backdrop-filter: blur(10px); overflow: hidden; }
   .log { flex: 1; overflow-y: auto; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
   .b { max-width: 82%; padding: 10px 14px; border-radius: 16px; line-height: 1.35; font-size: 15px; white-space: pre-wrap; word-break: break-word; animation: pop .25s ease-out; }
   @keyframes pop { from { transform: translateY(6px) scale(.98); opacity: 0; } }
@@ -55,16 +53,10 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="stage" id="stage" data-conn="connecting">
+  <div class="scene" id="scene" data-conn="connecting">
+    <div id="stage"></div>
     <div class="tag" id="tag">Lisa 3D · on discute</div>
-    <div class="rig" id="rig">
-      <div class="shadow"></div>
-      <model-viewer id="mv" src="lisa3d/lisa.glb?v=2" alt="Lisa en 3D"
-        camera-controls disable-zoom disable-pan interaction-prompt="none" touch-action="pan-y"
-        camera-orbit="0deg 86deg 0.95m" min-camera-orbit="auto 65deg auto" max-camera-orbit="auto 100deg auto" camera-target="0m 0.75m 0m"
-        environment-image="neutral" exposure="1.0" shadow-intensity="0" loading="eager" reveal="auto"></model-viewer>
-    </div>
-    <div class="status" id="status">Connexion…</div>
+    <div class="status" id="status">Chargement…</div>
     <a class="open" id="open" href="#" target="_blank" rel="noopener" hidden>Ouvrir en grand ↗</a>
   </div>
   <div class="chat">
@@ -79,18 +71,19 @@
     </div>
   </div>
 </div>
-<script>
-(() => {
+<script type="module">
+  const { create } = await import('./lisa3d-rig.js?v=3');
   const p = new URLSearchParams(location.search);
   if (p.get('tag') === '') document.getElementById('tag').style.display = 'none';
   else if (p.get('tag')) document.getElementById('tag').textContent = p.get('tag');
-  const stage = document.getElementById('stage'), status = document.getElementById('status');
+  const scene = document.getElementById('scene'), status = document.getElementById('status');
   const log = document.getElementById('log'), input = document.getElementById('input'), form = document.getElementById('form');
   const micBtn = document.getElementById('mic'), hint = document.getElementById('hint');
-  const lisa = LisaMV.create({ mv: document.getElementById('mv'), rig: document.getElementById('rig') });
   const embedded = (() => { try { return window.self !== window.top; } catch { return true; } })();
   const openBtn = document.getElementById('open');
   if (embedded) { openBtn.href = location.href; openBtn.hidden = false; }
+  const lisa = create({ stage: document.getElementById('stage') });
+  await lisa.init(p.get('glb') || 'lisa.glb');
 
   function bubble(role, text = '', cls = '') {
     const el = document.createElement('div'); el.className = 'b ' + (role === 'me' ? 'me' : 'bot') + (cls ? ' ' + cls : '');
@@ -99,9 +92,8 @@
   let dots = null;
   function showDots() { if (!dots) { dots = bubble('bot', '', 'dots'); dots.innerHTML = '<span>●</span><span>●</span><span>●</span>'; } }
   function hideDots() { if (dots) { dots.remove(); dots = null; } }
-  function setStatus(conn, text) { stage.dataset.conn = conn; status.textContent = text; }
+  function setStatus(conn, text) { scene.dataset.conn = conn; status.textContent = text; }
 
-  // ---- session texte (par défaut) ----
   let conv = null, streaming = null, lastUserText = '';
   async function connect() {
     setStatus('connecting', 'Connexion…');
@@ -138,7 +130,6 @@
   document.getElementById('send').addEventListener('click', e => { e.preventDefault(); send(input.value); });
   input.addEventListener('input', () => { if (conv) conv.sendUserActivity(); });
 
-  // ---- micro : session vocale, elle parle vraiment ----
   let voice = null, micOn = false;
   function outputAmp() {
     if (!voice || !voice.getOutputByteFrequencyData) return 0;
@@ -160,7 +151,7 @@
         onMessage: ({ message, role, source }) => {
           const r = role || (source === 'ai' ? 'agent' : 'user');
           if (r === 'user') { bubble('me', message); lisa.setState('thinking'); showDots(); return; }
-          hideDots(); bubble('bot', message);
+          hideDots(); bubble('bot', message); lisa.nourrit(message);
         },
       });
       conv = voice;
@@ -168,7 +159,6 @@
   }
   async function stopVoice() { if (voice) { try { await voice.endSession(); } catch {} } }
   micBtn.addEventListener('click', () => { if (micOn) stopVoice(); else startVoice(); });
-})();
 </script>
 </body>
 </html>
