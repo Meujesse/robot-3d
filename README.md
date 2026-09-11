@@ -87,6 +87,10 @@ Insérer > Autres > coller :
 
 Même robot, généré avec Tripo v3.1 « par parties » (29 pièces regroupées par `tools/group-nika.mjs` en corps, bras, antenne, œil, visière), texture 4K, voix « Robote Meujesse (Nika) ». Les pages de Noki acceptent `?perso=nika` : `lab.html?perso=nika&v=1..6`, `labels.html?perso=nika` ; `nika-test.html` liste ses animations (dont `blink`, la visière qui cligne). Genially « test Nika 3D » (Portfolio).
 
+## Dragon, fée, dé 20 (créatures)
+
+Générés avec Tripo v3.1 « par parties » puis texturés ; `tools/skin-parts.mjs` transforme les parties en un maillage à squelette (un os par groupe, poids fondus aux articulations, pas de trou) avec des animations lissées : dragon (`dragon/dragon.glb` : vol, battement, rugir, queue, trot, regard ; `dragon/dragon-marche.glb` = rig animal Tripo), fée (`fee/fee.glb` : ailes qui frétillent, paupières naturelles, salut, hourra, timide ; `fee/fee-rig.glb` = rig humanoïde Tripo, 9 gestes), dé 20 (`d20/d20.glb` : clignement, parler, surprise, dandiner, sauter, lancer). Page unique `creature.html?perso=dragon|feevol|fee|d20` (toucher par zones, boutons, Voler/Se poser, flottement). Geniallys : « test Dragon 3D », « test Fée 3D », « test Dé 20 3D » (Portfolio).
+
 ## Fichiers
 
 - `robot-source.png` : image d'origine (ChatGPT).
