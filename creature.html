@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Créature 3D : elle réagit au toucher</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; background: transparent; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
+  .stage { position: relative; width: 100%; height: 100%; }
+  .rig { position: absolute; inset: 0; transform-origin: 50% 80%; }
+  .shadow { position: absolute; left: 50%; bottom: 5%; width: 30%; height: 5%; transform: translateX(-50%);
+    background: radial-gradient(ellipse at center, rgba(0,0,0,.35) 0%, rgba(0,0,0,.18) 40%, rgba(0,0,0,0) 70%); pointer-events: none; }
+  model-viewer { position: absolute; inset: 0; width: 100%; height: 100%; background: transparent; --poster-color: transparent; --progress-bar-color: transparent; cursor: pointer; }
+  .tag { position: absolute; top: 12px; left: 14px; z-index: 5; color: rgba(255,255,255,.85); font-size: 12px; letter-spacing: .08em;
+    text-transform: uppercase; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; }
+  .hint { position: absolute; top: 12px; right: 14px; z-index: 5; color: rgba(255,255,255,.9); font-size: 12px; background: rgba(20,24,34,.55); padding: 6px 10px; border-radius: 6px; pointer-events: none; transition: opacity .5s; }
+  .hint.off { opacity: 0; }
+  .bar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 6; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 92%; }
+  .bar button { font-family: inherit; border: 0; background: rgba(20,24,34,.62); color: #fff; padding: 7px 12px; font-size: 12px; border-radius: 999px; cursor: pointer; backdrop-filter: blur(6px); transition: background .15s, transform .1s; }
+  .bar button:hover { background: rgba(245,180,0,.85); color: #1b1b1b; } .bar button:active { transform: scale(.95); }
+  .bar button.on { background: #f5b400; color: #1b1b1b; }
+  .zone { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 5; pointer-events: none; font-size: 13px; color: #1b1b1b; background: #f5b400; padding: 5px 10px; border-radius: 999px; opacity: 0; transition: opacity .25s; }
+  .zone.on { opacity: 1; }
+  model-viewer.pop { animation: pop .35s ease-out 1; }
+  @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.03); } 100% { transform: scale(1); } }
+  /* flottement (fée) */
+  .stage.flotte .rig { animation: flotte 4.8s ease-in-out infinite; }
+  .stage.flotte .shadow { animation: ombre 4.8s ease-in-out infinite; }
+  @keyframes flotte { 0%, 100% { transform: translateY(0) rotate(-.4deg); } 50% { transform: translateY(-2.2%) rotate(.4deg); } }
+  @keyframes ombre { 0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; } 50% { transform: translateX(-50%) scale(.82); opacity: .7; } }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="tag" id="tag"></div>
+  <div class="hint" id="hint"></div>
+  <div class="rig" id="rig">
+    <div class="shadow" id="shadow"></div>
+    <model-viewer id="mv" alt="Créature 3D"
+      camera-controls disable-zoom disable-pan interaction-prompt="none" touch-action="pan-y"
+      camera-orbit="-20deg 82deg 105%" min-camera-orbit="auto 60deg auto" max-camera-orbit="auto 100deg auto"
+      environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto"></model-viewer>
+  </div>
+  <div class="zone" id="zone"></div>
+  <div class="bar" id="bar"></div>
+</div>
+<script>
+  // Personnages : modèle, libellés, zones du corps (en fractions de la boîte englobante : y de bas en haut, z de l'arrière vers l'avant)
+  const PERSOS = {
+    dragon: { model: 'dragon/dragon.glb?v=1', tag: 'Dragon 3D · il réagit au toucher', hint: 'Touche sa tête, ses ailes, sa queue…', elle: false,
+      zones: [
+        { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.55 && z > 0.55, prefs: ['idle', 'look', 'head', 'roar', 'bite', 'sit'] },
+        { id: 'queue', label: 'la queue', test: (y, z, x) => z < 0.28, prefs: ['turn', 'walk', 'run', 'jump'] },
+        { id: 'ailes', label: 'les ailes', test: (y, z, x) => y > 0.55, prefs: ['fly', 'jump', 'run', 'idle'] },
+        { id: 'pattes', label: 'les pattes', test: (y, z, x) => y < 0.35, prefs: ['walk', 'run', 'jump', 'sit'] },
+        { id: 'corps', label: 'le ventre', test: () => true, prefs: ['jump', 'sit', 'idle', 'turn'] },
+      ] },
+    fee: { model: 'fee/fee.glb?v=1', tag: 'Fée 3D · elle réagit au toucher', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, orbit: '0deg 84deg 2.3m',
+      zones: [
+        { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.78, prefs: ['agree', 'look_around', 'laugh', 'scratch'] },
+        { id: 'ailes', label: 'les ailes', test: (y, z, x) => z < 0.4 && y > 0.4, prefs: ['jump', 'dance', 'turn', 'heart'] },
+        { id: 'brasG', label: 'le bras gauche', test: (y, z, x) => x < 0.35 && y > 0.4 && y < 0.78, prefs: ['greet', 'wave', 'clap', 'heart'] },
+        { id: 'brasD', label: 'le bras droit', test: (y, z, x) => x > 0.65 && y > 0.4 && y < 0.78, prefs: ['greet_02', 'greet', 'clap', 'fold'] },
+        { id: 'jambes', label: 'les jambes', test: (y, z, x) => y < 0.42, prefs: ['jump', 'walk', 'dance', 'turn', 'kick'] },
+        { id: 'corps', label: 'la robe', test: () => true, prefs: ['dance', 'heart', 'turn', 'depressed'] },
+      ] },
+  };
+  const LIB = { idle: 'Repos', wait: 'Attente', walk: 'Marcher', run: 'Courir', jump: 'Sauter', turn: 'Tourner', sit: 'S’asseoir', fly: 'Voler', roar: 'Rugir', bite: 'Mordre', attack: 'Attaquer', eat: 'Manger', sleep: 'Dormir', die: 'Tomber', hit: 'Encaisser',
+    greet_01: 'Saluer', greet_02: 'Saluer 2', wave_goodbye_01: 'Au revoir', agree: 'Approuver', clap: 'Applaudir', heart_pose: 'Cœur', laugh_01: 'Rire', scratch: 'Se gratter', look_around: 'Regarder autour', fold_arms: 'Bras croisés', depressed: 'Déprimée', dance_01: 'Danser', front_kick_01: 'Coup de pied', look: 'Regarder', head: 'Tête' };
+  const p = new URLSearchParams(location.search);
+  const PERSO = PERSOS[p.get('perso')] || PERSOS.dragon;
+  const stage = document.getElementById('stage'), mv = document.getElementById('mv'), hint = document.getElementById('hint'), zone = document.getElementById('zone'), bar = document.getElementById('bar'), tag = document.getElementById('tag');
+  mv.src = p.get('model') || PERSO.model;
+  if (PERSO.orbit) mv.setAttribute('camera-orbit', PERSO.orbit);
+  tag.textContent = p.get('tag') ?? PERSO.tag; if (p.get('tag') === '') tag.style.display = 'none';
+  hint.textContent = PERSO.hint;
+  if (PERSO.flotte && p.get('flotte') !== '0') stage.classList.add('flotte');
+  const BOUCLES = ['idle', 'wait', 'walk', 'run', 'fly'];
+  let clips = {}, idleName = null, current = null, ready = false, lastByZone = {}, box = null;
+  const short = n => n.split(':').pop();
+  const libelle = n => LIB[n] || LIB[n.replace(/_\d+$/, '')] || n.replace(/_/g, ' ');
+  function anim(name, loop = false) {
+    const full = clips[name]; if (!full || !ready) return false;
+    mv.animationName = full; mv.currentTime = 0; mv.play({ repetitions: loop ? Infinity : 1 }); current = name;
+    [...bar.children].forEach(b => b.classList.toggle('on', b.dataset.a === name));
+    return true;
+  }
+  function idle() { if (idleName) anim(idleName, true); else { mv.pause(); current = null; [...bar.children].forEach(b => b.classList.remove('on')); } }
+  mv.addEventListener('finished', () => { if (!BOUCLES.includes(current)) idle(); });
+  mv.addEventListener('load', () => {
+    ready = true;
+    for (const n of mv.availableAnimations) clips[short(n)] = n;
+    idleName = BOUCLES.find(n => clips[n]) || null;
+    idle();
+    const size = mv.getDimensions(), c = mv.getBoundingBoxCenter();
+    box = { min: [c.x - size.x / 2, c.y - size.y / 2, c.z - size.z / 2], size: [size.x, size.y, size.z] };
+    for (const n of Object.keys(clips)) {
+      const b = document.createElement('button'); b.textContent = libelle(n); b.dataset.a = n;
+      b.addEventListener('click', e => { e.stopPropagation(); if (BOUCLES.includes(n)) { idleName = n; anim(n, true); } else anim(n); hint.classList.add('off'); });
+      bar.appendChild(b);
+    }
+    if (p.get('anim')) setTimeout(() => anim(p.get('anim'), BOUCLES.includes(p.get('anim'))), 300);
+  });
+  function choisir(prefs, z) {
+    const noms = Object.keys(clips);
+    for (const pref of prefs) { const c = noms.filter(n => n.includes(pref) && n !== lastByZone[z]); if (c.length) return c[Math.floor(Math.random() * c.length)]; }
+    const c = noms.filter(n => n !== lastByZone[z] && !BOUCLES.includes(n)); return c[Math.floor(Math.random() * c.length)] || noms[0];
+  }
+  let zoneTimer = null;
+  function touche(clientX, clientY) {
+    const hit = mv.positionAndNormalFromPoint(clientX, clientY);
+    if (!hit || !box) return;
+    const nx = (hit.position.x - box.min[0]) / box.size[0], ny = (hit.position.y - box.min[1]) / box.size[1], nz = (hit.position.z - box.min[2]) / box.size[2];
+    const Z = PERSO.zones.find(z => z.test(ny, nz, nx));
+    const a = choisir(Z.prefs, Z.id); if (!a) return;
+    lastByZone[Z.id] = a; anim(a);
+    mv.classList.remove('pop'); void mv.offsetWidth; mv.classList.add('pop');
+    zone.textContent = 'Tu as touché ' + Z.label + ' → ' + libelle(a); zone.classList.add('on');
+    clearTimeout(zoneTimer); zoneTimer = setTimeout(() => zone.classList.remove('on'), 1800);
+    hint.classList.add('off');
+  }
+  let down = null;
+  mv.addEventListener('pointerdown', e => { down = { x: e.clientX, y: e.clientY, t: performance.now() }; });
+  mv.addEventListener('pointerup', e => { if (!down) return; if (Math.hypot(e.clientX - down.x, e.clientY - down.y) < 8 && performance.now() - down.t < 600) touche(e.clientX, e.clientY); down = null; });
+</script>
+</body>
+</html>
