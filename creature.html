@@ -64,7 +64,7 @@
         { id: 'bouche', label: 'sa bouche', test: (y, z, x) => y > 0.6 && y <= 0.78 && x < 0.55 && z > 0.45, prefs: ['talk'] },
         { id: 'face', label: 'une face', test: () => true, prefs: ['roll', 'bounce', 'wobble'] },
       ] },
-    feevol: { model: 'fee/fee.glb?v=2', tag: 'Fée 3D · elle vole', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, vol: 'fly', cligne: true, orbit: '0deg 84deg 105%',
+    feevol: { model: 'fee/fee.glb?v=3', tag: 'Fée 3D · elle vole', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, vol: 'fly', cligne: true, orbit: '0deg 84deg 105%',
       zones: [
         { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.7, prefs: ['look', 'giggle', 'shy'] },
         { id: 'ailes', label: 'les ailes', test: (y, z, x) => z < 0.4 && y > 0.5, prefs: ['cheer', 'shy'] },
@@ -83,7 +83,7 @@
       ] },
   };
   const LIB = { idle: 'Repos', wait: 'Attente', walk: 'Marcher', run: 'Courir', jump: 'Sauter', turn: 'Tourner', sit: 'S’asseoir', fly: 'Voler', roar: 'Rugir', bite: 'Mordre', attack: 'Attaquer', eat: 'Manger', sleep: 'Dormir', die: 'Tomber', hit: 'Encaisser',
-    greet_01: 'Saluer', greet_02: 'Saluer 2', wave_goodbye_01: 'Au revoir', agree: 'Approuver', clap: 'Applaudir', heart_pose: 'Cœur', laugh_01: 'Rire', scratch: 'Se gratter', look_around: 'Regarder autour', fold_arms: 'Bras croisés', depressed: 'Déprimée', dance_01: 'Danser', front_kick_01: 'Coup de pied', look: 'Regarder', head: 'Tête', flap: 'Battre des ailes', wag: 'Remuer la queue', trot: 'Trotter', hello: 'Saluer', blink: 'Cligner', roll: 'Lancer le dé', talk: 'Parler', wobble: 'Se dandiner', bounce: 'Sauter', giggle: 'Rire', shy: 'Timide', cheer: 'Hourra', hello_left: 'Saluer (gauche)' };
+    greet_01: 'Saluer', greet_02: 'Saluer 2', wave_goodbye_01: 'Au revoir', agree: 'Approuver', clap: 'Applaudir', heart_pose: 'Cœur', laugh_01: 'Rire', scratch: 'Se gratter', look_around: 'Regarder autour', fold_arms: 'Bras croisés', depressed: 'Déprimée', dance_01: 'Danser', front_kick_01: 'Coup de pied', look: 'Regarder', head: 'Tête', flap: 'Battre des ailes', wag: 'Remuer la queue', trot: 'Trotter', hello: 'Saluer', blink: 'Cligner', roll: 'Lancer le dé', talk: 'Parler', wobble: 'Se dandiner', bounce: 'Sauter', giggle: 'Rire', shy: 'Timide', cheer: 'Hourra', hello_left: 'Saluer (gauche)', wink: 'Clin d’œil' };
   const p = new URLSearchParams(location.search);
   const PERSO = PERSOS[p.get('perso')] || PERSOS.dragon;
   const stage = document.getElementById('stage'), mv = document.getElementById('mv'), hint = document.getElementById('hint'), zone = document.getElementById('zone'), bar = document.getElementById('bar'), tag = document.getElementById('tag');

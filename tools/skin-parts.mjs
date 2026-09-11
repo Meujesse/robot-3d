@@ -80,6 +80,30 @@ for (const [key, d] of partData) {
   mesh.addPrimitive(prim);
   console.log(gname.padEnd(8), 'partie', String(key).padEnd(4), n, 'sommets');
 }
+// ---- paupières (quads devant les yeux, os dédié, pivot au bord haut) ----
+for (const lid of (cfg.eyelids || [])) {
+  const eyeParts = cfg.groups[lid.over].parts.map(String);
+  let mn = [Infinity, Infinity, Infinity], mx = [-Infinity, -Infinity, -Infinity];
+  for (const [key, d] of partData) if (eyeParts.includes(String(key))) for (let i = 0; i < d.pos.length; i += 3) for (let k = 0; k < 3; k++) { mn[k] = Math.min(mn[k], d.pos[i + k]); mx[k] = Math.max(mx[k], d.pos[i + k]); }
+  const pad = lid.pad || 1.35, cx = (mn[0] + mx[0]) / 2, cy = (mn[1] + mx[1]) / 2, w = (mx[0] - mn[0]) * pad, h = (mx[1] - mn[1]) * pad * (lid.tall || 1.2), z = mx[2] + (lid.offset || 0.004);
+  const top = cy + h / 2, bot = cy - h / 2, x0 = cx - w / 2, x1 = cx + w / 2;
+  // légère courbure : 5 colonnes, z recule sur les bords
+  const cols = 6, P = [], N = [], U = [], I = [], J = [], W = [];
+  for (let c = 0; c <= cols; c++) { const u = c / cols, x = x0 + (x1 - x0) * u, zz = z - Math.pow((u - 0.5) * 2, 2) * (lid.curve || 0.006);
+    for (const [y, v] of [[top, 0], [bot, 1]]) { P.push(x, y, zz); N.push(0, 0, 1); U.push(u, v); } }
+  for (let c = 0; c < cols; c++) { const a = c * 2, b = a + 1, cc = a + 2, d = a + 3; I.push(a, b, cc, b, d, cc); }
+  const nv = P.length / 3; const jIdx = names.length; names.push(lid.name);
+  const jn = doc.createNode(lid.name).setTranslation([cx - cfg.groups[lid.parent].pivot[0], top - cfg.groups[lid.parent].pivot[1], z - cfg.groups[lid.parent].pivot[2]]).setScale([1, 0.02, 1]);
+  joints[lid.name] = jn; jointIndex[lid.name] = jIdx; joints[lid.parent].addChild(jn); skin.addJoint(jn);
+  const ibm2 = new Float32Array((jIdx + 1) * 16); ibm2.set(skin.getInverseBindMatrices().getArray()); ibm2.set([1,0,0,0, 0,1,0,0, 0,0,1,0, -cx,-top,-z,1], jIdx * 16); skin.getInverseBindMatrices().setArray(ibm2);
+  for (let i = 0; i < nv; i++) { J.push(jIdx, 0, 0, 0); W.push(1, 0, 0, 0); }
+  const mk = (arr, type) => doc.createAccessor().setType(type).setArray(arr).setBuffer(buffer);
+  const mat = doc.createMaterial(lid.name + '_material').setBaseColorFactor([...(lid.color || [0.68, 0.36, 0.19]), 1]).setRoughnessFactor(0.85).setMetallicFactor(0).setDoubleSided(true);
+  const prim = doc.createPrimitive().setAttribute('POSITION', mk(new Float32Array(P), Accessor.Type.VEC3)).setAttribute('NORMAL', mk(new Float32Array(N), Accessor.Type.VEC3)).setAttribute('TEXCOORD_0', mk(new Float32Array(U), Accessor.Type.VEC2))
+    .setAttribute('JOINTS_0', mk(new Uint16Array(J), Accessor.Type.VEC4)).setAttribute('WEIGHTS_0', mk(new Float32Array(W), Accessor.Type.VEC4)).setIndices(mk(new Uint32Array(I), Accessor.Type.SCALAR)).setMaterial(mat);
+  mesh.addPrimitive(prim);
+  console.log('paupière', lid.name, 'sur', lid.over, 'centre', cx.toFixed(3), cy.toFixed(3), 'taille', w.toFixed(3), h.toFixed(3));
+}
 const skinned = doc.createNode('creature').setMesh(mesh).setSkin(skin);
 scene.addChild(skinned);
 // supprime les anciens nœuds/maillages de parties
