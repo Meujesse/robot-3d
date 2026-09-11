@@ -64,7 +64,7 @@
         { id: 'bouche', label: 'sa bouche', test: (y, z, x) => y > 0.6 && y <= 0.78 && x < 0.55 && z > 0.45, prefs: ['talk'] },
         { id: 'face', label: 'une face', test: () => true, prefs: ['roll', 'bounce', 'wobble'] },
       ] },
-    fee: { model: 'fee/fee.glb?v=1', tag: 'Fée 3D · elle réagit au toucher', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, orbit: '0deg 84deg 2.3m',
+    fee: { model: 'fee/fee-rig.glb?v=1', tag: 'Fée 3D · elle réagit au toucher', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, orbit: '0deg 84deg 2.3m',
       zones: [
         { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.78, prefs: ['agree', 'look_around', 'laugh', 'scratch'] },
         { id: 'ailes', label: 'les ailes', test: (y, z, x) => z < 0.4 && y > 0.4, prefs: ['jump', 'dance', 'turn', 'heart'] },
