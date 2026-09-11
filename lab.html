@@ -130,7 +130,7 @@
   // personnage : Noki (défaut) ou Nika, sa version fille (?perso=nika)
   const PERSOS = {
     noki: { model: 'robot-parts.glb?v=3', audio: 'audio/', elle: false },
-    nika: { model: 'nika/nika-parts.glb?v=1', audio: 'audio-nika/', elle: true },
+    nika: { model: 'nika/nika-parts.glb?v=3', audio: 'audio-nika/', elle: true, glint: '0.06 0.45 0.29' },
   };
   const PERSO = PERSOS[p.get('perso')] || PERSOS.noki;
   const E = PERSO.elle;
@@ -144,7 +144,7 @@
   const stage = document.getElementById('stage');
   const rig = document.getElementById('rig');
   const mv = document.getElementById('robot');
-  if (PERSO !== PERSOS.noki) mv.src = PERSO.model;
+  if (PERSO !== PERSOS.noki) { mv.src = PERSO.model; if (PERSO.glint) document.getElementById('glint').dataset.position = PERSO.glint; }
   const say = document.getElementById('say');
   const tag = document.getElementById('tag');
   const hint = document.getElementById('hint');
@@ -238,6 +238,10 @@
   }
   let idleWanted = true;
   mv.addEventListener('finished', () => { if (idleWanted && !asleep) { mv.pause(); mv.currentTime = 0; } });
+  // Nika cligne de la visière de temps en temps, quand rien d'autre ne joue
+  if (PERSO.elle) (function blinkLoop() {
+    setTimeout(() => { if (!asleep && mv.paused && (mv.availableAnimations || []).includes('blink')) anim('blink'); blinkLoop(); }, 2600 + Math.random() * 3800);
+  })();
 
   // ---------- Regard (la caméra suit la souris, donc le robot semble se tourner) ----------
   let lookTarget = { theta: -30, phi: 82 }, lookCur = { theta: -30, phi: 82 };
@@ -368,7 +372,7 @@
 
   // ---------- Chargement ----------
   mv.addEventListener('load', () => {
-    eyeMat = mv.model.materials.find(m => m.name === 'eye_material') || null;
+    eyeMat = (() => { const mats = mv.model.materials.filter(m => m.name === 'eye_material'); return mats.length ? { setEmissiveFactor: f => mats.forEach(m => m.setEmissiveFactor(f)), pbrMetallicRoughness: { setBaseColorFactor: c => mats.forEach(m => m.pbrMetallicRoughness.setBaseColorFactor(c)) } } : null; })();
     eyeTick();
     mv.pause(); mv.currentTime = 0;
     if (F.talk) { setTimeout(() => { if (!asleep) speak('coucou'); }, 900); }

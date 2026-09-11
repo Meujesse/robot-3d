@@ -1,0 +1,11 @@
+<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Nika : test des animations</title>
+<script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+<style>html,body{margin:0;height:100%;background:#f4f4f6}model-viewer{width:100%;height:100%}.bar{position:absolute;bottom:10px;left:10px;display:flex;gap:6px;flex-wrap:wrap}button{font:12px sans-serif;padding:6px 10px}</style></head>
+<body><model-viewer id="mv" src="nika/nika-parts.glb?v=3" camera-controls camera-orbit="0deg 85deg 112%" environment-image="neutral" exposure="1.05" shadow-intensity="0"></model-viewer>
+<div class="bar" id="bar"></div>
+<script>
+const mv=document.getElementById('mv'), bar=document.getElementById('bar'), p=new URLSearchParams(location.search);
+mv.addEventListener('load',()=>{ for(const n of mv.availableAnimations){const b=document.createElement('button');b.textContent=n;b.onclick=()=>{mv.animationName=n;mv.currentTime=0;mv.play({repetitions:1});};bar.appendChild(b);}
+  if(p.get('anim')){ mv.animationName=p.get('anim'); mv.currentTime=parseFloat(p.get('t')||'0'); mv.pause(); }
+  if(p.get('orbit')){ mv.cameraOrbit=p.get('orbit'); mv.jumpCameraToGoal(); } });
+</script></body></html>

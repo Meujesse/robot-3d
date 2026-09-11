@@ -68,7 +68,7 @@
     }
 
     mv.addEventListener('load', () => {
-      eyeMat = mv.model.materials.find(m => m.name === 'eye_material') || null;
+      eyeMat = (() => { const mats = mv.model.materials.filter(m => m.name === 'eye_material'); return mats.length ? { setEmissiveFactor: f => mats.forEach(m => m.setEmissiveFactor(f)), pbrMetallicRoughness: { setBaseColorFactor: c => mats.forEach(m => m.pbrMetallicRoughness.setBaseColorFactor(c)) } } : null; })();
       ready = true;
       restPose();
       tick();

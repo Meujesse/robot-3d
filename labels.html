@@ -126,7 +126,38 @@
   </div>
 </div>
 <script>
+  const NIKA_HS = `    <div class="hs up" slot="hotspot-eye" data-position="0.04 0.44 0.29" data-normal="0 0 1" data-visibility-attribute="visible" style="--len:120px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Capteur optique</b><span>Objectif à iris bleu. Elle reconnaît les visages, les gestes et les sourires.</span><i>OPT-02 · ONLINE</i></div>
+    </div>
+    <div class="hs left up" slot="hotspot-antenna" data-position="0.227 0.79 -0.22" data-normal="0 1 0" data-visibility-attribute="visible" style="--len:110px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Antenne de liaison</b><span>Sa petite boule rose s’allume quand elle reçoit un message du module.</span><i>COM-08 · 5 GHz</i></div>
+    </div>
+    <div class="hs down" slot="hotspot-thruster" data-position="0.0 0.02 0.07" data-normal="0 -1 0" data-visibility-attribute="visible" style="--len:120px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Turbine de sustentation</b><span>Un flux d’air ionisé la maintient en vol stationnaire, sans bruit.</span><i>LIFT-04 · 100 %</i></div>
+    </div>
+    <div class="hs down" slot="hotspot-clawR" data-position="0.40 0.06 0.17" data-normal="1 -1 0" data-visibility-attribute="visible" style="--len:100px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Main articulée</b><span>Trois doigts fins, prise délicate. Elle sert surtout à saluer et à applaudir.</span><i>ARM-R · 3 AXES</i></div>
+    </div>
+    <div class="hs left" slot="hotspot-ear" data-position="-0.44 0.30 0.03" data-normal="-1 0 0" data-visibility-attribute="visible" style="--len:110px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Module auditif</b><span>Deux micros directionnels dans les épaules. Elle entend d’où tu lui parles.</span><i>AUD-03 · STEREO</i></div>
+    </div>
+    <div class="hs down" slot="hotspot-heart" data-position="0.24 0.35 0.16" data-normal="0.8 0 0.6" data-visibility-attribute="visible" style="--len:130px">
+      <div class="dot"></div><div class="lead"></div>
+      <div class="label"><b>Cœur lumineux</b><span>Son voyant d’humeur. Rose : tout va bien. Il bat plus vite quand tu réussis.</span><i>MOOD-01 · ROSE</i></div>
+    </div>
+`;
   const mv = document.getElementById('robot');
+  const P0 = new URLSearchParams(location.search);
+  if (P0.get('perso') === 'nika') {
+    mv.src = 'nika/nika-parts.glb?v=3'; mv.alt = 'Nika, petite robote volante';
+    mv.querySelectorAll('.hs').forEach(el => el.remove());
+    mv.insertAdjacentHTML('beforeend', NIKA_HS);
+  }
   const hs = [...document.querySelectorAll('.hs')];
   const hint = document.getElementById('hint');
   let opened = 0;
