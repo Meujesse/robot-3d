@@ -154,7 +154,7 @@
   const mv = document.getElementById('robot');
   const P0 = new URLSearchParams(location.search);
   if (P0.get('perso') === 'nika') {
-    mv.src = 'nika/nika-parts.glb?v=3'; mv.alt = 'Nika, petite robote volante';
+    mv.src = 'nika/nika-parts.glb?v=4'; mv.alt = 'Nika, petite robote volante';
     mv.querySelectorAll('.hs').forEach(el => el.remove());
     mv.insertAdjacentHTML('beforeend', NIKA_HS);
   }

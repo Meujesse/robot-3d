@@ -85,6 +85,16 @@
   .bar button:hover { background: rgba(60,70,95,.85); }
   .bar button:active { transform: scale(.96); }
   .bar[hidden] { display: none; }
+  .couleurs { position: absolute; left: 50%; bottom: 56px; transform: translateX(-50%); z-index: 6; display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; max-width: 92%; background: rgba(20,24,34,.45); padding: 6px 8px; border-radius: 999px; backdrop-filter: blur(6px); }
+  .couleurs[hidden] { display: none; }
+  .couleurs button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,.7); cursor: pointer; padding: 0; transition: transform .1s; }
+  .couleurs button:hover { transform: scale(1.2); } .couleurs button.on { border-color: #f5b400; box-shadow: 0 0 0 2px rgba(245,180,0,.5); }
+  .flamme { position: relative; width: 0; height: 0; pointer-events: none; opacity: 0; }
+  .flamme.on { opacity: 1; }
+  .flamme i { position: absolute; left: -14px; top: 0; width: 28px; height: 70px; border-radius: 50% 50% 40% 40% / 30% 30% 70% 70%;
+    background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(120,210,255,.9) 25%, rgba(255,150,220,.7) 60%, rgba(255,120,200,0)); filter: blur(1.5px); transform-origin: 50% 0; animation: flamme .12s ease-in-out infinite alternate; }
+  .flamme b { position: absolute; left: -26px; top: -6px; width: 52px; height: 24px; border-radius: 50%; background: radial-gradient(ellipse, rgba(120,210,255,.9), rgba(120,210,255,0) 70%); animation: flamme .1s ease-in-out infinite alternate-reverse; }
+  @keyframes flamme { from { transform: scaleY(.85) scaleX(.9); } to { transform: scaleY(1.15) scaleX(1.05); } }
 </style>
 </head>
 <body>
@@ -99,6 +109,7 @@
       camera-orbit="-30deg 82deg 112%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
       environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto">
       <div class="glint" id="glint" slot="hotspot-glint" data-position="0.0 0.455 0.345" data-normal="0 0 1" data-visibility-attribute="visible"><i></i><b></b></div>
+      <div class="flamme" id="flamme" slot="hotspot-flamme" data-position="0 0.02 0.06" data-normal="0 -1 0"><b></b><i></i></div>
     </model-viewer>
     <div class="zzz">z<small>z</small><small><small>z</small></small></div>
   </div>
@@ -107,7 +118,9 @@
     <button data-state="happy">Bonne réponse</button>
     <button data-state="wrong">Mauvaise réponse</button>
     <button data-state="sleep">Dodo</button>
+    <button data-state="propulse" id="btn-propulse" hidden>Propulsion</button>
   </div>
+  <div class="couleurs" id="couleurs" hidden></div>
 </div>
 
 <script>
@@ -130,7 +143,7 @@
   // personnage : Noki (défaut) ou Nika, sa version fille (?perso=nika)
   const PERSOS = {
     noki: { model: 'robot-parts.glb?v=3', audio: 'audio/', elle: false },
-    nika: { model: 'nika/nika-parts.glb?v=3', audio: 'audio-nika/', elle: true, glint: '0.06 0.45 0.29' },
+    nika: { model: 'nika/nika-parts.glb?v=4', audio: 'audio-nika/', elle: true, glint: '0.06 0.45 0.29' },
   };
   const PERSO = PERSOS[p.get('perso')] || PERSOS.noki;
   const E = PERSO.elle;
@@ -225,6 +238,33 @@
     requestAnimationFrame(eyeTick);
   }
   function setEyeState(rgb) { eyeBase = rgb; }
+  // ---------- Couleurs d'œil (Nika) : on échange la texture de l'œil, même rendu que le bleu naturel ----------
+  const COULEURS = { bleu: '#37a6ff', vert: '#2ecc71', rouge: '#ff3b3b', jaune: '#ffd400', orange: '#ff8a1f', violet: '#9b4dff', rose: '#ff5fb8', marron: '#8a5a2b', cyan: '#33e6e6', blanc: '#f4f4f4', gris: '#9a9a9a', noir: '#222' };
+  const eyeTex = {}; let eyeColor = 'bleu';
+  async function setEyeColor(nom, opts = {}) {
+    if (!PERSO.elle || !mv.model) return;
+    const mats = { eye_material: 16, eye_ring_material: 12 };
+    for (const m of mv.model.materials) {
+      const part = mats[m.name]; if (!part) continue;
+      const key = nom + '-' + part;
+      if (!eyeTex[key]) eyeTex[key] = await mv.createTexture('nika/eye/' + key + '.webp');
+      m.pbrMetallicRoughness.baseColorTexture.setTexture(eyeTex[key]);
+    }
+    eyeColor = nom;
+    [...document.querySelectorAll('#couleurs button')].forEach(b => b.classList.toggle('on', b.dataset.c === nom));
+  }
+  let eyeTimer = null;
+  function eyeColorFor(nom, ms) { clearTimeout(eyeTimer); setEyeColor(nom); eyeTimer = setTimeout(() => setEyeColor('bleu'), ms); }
+  // ---------- Propulsion : petite poussée du réacteur, sans décoller ----------
+  const flamme = document.getElementById('flamme');
+  function propulse() {
+    if (asleep) return;
+    flamme.classList.add('on');
+    eyeFlash([0.2, 0.6, 1.0], 700);
+    if (mv.animate) mv.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-2.5%) rotate(-.6deg)' }, { transform: 'translateY(-1.5%) rotate(.5deg)' }, { transform: 'translateY(0)' }], { duration: 950, easing: 'ease-out' });
+    anim('antenna');
+    setTimeout(() => flamme.classList.remove('on'), 850);
+  }
   const glintEl = document.getElementById('glint');
   function glint(kind) { glintEl.classList.toggle('on', !!kind); glintEl.classList.toggle('ko', kind === 'ko'); }
   function eyeFlash(rgb, ms = 500) {
@@ -316,13 +356,13 @@
   }
   function happy() {
     wake(false); armSleep();
-    setEyeState([0.0, 0.05, 0.015]); glint('ok'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
+    if (PERSO.elle) eyeColorFor('vert', 2600); setEyeState([0.0, 0.05, 0.015]); glint('ok'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
     rig.classList.remove('jump'); void rig.offsetWidth; rig.classList.add('jump');
     anim('cheer'); speak('bravo');
   }
   function wrong() {
     wake(false); armSleep();
-    setEyeState([0.07, 0.01, 0.01]); glint('ko'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
+    if (PERSO.elle) eyeColorFor('rouge', 2600); setEyeState([0.07, 0.01, 0.01]); glint('ko'); setTimeout(() => { setEyeState([0, 0, 0]); glint(null); }, 2600);
     rig.classList.remove('shake'); void rig.offsetWidth; rig.classList.add('shake');
     anim('shrug'); speak('faux');
   }
@@ -330,7 +370,7 @@
     bar.hidden = false;
     bar.addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
-      ({ happy, wrong, sleep }[b.dataset.state])();
+      ({ happy, wrong, sleep, propulse }[b.dataset.state])();
     });
     armSleep();
     ['pointerdown', 'pointermove', 'keydown'].forEach(ev => window.addEventListener(ev, () => { if (!asleep) armSleep(); }, { passive: true }));
@@ -372,8 +412,14 @@
 
   // ---------- Chargement ----------
   mv.addEventListener('load', () => {
-    eyeMat = (() => { const mats = mv.model.materials.filter(m => m.name === 'eye_material'); return mats.length ? { setEmissiveFactor: f => mats.forEach(m => m.setEmissiveFactor(f)), pbrMetallicRoughness: { setBaseColorFactor: c => mats.forEach(m => m.pbrMetallicRoughness.setBaseColorFactor(c)) } } : null; })();
+    eyeMat = (() => { const mats = mv.model.materials.filter(m => m.name === 'eye_material' || m.name === 'eye_ring_material'); return mats.length ? { setEmissiveFactor: f => mats.forEach(m => m.setEmissiveFactor(f)), pbrMetallicRoughness: { setBaseColorFactor: c => mats.forEach(m => m.pbrMetallicRoughness.setBaseColorFactor(c)) } } : null; })();
     eyeTick();
+    if (PERSO.elle && F.state) {
+      const bar = document.getElementById('couleurs');
+      for (const [nom, hex] of Object.entries(COULEURS)) { const b = document.createElement('button'); b.dataset.c = nom; b.title = nom; b.style.background = hex; b.addEventListener('click', e => { e.stopPropagation(); clearTimeout(eyeTimer); setEyeColor(nom); eyeFlash([0.3, 0.3, 0.3], 300); }); bar.appendChild(b); }
+      bar.hidden = false; document.getElementById('btn-propulse').hidden = false;
+      [...bar.children].find(b => b.dataset.c === 'bleu').classList.add('on');
+    }
     mv.pause(); mv.currentTime = 0;
     if (F.talk) { setTimeout(() => { if (!asleep) speak('coucou'); }, 900); }
     if (initial === 'happy') setTimeout(happy, 1200);

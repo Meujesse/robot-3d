@@ -35,7 +35,7 @@ for (const [name, g] of Object.entries(GROUPS)) {
     const parent = n.getParentNode();
     if (parent) parent.removeChild(n); else scene.removeChild(n);
     n.setTranslation([-g.pivot[0], -g.pivot[1], -g.pivot[2]]);
-    if (name === 'eye') for (const p of n.getMesh().listPrimitives()) p.getMaterial().setName('eye_material').setEmissiveFactor([0, 0, 0.01]);
+    if (name === 'eye') for (const p of n.getMesh().listPrimitives()) p.getMaterial().setName(num === 16 ? 'eye_material' : 'eye_ring_material').setEmissiveFactor([0, 0, 0.01]);
     grp.addChild(n);
   }
   scene.addChild(grp);
@@ -83,5 +83,9 @@ const rest = [0, 0, 0, 1];
 { const a = doc.createAnimation('blink');
   addChannel(a, nodes.brow, [0, 0.12, 0.22, 0.4], [rest, quatAxis(X, 24), quatAxis(X, 24), rest]); }
 
+for (const a of root.listAnimations()) if (a.getName() !== 'blink') {
+  const dur = Math.max(...a.listSamplers().map(s => { const arr = s.getInput().getArray(); return arr[arr.length - 1]; }));
+  addChannel(a, nodes.brow, [0, dur], [rest, rest]);
+}
 await io.write(OUT, doc);
 console.log('écrit', OUT, 'animations', root.listAnimations().map(a => a.getName()).join(','));
