@@ -10,7 +10,7 @@ import fs from 'fs';
 
 const cfg = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const io = new NodeIO().registerExtensions(ALL_EXTENSIONS)
-  .registerDependencies({ 'draco3d.decoder': await draco3d.createDecoderModule() });
+  .registerDependencies({ 'draco3d.decoder': await draco3d.createDecoderModule(), 'draco3d.encoder': await draco3d.createEncoderModule() });
 const doc = await io.read(cfg.in);
 const root = doc.getRoot();
 const buffer = root.listBuffers()[0];

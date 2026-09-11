@@ -543,6 +543,10 @@ for (const tr of (cfg.addToAll || [])) {
     if (anim.listChannels().some(c => c.getTargetNode() === node)) continue;   // déjà animé
     let dur = 0; for (const s of anim.listSamplers()) { const arr = s.getInput().getArray(); dur = Math.max(dur, arr[arr.length-1]); }
     if (!dur) continue;
+    if (tr.path === 'scale') {                       // valeur constante (os caché)
+      addChannel(anim, node, [0, dur], [tr.v, tr.v], 'scale');
+      continue;
+    }
     const per = tr.period || 0.4, fps = 30, T = [], V = [];
     for (let t = 0; t <= dur + 1e-6; t += 1/fps) {
       const u = (t % per) / per;                       // 0..1 sur un cycle

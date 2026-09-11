@@ -1,6 +1,6 @@
 {
- "in": "/Users/jynchereze/Downloads/lisa-3d/dragon/dragon-os-full.glb",
- "out": "/Users/jynchereze/Downloads/robot-3d/dragon/dragon-rig-full.glb",
+ "in": "/tmp/d-opt.glb",
+ "out": "/Users/jynchereze/Downloads/robot-3d/dragon/dragon.glb",
  "os": "feuBone",
  "base": [
   -0.487,
@@ -12,8 +12,8 @@
   -0.1,
   0.3
  ],
- "anneaux": 16,
- "segments": 18,
+ "anneaux": 22,
+ "segments": 20,
  "couches": [
   {
    "nom": "jet",
