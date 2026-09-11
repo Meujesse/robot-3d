@@ -88,7 +88,7 @@ Insérer > Autres > coller :
 - `robot-source.png` : image d'origine (ChatGPT).
 - `robot.glb` : modèle d'un seul bloc (Tripo v2.5, allégé, 1,2 Mo).
 - `robot-parts.glb` : même robot découpé en pièces (corps, bras droit, bras gauche, antenne, œil) avec les animations `hello`, `hello_left`, `cheer`, `shrug`, `antenna`, `idle`.
-- `audio/` : voix « Robot Meujesse (Wall-E) » (ElevenLabs, voix conçue sur mesure). `audio-maevys/` : la version voix douce féminine, gardée en réserve.
+- `audio/` : voix « Robot Meujesse (Wall-E) » (ElevenLabs, voix conçue sur mesure). `audio-maevys/` : la version voix douce féminine, gardée en réserve. `audio-nika/` : voix « Robote Meujesse (Nika) » (ElevenLabs, voix conçue sur mesure, ID ZKmSew5e6xZOLYMau7qI), mêmes répliques au féminin, pour la version fille de Noki.
 - `robot-rig.js` : moteur commun « robot vivant » (œil, gestes, corps, états) utilisé par chat.html et voice.html.
 - `tools/split.mjs` : script de découpage + animations (gltf-transform). `tools/analyze*.mjs` : analyse de la géométrie.
 
