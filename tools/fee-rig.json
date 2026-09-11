@@ -1,0 +1,140 @@
+{
+ "in": "/Users/jynchereze/Downloads/lisa-3d/fee/fee-rig-full.glb",
+ "parts": "/Users/jynchereze/Downloads/lisa-3d/fee/fee-parts-full.glb",
+ "out": "../fee/fee-rig2-full.glb",
+ "grid": 110,
+ "bones": [
+  {
+   "name": "wingL",
+   "parent": "Spine02",
+   "seedJoints": [
+    "R_UpperarmTwist01"
+   ],
+   "pivotAxis": "x",
+   "blur": 4,
+   "lo": 0.25,
+   "hi": 0.75
+  },
+  {
+   "name": "wingR",
+   "parent": "Spine02",
+   "seedJoints": [
+    "L_UpperarmTwist01"
+   ],
+   "pivotAxis": "x",
+   "blur": 4,
+   "lo": 0.25,
+   "hi": 0.75
+  }
+ ],
+ "animations": {
+  "fly": [
+   {
+    "bone": "wingR",
+    "axis": "Y",
+    "t": [
+     0,
+     0.09,
+     0.18
+    ],
+    "a": [
+     -22,
+     20,
+     -22
+    ]
+   },
+   {
+    "bone": "wingL",
+    "axis": "Y",
+    "t": [
+     0,
+     0.09,
+     0.18
+    ],
+    "a": [
+     22,
+     -20,
+     22
+    ]
+   },
+   {
+    "bone": "Root",
+    "path": "translation",
+    "t": [
+     0,
+     0.09,
+     0.18
+    ],
+    "v": [
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0.004,
+      0
+     ],
+     [
+      0,
+      0,
+      0
+     ]
+    ]
+   }
+  ],
+  "hover": [
+   {
+    "bone": "wingR",
+    "axis": "Y",
+    "t": [
+     0,
+     0.09,
+     0.18
+    ],
+    "a": [
+     -20,
+     18,
+     -20
+    ]
+   },
+   {
+    "bone": "wingL",
+    "axis": "Y",
+    "t": [
+     0,
+     0.09,
+     0.18
+    ],
+    "a": [
+     20,
+     -18,
+     20
+    ]
+   }
+  ]
+ },
+ "addToAll": [
+  {
+   "bone": "wingR",
+   "axis": "Y",
+   "t": [],
+   "a": [
+    -18,
+    16
+   ],
+   "period": 0.2
+  },
+  {
+   "bone": "wingL",
+   "axis": "Y",
+   "t": [],
+   "a": [
+    18,
+    -16
+   ],
+   "period": 0.2
+  }
+ ]
+}

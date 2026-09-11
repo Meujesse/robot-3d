@@ -28,6 +28,8 @@ GROUPS.body.parts = [...byNum.keys()].filter(k => !assigned.has(k)).sort((a, b) 
 // matériaux de l'œil renommés eye_material (émissif piloté par la page) ; chaque partie garde sa texture
 
 const nodes = {};
+const allNode = doc.createNode('all');
+scene.addChild(allNode);
 for (const [name, g] of Object.entries(GROUPS)) {
   const grp = doc.createNode(name).setTranslation(g.pivot);
   for (const num of g.parts) {
@@ -38,12 +40,12 @@ for (const [name, g] of Object.entries(GROUPS)) {
     if (name === 'eye') for (const p of n.getMesh().listPrimitives()) p.getMaterial().setName(num === 16 ? 'eye_material' : 'eye_ring_material').setEmissiveFactor([0, 0, 0.01]);
     grp.addChild(n);
   }
-  scene.addChild(grp);
+  allNode.addChild(grp);
   nodes[name] = grp;
   console.log(name, 'parties', g.parts.join(','));
 }
 // nettoie les nœuds vides restants (racine Tripo)
-for (const n of root.listNodes()) if (!n.getMesh() && n.listChildren().length === 0 && !nodes[n.getName()]) n.dispose();
+for (const n of root.listNodes()) if (!n.getMesh() && n.listChildren().length === 0 && !nodes[n.getName()] && n !== allNode) n.dispose();
 
 // ---- Animations (copie de split.mjs) ----
 const deg = d => d * Math.PI / 180;
@@ -79,6 +81,21 @@ const rest = [0, 0, 0, 1];
   addChannel(a, nodes.armR, [0, 0.5, 1.0, 1.6, 2.2, 2.8], [rest, quatAxis(Z, 9), quatAxis(Z, 3), quatAxis(Z, 12), quatAxis(Z, 4), rest]);
   addChannel(a, nodes.armL, [0, 0.4, 0.9, 1.5, 2.1, 2.8], [rest, quatAxis(Z, -4), quatAxis(Z, -11), quatAxis(Z, -3), quatAxis(Z, -9), rest]);
   addChannel(a, nodes.antenna, [0, 0.35, 0.7, 1.4, 2.1, 2.8], [rest, quatAxis(X, 6), quatAxis(X, -5), quatAxis(X, 4), quatAxis(X, -6), rest]); }
+// tour sur elle-même
+{ const a = doc.createAnimation('spin');
+  addChannel(a, allNode, [0, 0.35, 0.7, 1.05, 1.4], [rest, quatAxis([0,1,0], 90), quatAxis([0,1,0], 180), quatAxis([0,1,0], 270), quatAxis([0,1,0], 359.9)]); }
+// oui / non
+{ const a = doc.createAnimation('oui');
+  addChannel(a, allNode, [0, 0.2, 0.4, 0.6, 0.8], [rest, quatAxis(X, 11), rest, quatAxis(X, 9), rest]);
+  addChannel(a, nodes.antenna, [0, 0.2, 0.4, 0.6, 0.8], [rest, quatAxis(X, -8), rest, quatAxis(X, -6), rest]); }
+{ const a = doc.createAnimation('non');
+  addChannel(a, allNode, [0, 0.2, 0.4, 0.6, 0.8], [rest, quatAxis([0,1,0], 15), quatAxis([0,1,0], -15), quatAxis([0,1,0], 10), rest]); }
+// propulsion : elle s'accroupit puis se soulève d'un coup, sans décoller
+{ const a = doc.createAnimation('propulse');
+  addChannel(a, allNode, [0, 0.18, 0.36, 0.62, 0.9], [[0,0,0], [0,-0.02,0], [0,0.05,0], [0,0.015,0], [0,0,0]], 'translation');
+  addChannel(a, nodes.antenna, [0, 0.18, 0.36, 0.62, 0.9], [rest, quatAxis(X, 12), quatAxis(X, -16), quatAxis(X, 8), rest]);
+  addChannel(a, nodes.armR, [0, 0.18, 0.36, 0.9], [rest, quatAxis(Z, -12), quatAxis(Z, 16), rest]);
+  addChannel(a, nodes.armL, [0, 0.18, 0.36, 0.9], [rest, quatAxis(Z, 12), quatAxis(Z, -16), rest]); }
 // blink : la visière bleue descend sur l'œil puis remonte (nouveau pour Nika)
 { const a = doc.createAnimation('blink');
   addChannel(a, nodes.brow, [0, 0.12, 0.22, 0.4], [rest, quatAxis(X, 24), quatAxis(X, 24), rest]); }

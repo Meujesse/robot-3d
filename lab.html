@@ -89,11 +89,13 @@
   .couleurs[hidden] { display: none; }
   .couleurs button { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,.7); cursor: pointer; padding: 0; transition: transform .1s; }
   .couleurs button:hover { transform: scale(1.2); } .couleurs button.on { border-color: #f5b400; box-shadow: 0 0 0 2px rgba(245,180,0,.5); }
-  .flamme { position: relative; width: 0; height: 0; pointer-events: none; opacity: 0; }
+  .flamme { position: relative; width: 0; height: 0; pointer-events: none; }
+  .jet { position: relative; width: 0; height: 0; opacity: 0; transition: opacity .1s; }
+  .jet.on { opacity: 1; }
   .flamme.on { opacity: 1; }
-  .flamme i { position: absolute; left: -14px; top: 0; width: 28px; height: 70px; border-radius: 50% 50% 40% 40% / 30% 30% 70% 70%;
-    background: linear-gradient(180deg, rgba(255,255,255,.95), rgba(120,210,255,.9) 25%, rgba(255,150,220,.7) 60%, rgba(255,120,200,0)); filter: blur(1.5px); transform-origin: 50% 0; animation: flamme .12s ease-in-out infinite alternate; }
-  .flamme b { position: absolute; left: -26px; top: -6px; width: 52px; height: 24px; border-radius: 50%; background: radial-gradient(ellipse, rgba(120,210,255,.9), rgba(120,210,255,0) 70%); animation: flamme .1s ease-in-out infinite alternate-reverse; }
+  .jet i { position: absolute; left: -29px; top: -8px; width: 58px; height: 150px; border-radius: 50% 50% 40% 40% / 30% 30% 70% 70%;
+    background: linear-gradient(180deg, rgba(255,255,255,1), rgba(150,225,255,.95) 22%, rgba(120,190,255,.85) 45%, rgba(255,150,220,.6) 72%, rgba(255,120,200,0)); filter: blur(2.5px); transform-origin: 50% 0; animation: flamme .12s ease-in-out infinite alternate; }
+  .jet b { position: absolute; left: -56px; top: -18px; width: 112px; height: 52px; border-radius: 50%; background: radial-gradient(ellipse, rgba(150,225,255,.95), rgba(120,190,255,.45) 45%, rgba(120,190,255,0) 72%); animation: flamme .1s ease-in-out infinite alternate-reverse; }
   @keyframes flamme { from { transform: scaleY(.85) scaleX(.9); } to { transform: scaleY(1.15) scaleX(1.05); } }
 </style>
 </head>
@@ -107,17 +109,17 @@
       auto-rotate auto-rotate-delay="0" rotation-per-second="22deg"
       camera-controls disable-zoom disable-pan interaction-prompt="none"
       camera-orbit="-30deg 82deg 112%" min-camera-orbit="auto 55deg auto" max-camera-orbit="auto 105deg auto"
-      environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto">
+      environment-image="neutral" exposure="1.05" shadow-intensity="0" loading="eager" reveal="auto" style="--min-hotspot-opacity: 1">
       <div class="glint" id="glint" slot="hotspot-glint" data-position="0.0 0.455 0.345" data-normal="0 0 1" data-visibility-attribute="visible"><i></i><b></b></div>
-      <div class="flamme" id="flamme" slot="hotspot-flamme" data-position="0 0.02 0.06" data-normal="0 -1 0"><b></b><i></i></div>
+      <div class="flamme" slot="hotspot-flamme" data-position="0 0.012 0.075"><div class="jet" id="flamme"><b></b><i></i></div></div>
     </model-viewer>
     <div class="zzz">z<small>z</small><small><small>z</small></small></div>
   </div>
   <div class="say" id="say"></div>
-  <div class="bar" id="bar" hidden>
-    <button data-state="happy">Bonne réponse</button>
-    <button data-state="wrong">Mauvaise réponse</button>
-    <button data-state="sleep">Dodo</button>
+  <div class="bar" id="bar">
+    <button data-state="happy" class="etat" hidden>Bonne réponse</button>
+    <button data-state="wrong" class="etat" hidden>Mauvaise réponse</button>
+    <button data-state="sleep" class="etat" hidden>Dodo</button>
     <button data-state="propulse" id="btn-propulse" hidden>Propulsion</button>
   </div>
   <div class="couleurs" id="couleurs" hidden></div>
@@ -143,7 +145,7 @@
   // personnage : Noki (défaut) ou Nika, sa version fille (?perso=nika)
   const PERSOS = {
     noki: { model: 'robot-parts.glb?v=3', audio: 'audio/', elle: false },
-    nika: { model: 'nika/nika-parts.glb?v=4', audio: 'audio-nika/', elle: true, glint: '0.06 0.45 0.29' },
+    nika: { model: 'nika/nika-parts.glb?v=5', audio: 'audio-nika/', elle: true, glint: '0.06 0.45 0.29' },
   };
   const PERSO = PERSOS[p.get('perso')] || PERSOS.noki;
   const E = PERSO.elle;
@@ -151,7 +153,7 @@
     ? { 2: 'V2 · elle réagit au toucher', 3: 'V3 · elle te regarde', 4: 'V4 · elle se déplace', 5: 'V5 · elle parle', 6: 'V6 · elle change d’état' }
     : { 2: 'V2 · il réagit au toucher', 3: 'V3 · il te regarde', 4: 'V4 · il se déplace', 5: 'V5 · il parle', 6: 'V6 · il change d’état' };
   const HINTS = E
-    ? { 2: 'Touche la robote', 3: 'Bouge la souris autour d’elle', 4: 'Touche-la, elle décolle', 5: 'Elle te parle toute seule', 6: 'Essaie les boutons en bas' }
+    ? { 2: 'Touche la robote', 3: 'Bouge la souris autour d’elle', 4: 'Clique où tu veux : elle y va', 5: 'Elle te parle toute seule', 6: 'Essaie les boutons en bas' }
     : { 2: 'Touche le robot', 3: 'Bouge la souris autour de lui', 4: 'Touche-le, il décolle', 5: 'Il te parle tout seul', 6: 'Essaie les boutons en bas' };
 
   const stage = document.getElementById('stage');
@@ -223,6 +225,7 @@
   let eyeBase = [0, 0, 0];        // couleur d'état (vert, rouge...)
   let eyeGlow = 0;                // pulsation de parole 0..1
   const data = new Uint8Array(128);
+  let flash = [0, 0, 0];
   function eyeTick() {
     if (eyeMat) {
       let amp = 0;
@@ -232,7 +235,8 @@
       }
       eyeGlow += (amp - eyeGlow) * 0.35;
       const g = eyeGlow;
-      const e = [eyeBase[0] + 0.02 * g, eyeBase[1] + 0.10 * g, eyeBase[2] + 0.28 * g];
+      flash = flash.map(v => v * 0.955);
+      const e = [eyeBase[0] + 0.02 * g + flash[0], eyeBase[1] + 0.10 * g + flash[1], eyeBase[2] + 0.28 * g + flash[2]];
       eyeMat.setEmissiveFactor(e.map(x => Math.min(1, x)));
     }
     requestAnimationFrame(eyeTick);
@@ -254,21 +258,28 @@
     [...document.querySelectorAll('#couleurs button')].forEach(b => b.classList.toggle('on', b.dataset.c === nom));
   }
   let eyeTimer = null;
-  function eyeColorFor(nom, ms) { clearTimeout(eyeTimer); setEyeColor(nom); eyeTimer = setTimeout(() => setEyeColor('bleu'), ms); }
+  function eyeColorFor(nom, ms) { clearTimeout(eyeTimer); setEyeColor(nom); voile(nom); eyeTimer = setTimeout(() => { setEyeColor('bleu'); voile('bleu', 0.5); }, ms); }
   // ---------- Propulsion : petite poussée du réacteur, sans décoller ----------
   const flamme = document.getElementById('flamme');
   function propulse() {
     if (asleep) return;
     flamme.classList.add('on');
     eyeFlash([0.2, 0.6, 1.0], 700);
-    if (mv.animate) mv.animate([{ transform: 'translateY(0)' }, { transform: 'translateY(-2.5%) rotate(-.6deg)' }, { transform: 'translateY(-1.5%) rotate(.5deg)' }, { transform: 'translateY(0)' }], { duration: 950, easing: 'ease-out' });
-    anim('antenna');
-    setTimeout(() => flamme.classList.remove('on'), 850);
+    anim('propulse');
+    setTimeout(() => flamme.classList.remove('on'), 900);
   }
   const glintEl = document.getElementById('glint');
   function glint(kind) { glintEl.classList.toggle('on', !!kind); glintEl.classList.toggle('ko', kind === 'ko'); }
   function eyeFlash(rgb, ms = 500) {
     const prev = eyeBase; eyeBase = rgb; setTimeout(() => { if (eyeBase === rgb) eyeBase = prev; }, ms);
+  }
+  // voile lumineux de la couleur choisie, qui s'éteint doucement
+  function voile(nom, k = 0.85) {
+    const hex = COULEURS[nom] || '#ffffff';
+    let c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2) || hex[1] + hex[1], 16) / 255);
+    if (hex.length === 4) c = [1, 2, 3].map(i => parseInt(hex[i] + hex[i], 16) / 255);
+    const mx = Math.max(...c) || 1;
+    flash = c.map(v => Math.max(v / mx * k, nom === 'noir' ? 0.12 : 0));
   }
 
   // ---------- Animations glTF ----------
@@ -278,10 +289,6 @@
   }
   let idleWanted = true;
   mv.addEventListener('finished', () => { if (idleWanted && !asleep) { mv.pause(); mv.currentTime = 0; } });
-  // Nika cligne de la visière de temps en temps, quand rien d'autre ne joue
-  if (PERSO.elle) (function blinkLoop() {
-    setTimeout(() => { if (!asleep && mv.paused && (mv.availableAnimations || []).includes('blink')) anim('blink'); blinkLoop(); }, 2600 + Math.random() * 3800);
-  })();
 
   // ---------- Regard (la caméra suit la souris, donc le robot semble se tourner) ----------
   let lookTarget = { theta: -30, phi: 82 }, lookCur = { theta: -30, phi: 82 };
@@ -311,19 +318,23 @@
   // ---------- Déplacement ----------
   let pos = { x: 0, y: 0 };
   function moveTo(x, y) { pos = { x, y }; rig.style.transform = `translate(${x}%, ${y}%)`; }
-  let wanderTimer = null;
-  function wander() {
-    if (asleep) return;
-    const x = (Math.random() * 2 - 1) * 22, y = (Math.random() * 2 - 1) * 8;
+  const borne = (v, m) => Math.max(-m, Math.min(m, v));
+  function vaVers(clientX, clientY) {
+    if (!F.move || asleep) return;
+    const r = stage.getBoundingClientRect();
+    const x = borne(((clientX - r.left) / r.width - 0.5) * 108, 34);
+    const y = borne(((clientY - r.top) / r.height - 0.5) * 82, 22);
     moveTo(x, y);
+    anim('antenna');
+    flamme.classList.add('on'); setTimeout(() => flamme.classList.remove('on'), 700);
   }
   if (F.move) {
     rig.style.transition = 'none'; moveTo(-70, 25);          // hors champ, en bas à gauche
     setTimeout(() => { rig.style.transition = ''; moveTo(0, 0); }, 80);
-    wanderTimer = setInterval(wander, 7000);
   }
   function takeOff() {
     if (!F.move) return;
+    propulse();
     const dir = pos.x > 0 ? -1 : 1;
     moveTo(dir * 28, -14);
     setTimeout(() => moveTo(dir * -10, 4), 1700);
@@ -383,7 +394,7 @@
 
   // ---------- Toucher ----------
   const TOUCH_LINES = ['hey', 'oui', 'ok', 'chatouille', 'coucou'];
-  const TOUCH_ANIMS = ['hello', 'hello_left', 'cheer', 'hello'];
+  const TOUCH_ANIMS = ['hello', 'oui', 'cheer', 'hello_left', 'non', 'spin'];
   let touchN = 0;
   function onTouch() {
     if (asleep) { wake(true); return; }
@@ -401,8 +412,10 @@
       if (!dragging) return; dragging = false;
       const dt = performance.now() - downAt, dx = Math.hypot(e.clientX - downXY[0], e.clientY - downXY[1]);
       if (dt < 450 && dx < 8) {
+        if (asleep) { wake(true); return; }
         const hit = mv.positionAndNormalFromPoint(e.clientX, e.clientY);
         if (hit) onTouch();
+        else if (F.move && !e.target.closest('.bar') && !e.target.closest('.couleurs')) vaVers(e.clientX, e.clientY);
       }
     });
   } else {
@@ -414,14 +427,16 @@
   mv.addEventListener('load', () => {
     eyeMat = (() => { const mats = mv.model.materials.filter(m => m.name === 'eye_material' || m.name === 'eye_ring_material'); return mats.length ? { setEmissiveFactor: f => mats.forEach(m => m.setEmissiveFactor(f)), pbrMetallicRoughness: { setBaseColorFactor: c => mats.forEach(m => m.pbrMetallicRoughness.setBaseColorFactor(c)) } } : null; })();
     eyeTick();
+    if (PERSO.elle && F.touch) document.getElementById('btn-propulse').hidden = false;
     if (PERSO.elle && F.state) {
       const bar = document.getElementById('couleurs');
-      for (const [nom, hex] of Object.entries(COULEURS)) { const b = document.createElement('button'); b.dataset.c = nom; b.title = nom; b.style.background = hex; b.addEventListener('click', e => { e.stopPropagation(); clearTimeout(eyeTimer); setEyeColor(nom); eyeFlash([0.3, 0.3, 0.3], 300); }); bar.appendChild(b); }
-      bar.hidden = false; document.getElementById('btn-propulse').hidden = false;
+      for (const [nom, hex] of Object.entries(COULEURS)) { const b = document.createElement('button'); b.dataset.c = nom; b.title = nom; b.style.background = hex; b.addEventListener('click', e => { e.stopPropagation(); clearTimeout(eyeTimer); setEyeColor(nom); voile(nom); }); bar.appendChild(b); }
+      bar.hidden = false;
       [...bar.children].find(b => b.dataset.c === 'bleu').classList.add('on');
     }
     mv.pause(); mv.currentTime = 0;
     if (F.talk) { setTimeout(() => { if (!asleep) speak('coucou'); }, 900); }
+    if (F.state) [...document.querySelectorAll('.etat')].forEach(b => b.hidden = false);
     if (initial === 'happy') setTimeout(happy, 1200);
     if (initial === 'wrong') setTimeout(wrong, 1200);
     if (initial === 'sleep') setTimeout(sleep, 300);

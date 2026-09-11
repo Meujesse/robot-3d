@@ -48,42 +48,43 @@
 <script>
   // Personnages : modèle, libellés, zones du corps (en fractions de la boîte englobante : y de bas en haut, z de l'arrière vers l'avant)
   const PERSOS = {
-    dragon: { model: 'dragon/dragon.glb?v=3', tag: 'Dragon 3D · il réagit au toucher', hint: 'Touche sa tête, ses ailes, sa queue…', elle: false, flotte: true, orbit: '-55deg 80deg 105%', vol: 'fly',
+    dragon: { model: 'dragon/dragon.glb?v=5', tag: 'Dragon 3D · il réagit au toucher', hint: 'Touche sa tête, ses ailes, sa queue…', elle: false, flotte: true, orbit: '-55deg 80deg 105%', vol: 'fly',
       // le dragon regarde vers -x : x_n petit = tête, x_n grand = queue
       zones: [
         { id: 'tete', label: 'la tête', test: (y, z, x) => x < 0.34 && y > 0.45, prefs: ['hello', 'look', 'roar'] },
         { id: 'queue', label: 'la queue', test: (y, z, x) => x > 0.62, prefs: ['wag', 'hello'] },
         { id: 'ailes', label: 'les ailes', test: (y, z, x) => y > 0.42 && x >= 0.34 && x <= 0.62, prefs: ['flap', 'roar'] },
-        { id: 'pattes', label: 'les pattes', test: (y, z, x) => y < 0.38, prefs: ['trot', 'roar'] },
+        { id: 'pattes', label: 'les pattes', test: (y, z, x) => y < 0.38, prefs: ['walk', 'roar'] },
         { id: 'corps', label: 'le ventre', test: () => true, prefs: ['flap', 'wag', 'roar', 'look'] },
       ] },
-    d20: { model: 'd20/d20.glb?v=1', tag: 'Dé 20 · il réagit au toucher', hint: 'Touche ses yeux, sa bouche, ses faces…', elle: false, orbit: '-50deg 50deg 105%', cligne: true,
+    d20: { model: 'd20/d20.glb?v=1', tag: 'Dé 20 · il réagit au toucher', hint: 'Touche ses yeux, sa bouche, ses faces…', elle: false, orbit: '-50deg 50deg 105%',
       // le visage est sur la face haut-avant-gauche : x_n petit, y_n grand, z_n grand
       zones: [
         { id: 'yeux', label: 'ses yeux', test: (y, z, x) => y > 0.68 && x < 0.55 && z > 0.45, prefs: ['surprise', 'blink'] },
         { id: 'bouche', label: 'sa bouche', test: (y, z, x) => y > 0.6 && y <= 0.78 && x < 0.55 && z > 0.45, prefs: ['talk'] },
         { id: 'face', label: 'une face', test: () => true, prefs: ['roll', 'bounce', 'wobble'] },
       ] },
-    feevol: { model: 'fee/fee.glb?v=3', tag: 'Fée 3D · elle vole', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, vol: 'fly', cligne: true, orbit: '0deg 84deg 105%',
+    feevol: { model: 'fee/fee.glb?v=6', cils: 'fee/fee-eyes-closed.webp?v=1', tag: 'Fée 3D · elle vole', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, vol: 'fly', orbit: '0deg 84deg 105%',
       zones: [
-        { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.7, prefs: ['look', 'giggle', 'shy'] },
-        { id: 'ailes', label: 'les ailes', test: (y, z, x) => z < 0.4 && y > 0.5, prefs: ['cheer', 'shy'] },
-        { id: 'brasG', label: 'le bras gauche', test: (y, z, x) => x < 0.38 && y > 0.35 && y <= 0.7, prefs: ['hello_left', 'cheer'] },
-        { id: 'brasD', label: 'le bras droit', test: (y, z, x) => x > 0.62 && y > 0.35 && y <= 0.7, prefs: ['hello', 'cheer'] },
-        { id: 'robe', label: 'la robe', test: () => true, prefs: ['giggle', 'shy', 'cheer', 'look'] },
+        { id: 'yeux', label: 'ses yeux', test: (y, z, x) => y > 0.78 && y < 0.85 && z > 0.55, prefs: ['__cligne'] },
+        { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.7, prefs: ['look_around', 'laugh_01'] },
+        { id: 'ailes', label: 'les ailes', test: (y, z, x) => z < 0.4 && y > 0.5, prefs: ['jump', 'turn'] },
+        { id: 'brasG', label: 'le bras gauche', test: (y, z, x) => x < 0.38 && y > 0.35 && y <= 0.7, prefs: ['wave_goodbye_01', 'clap'] },
+        { id: 'brasD', label: 'le bras droit', test: (y, z, x) => x > 0.62 && y > 0.35 && y <= 0.7, prefs: ['greet_01', 'clap'] },
+        { id: 'robe', label: 'la robe', test: () => true, prefs: ['laugh_01', 'turn', 'clap', 'look_around'] },
       ] },
-    fee: { model: 'fee/fee-rig.glb?v=1', tag: 'Fée 3D · elle réagit au toucher', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, orbit: '0deg 84deg 2.3m',
+    fee: { model: 'fee/fee.glb?v=6', cils: 'fee/fee-eyes-closed.webp?v=1', tag: 'Fée 3D · gestes', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, vol: 'fly', volDefaut: false, orbit: '0deg 84deg 105%',
       zones: [
-        { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.78, prefs: ['agree', 'look_around', 'laugh', 'scratch'] },
-        { id: 'ailes', label: 'les ailes', test: (y, z, x) => z < 0.4 && y > 0.4, prefs: ['jump', 'dance', 'turn', 'heart'] },
-        { id: 'brasG', label: 'le bras gauche', test: (y, z, x) => x < 0.35 && y > 0.4 && y < 0.78, prefs: ['greet', 'wave', 'clap', 'heart'] },
-        { id: 'brasD', label: 'le bras droit', test: (y, z, x) => x > 0.65 && y > 0.4 && y < 0.78, prefs: ['greet_02', 'greet', 'clap', 'fold'] },
-        { id: 'jambes', label: 'les jambes', test: (y, z, x) => y < 0.42, prefs: ['jump', 'walk', 'dance', 'turn', 'kick'] },
-        { id: 'corps', label: 'la robe', test: () => true, prefs: ['dance', 'heart', 'turn', 'depressed'] },
+        { id: 'yeux', label: 'ses yeux', test: (y, z, x) => y > 0.78 && y < 0.85 && z > 0.55, prefs: ['__cligne'] },
+        { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.7, prefs: ['look_around', 'laugh_01'] },
+        { id: 'ailes', label: 'les ailes', test: (y, z, x) => z < 0.4 && y > 0.5, prefs: ['jump', 'turn'] },
+        { id: 'brasG', label: 'le bras gauche', test: (y, z, x) => x < 0.38 && y > 0.35 && y <= 0.7, prefs: ['wave_goodbye_01', 'clap'] },
+        { id: 'brasD', label: 'le bras droit', test: (y, z, x) => x > 0.62 && y > 0.35 && y <= 0.7, prefs: ['greet_01', 'clap'] },
+        { id: 'robe', label: 'la robe', test: () => true, prefs: ['laugh_01', 'turn', 'clap', 'look_around'] },
       ] },
   };
   const LIB = { idle: 'Repos', wait: 'Attente', walk: 'Marcher', run: 'Courir', jump: 'Sauter', turn: 'Tourner', sit: 'S’asseoir', fly: 'Voler', roar: 'Rugir', bite: 'Mordre', attack: 'Attaquer', eat: 'Manger', sleep: 'Dormir', die: 'Tomber', hit: 'Encaisser',
-    greet_01: 'Saluer', greet_02: 'Saluer 2', wave_goodbye_01: 'Au revoir', agree: 'Approuver', clap: 'Applaudir', heart_pose: 'Cœur', laugh_01: 'Rire', scratch: 'Se gratter', look_around: 'Regarder autour', fold_arms: 'Bras croisés', depressed: 'Déprimée', dance_01: 'Danser', front_kick_01: 'Coup de pied', look: 'Regarder', head: 'Tête', flap: 'Battre des ailes', wag: 'Remuer la queue', trot: 'Trotter', hello: 'Saluer', blink: 'Cligner', roll: 'Lancer le dé', talk: 'Parler', wobble: 'Se dandiner', bounce: 'Sauter', giggle: 'Rire', shy: 'Timide', cheer: 'Hourra', hello_left: 'Saluer (gauche)', wink: 'Clin d’œil' };
+    greet_01: 'Saluer', greet_02: 'Saluer 2', wave_goodbye_01: 'Au revoir', agree: 'Approuver', clap: 'Applaudir', heart_pose: 'Cœur', laugh_01: 'Rire', scratch: 'Se gratter', look_around: 'Regarder autour', fold_arms: 'Bras croisés', depressed: 'Déprimée', dance_01: 'Danser', front_kick_01: 'Coup de pied', look: 'Regarder', head: 'Tête', flap: 'Battre des ailes', wag: 'Remuer la queue', trot: 'Trotter', hello: 'Saluer', blink: 'Cligner', roll: 'Lancer le dé', talk: 'Parler', wobble: 'Se dandiner', bounce: 'Sauter', hover: 'Vol sur place', giggle: 'Rire', shy: 'Timide', cheer: 'Hourra', hello_left: 'Saluer (gauche)', wink: 'Clin d’œil' };
   const p = new URLSearchParams(location.search);
   const PERSO = PERSOS[p.get('perso')] || PERSOS.dragon;
   const stage = document.getElementById('stage'), mv = document.getElementById('mv'), hint = document.getElementById('hint'), zone = document.getElementById('zone'), bar = document.getElementById('bar'), tag = document.getElementById('tag');
@@ -100,6 +101,21 @@
     idleName = on ? PERSO.vol : (clips.idle ? 'idle' : null); idle();
   }
   let clips = {}, idleName = null, current = null, ready = false, lastByZone = {}, box = null;
+  // clignement peint sur la texture du visage (pas d'élément rapporté)
+  let infoTex = null, texOuvert = null, texFerme = null, cligneTimer = null;
+  async function prepareCils() {
+    if (!PERSO.cils || !mv.model) return;
+    const mat = mv.model.materials.find(m => m.pbrMetallicRoughness && m.pbrMetallicRoughness.baseColorTexture && m.pbrMetallicRoughness.baseColorTexture.texture) || mv.model.materials[0];
+    infoTex = mat.pbrMetallicRoughness.baseColorTexture;
+    texOuvert = infoTex.texture;
+    try { texFerme = await mv.createTexture(PERSO.cils); } catch (e) { console.warn('cils', e); }
+  }
+  function cligne(ms = 130) {
+    if (!infoTex || !texFerme) return false;
+    clearTimeout(cligneTimer); infoTex.setTexture(texFerme);
+    cligneTimer = setTimeout(() => infoTex.setTexture(texOuvert), ms);
+    return true;
+  }
   const short = n => n.split(':').pop();
   const libelle = n => LIB[n] || LIB[n.replace(/_\d+$/, '')] || n.replace(/_/g, ' ');
   function anim(name, loop = false) {
@@ -110,14 +126,16 @@
   }
   function idle() { if (idleName) anim(idleName, true); else { mv.pause(); current = null; [...bar.children].forEach(b => b.classList.remove('on')); } }
   mv.addEventListener('finished', () => { if (!BOUCLES.includes(current)) idle(); });
-  if (PERSO.cligne) (function blinkLoop() { setTimeout(() => { if (ready && clips.blink && (mv.paused || current === 'idle')) { const back = idleName; anim('blink'); idleName = back; } blinkLoop(); }, 2500 + Math.random() * 4000); })();
   mv.addEventListener('load', () => {
     ready = true;
     for (const n of mv.availableAnimations) clips[short(n)] = n;
     idleName = BOUCLES.find(n => clips[n]) || null;
     idle();
+    prepareCils();
     const size = mv.getDimensions(), c = mv.getBoundingBoxCenter();
     box = { min: [c.x - size.x / 2, c.y - size.y / 2, c.z - size.z / 2], size: [size.x, size.y, size.z] };
+    if (PERSO.cils) { const b = document.createElement('button'); b.textContent = 'Cligner';
+      b.addEventListener('click', e => { e.stopPropagation(); cligne(); hint.classList.add('off'); }); bar.appendChild(b); }
     for (const n of Object.keys(clips)) {
       const b = document.createElement('button'); b.textContent = libelle(n); b.dataset.a = n;
       b.addEventListener('click', e => { e.stopPropagation(); if (BOUCLES.includes(n)) { idleName = n; anim(n, true); } else anim(n); hint.classList.add('off'); });
@@ -128,7 +146,7 @@
       b.addEventListener('click', e => { e.stopPropagation(); setVol(!vole); hint.classList.add('off'); });
       bar.prepend(b);
       const vb = [...bar.children].find(x => x.dataset.a === PERSO.vol); if (vb) vb.remove();
-      if (p.get('vol') !== '0') setVol(true);
+      if (p.get('vol') !== '0' && PERSO.volDefaut !== false) setVol(true); else setVol(false);
     }
     if (p.get('anim')) setTimeout(() => anim(p.get('anim'), BOUCLES.includes(p.get('anim'))), 300);
   });
@@ -143,6 +161,12 @@
     if (!hit || !box) return;
     const nx = (hit.position.x - box.min[0]) / box.size[0], ny = (hit.position.y - box.min[1]) / box.size[1], nz = (hit.position.z - box.min[2]) / box.size[2];
     const Z = PERSO.zones.find(z => z.test(ny, nz, nx));
+    if (Z.prefs[0] === '__cligne') {
+      cligne(160);
+      zone.textContent = 'Tu as touché ' + Z.label + ' → elle cligne'; zone.classList.add('on');
+      clearTimeout(zoneTimer); zoneTimer = setTimeout(() => zone.classList.remove('on'), 1800);
+      hint.classList.add('off'); return;
+    }
     const a = choisir(Z.prefs, Z.id); if (!a) return;
     lastByZone[Z.id] = a; anim(a);
     mv.classList.remove('pop'); void mv.offsetWidth; mv.classList.add('pop');

@@ -13,6 +13,23 @@ const buffer = root.listBuffers()[0];
 
 const byNum = new Map();
 for (const n of root.listNodes()) { const m = /^tripo_part_(\d+)$/.exec(n.getName()); if (m && n.getMesh()) byNum.set(+m[1], n); }
+// découpe d'une partie en deux selon le signe de x (ailes gauche/droite) : "splitX": [num, ...]
+for (const num of (cfg.splitX || [])) {
+  const src = byNum.get(num); const mesh = src.getMesh(); const prim = mesh.listPrimitives()[0];
+  const pos = prim.getAttribute('POSITION').getArray(), nor = prim.getAttribute('NORMAL').getArray(), uv = prim.getAttribute('TEXCOORD_0').getArray(), idx = prim.getIndices().getArray();
+  const tris = { L: [], R: [] };
+  for (let t = 0; t < idx.length / 3; t++) { const a = idx[t*3], b = idx[t*3+1], c = idx[t*3+2]; const cx = (pos[a*3] + pos[b*3] + pos[c*3]) / 3; tris[cx < 0 ? 'L' : 'R'].push(t); }
+  for (const side of ['L', 'R']) {
+    const remap = new Map(); const P = [], N = [], U = [], I = [];
+    for (const t of tris[side]) for (let k = 0; k < 3; k++) { const v = idx[t*3+k]; let nv = remap.get(v); if (nv === undefined) { nv = remap.size; remap.set(v, nv); P.push(pos[v*3], pos[v*3+1], pos[v*3+2]); N.push(nor[v*3], nor[v*3+1], nor[v*3+2]); U.push(uv[v*2], uv[v*2+1]); } I.push(nv); }
+    const mk = (arr, type, u32) => doc.createAccessor().setType(type).setArray(u32 ? new Uint32Array(arr) : new Float32Array(arr)).setBuffer(buffer);
+    const p2 = doc.createPrimitive().setAttribute('POSITION', mk(P, Accessor.Type.VEC3)).setAttribute('NORMAL', mk(N, Accessor.Type.VEC3)).setAttribute('TEXCOORD_0', mk(U, Accessor.Type.VEC2)).setIndices(mk(I, Accessor.Type.SCALAR, true)).setMaterial(prim.getMaterial());
+    const m2 = doc.createMesh(`tripo_part_${num}${side}`).addPrimitive(p2);
+    const n2 = doc.createNode(`tripo_part_${num}${side}`).setMesh(m2); scene.addChild(n2);
+    byNum.set(`${num}${side}`, n2); console.log('découpe', num, side, tris[side].length, 'triangles');
+  }
+  const pn = src.getParentNode(); if (pn) pn.removeChild(src); else scene.removeChild(src); src.setMesh(null); mesh.dispose(); src.dispose(); byNum.delete(num);
+}
 const assigned = new Set();
 for (const g of Object.values(cfg.groups)) for (const p of (g.parts || [])) assigned.add(p);
 const rest = [...byNum.keys()].filter(k => !assigned.has(k)).sort((a, b) => a - b);
