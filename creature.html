@@ -65,7 +65,7 @@
         { id: 'bouche', label: 'sa bouche', test: (y, z, x) => y > 0.6 && y <= 0.78 && x < 0.55 && z > 0.45, prefs: ['talk'] },
         { id: 'face', label: 'une face', test: () => true, prefs: ['roll', 'bounce', 'wobble'] },
       ] },
-    feevol: { model: 'fee/fee.glb?v=9', cils: 'fee/fee-eyes-closed.webp?v=1', tag: 'Fée 3D · elle vole', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, vol: 'fly', orbit: '0deg 84deg 105%',
+    feevol: { model: 'fee/fee.glb?v=10', tag: 'Fée 3D · elle vole', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, flotte: true, vol: 'fly', orbit: '0deg 84deg 105%',
       zones: [
         { id: 'yeux', label: 'ses yeux', test: (y, z, x) => y > 0.78 && y < 0.85 && z > 0.55, prefs: ['__cligne'] },
         { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.7, prefs: ['giggle', 'look_around'] },
@@ -74,7 +74,7 @@
         { id: 'brasD', label: 'le bras droit', test: (y, z, x) => x > 0.62 && y > 0.35 && y <= 0.7, prefs: ['hello', 'clap'] },
         { id: 'robe', label: 'la robe', test: () => true, prefs: ['shy', 'giggle', 'twirl', 'clap'] },
       ] },
-    fee: { model: 'fee/fee.glb?v=9', cils: 'fee/fee-eyes-closed.webp?v=1', tag: 'Fée 3D · gestes', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, vol: 'fly', volDefaut: false, orbit: '0deg 84deg 105%',
+    fee: { model: 'fee/fee.glb?v=10', tag: 'Fée 3D · gestes', hint: 'Touche sa tête, ses ailes, ses bras…', elle: true, vol: 'fly', volDefaut: false, orbit: '0deg 84deg 105%',
       zones: [
         { id: 'yeux', label: 'ses yeux', test: (y, z, x) => y > 0.78 && y < 0.85 && z > 0.55, prefs: ['__cligne'] },
         { id: 'tete', label: 'la tête', test: (y, z, x) => y > 0.7, prefs: ['giggle', 'look_around'] },
@@ -112,6 +112,7 @@
     try { texFerme = await mv.createTexture(PERSO.cils); } catch (e) { console.warn('cils', e); }
   }
   function cligne(ms = 130) {
+    if (clips.blink) return anim('blink');          // clignement en géométrie (paupières)
     if (!infoTex || !texFerme) return false;
     clearTimeout(cligneTimer); infoTex.setTexture(texFerme);
     cligneTimer = setTimeout(() => infoTex.setTexture(texOuvert), ms);
@@ -135,7 +136,7 @@
     prepareCils();
     const size = mv.getDimensions(), c = mv.getBoundingBoxCenter();
     box = { min: [c.x - size.x / 2, c.y - size.y / 2, c.z - size.z / 2], size: [size.x, size.y, size.z] };
-    if (PERSO.cils) { const b = document.createElement('button'); b.textContent = 'Cligner';
+    if (PERSO.cils && !clips.blink) { const b = document.createElement('button'); b.textContent = 'Cligner';
       b.addEventListener('click', e => { e.stopPropagation(); cligne(); hint.classList.add('off'); }); bar.appendChild(b); }
     for (const n of Object.keys(clips)) {
       const b = document.createElement('button'); b.textContent = libelle(n); b.dataset.a = n;

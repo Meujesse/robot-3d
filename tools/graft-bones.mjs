@@ -61,6 +61,7 @@ async function masks(rigDoc) {
       dom[v] = bi; }
     clouds.set('__all__', P);
     for (const b of cfg.bones) {
+      if (!b.seedJoints) continue;
       const wanted = new Set((b.seedJoints || []).map(n => jn.indexOf(n)));
       const out = [];
       for (let v = 0; v < dom.length; v++) if (wanted.has(dom[v])) out.push(P[v*3], P[v*3+1], P[v*3+2]);
@@ -73,6 +74,7 @@ async function masks(rigDoc) {
     for (const n of byNum.values()) { const a = n.getMesh().listPrimitives()[0].getAttribute('POSITION').getArray(); for (let i = 0; i < a.length; i++) all.push(a[i]); }
     clouds.set('__all__', new Float32Array(all));
     for (const b of cfg.bones) {
+      if (!b.parts) continue;
       const out = [];
       for (const num of b.parts) { const n = byNum.get(num); if (!n) { console.warn('partie absente', num); continue; }
         const a = n.getMesh().listPrimitives()[0].getAttribute('POSITION').getArray();
@@ -92,11 +94,11 @@ async function masks(rigDoc) {
   const total = dim[0]*dim[1]*dim[2];
   const occ = new Float32Array(total);
   const fields = {};
-  for (const b of cfg.bones) fields[b.name] = new Float32Array(total);
+  for (const b of cfg.bones) if (clouds.has(b.name)) fields[b.name] = new Float32Array(total);
   const cellOf = p => [Math.min(dim[0]-1, Math.max(0, Math.floor((p[0]-org[0])/h))), Math.min(dim[1]-1, Math.max(0, Math.floor((p[1]-org[1])/h))), Math.min(dim[2]-1, Math.max(0, Math.floor((p[2]-org[2])/h)))];
   const pivots = {};
   for (const b of cfg.bones) {
-    const c3 = clouds.get(b.name); const nv = c3.length / 3;
+    const c3 = clouds.get(b.name); if (!c3) continue; const nv = c3.length / 3;
     for (let i = 0; i < c3.length; i += 3) fields[b.name][idx(...cellOf([c3[i], c3[i+1], c3[i+2]]))] = 1;
     const ki = (b.pivotAxis || 'z') === 'x' ? 0 : (b.pivotAxis || 'z') === 'y' ? 1 : 2;
     const order = Array.from({ length: nv }, (_, i) => i).sort((u, v) => Math.abs(c3[u*3+ki]) - Math.abs(c3[v*3+ki]));
@@ -121,6 +123,7 @@ async function masks(rigDoc) {
   };
   const out = {};
   for (const b of cfg.bones) {
+    if (!fields[b.name]) continue;
     const f = blur(fields[b.name], b.blur ?? 4);
     let n = 0, bmn = [1e9,1e9,1e9], bmx = [-1e9,-1e9,-1e9];
     for (let k = 0; k < dim[2]; k++) for (let j = 0; j < dim[1]; j++) for (let i = 0; i < dim[0]; i++) {
@@ -186,12 +189,161 @@ function masksSurface(rigDoc) {
   return out;
 }
 
+/* ---- masque « membrane » : sépare une voile fine d'un membre volumique ----
+   Une aile est une membrane de quelques millimètres, un bras est un volume.
+   On mesure l'épaisseur locale (distance au premier sommet de normale opposée),
+   on garde les composantes fines, on bouche leurs trous (nervures épaisses),
+   puis on fait retomber le poids à zéro près du plan médian pour que la racine
+   se fonde dans le dos sans entraîner l'épaule ni le bras. */
+function masksMembrane(rigDoc) {
+  const cf = Object.assign({ epaisseur: 0.006, yMin: 0.50, yMax: 0.95, x0: 0.025, x1: 0.075, zMax: 0.02, zPlein: 0.005, cellule: 0.008, rayon: 0.020 }, cfg.membrane || {});
+  const rt = rigDoc.getRoot();
+  const pr = rt.listMeshes()[0].listPrimitives()[0];
+  const P = pr.getAttribute('POSITION').getArray(), N = pr.getAttribute('NORMAL').getArray();
+  const idx = pr.getIndices().getArray();
+  const nv = P.length / 3;
+  // épaisseur locale
+  const gi = v => Math.floor(v / cf.cellule);
+  const hash = new Map();
+  for (let v = 0; v < nv; v++) { const k = `${gi(P[v*3])},${gi(P[v*3+1])},${gi(P[v*3+2])}`; let a = hash.get(k); if (!a) { a = []; hash.set(k, a); } a.push(v); }
+  const R2 = cf.rayon * cf.rayon;
+  const ep = new Float32Array(nv).fill(1);
+  for (let v = 0; v < nv; v++) {
+    const py = P[v*3+1]; if (py < cf.yMin || py > cf.yMax) continue;
+    const px = P[v*3], pz = P[v*3+2], nx = N[v*3], ny = N[v*3+1], nz = N[v*3+2];
+    const cx = gi(px), cy = gi(py), cz = gi(pz); let best = R2;
+    for (let a = -2; a <= 2; a++) for (let b = -2; b <= 2; b++) for (let c = -2; c <= 2; c++) {
+      const arr = hash.get(`${cx+a},${cy+b},${cz+c}`); if (!arr) continue;
+      for (const j of arr) { if (j === v) continue;
+        if (nx*N[j*3] + ny*N[j*3+1] + nz*N[j*3+2] > -0.4) continue;
+        const dx = P[j*3]-px, dy = P[j*3+1]-py, dz = P[j*3+2]-pz;
+        if (dx*nx + dy*ny + dz*nz > 0) continue;
+        const dd = dx*dx + dy*dy + dz*dz; if (dd < best) best = dd; } }
+    ep[v] = Math.sqrt(best);
+  }
+  // graphe des sommets soudés
+  const key = new Map(), rep = new Int32Array(nv);
+  for (let v = 0; v < nv; v++) { const k = `${Math.round(P[v*3]*1e5)},${Math.round(P[v*3+1]*1e5)},${Math.round(P[v*3+2]*1e5)}`;
+    if (!key.has(k)) key.set(k, v); rep[v] = key.get(k); }
+  const adj = new Map();
+  const lien = (a, b) => { a = rep[a]; b = rep[b]; if (a === b) return;
+    let s2 = adj.get(a); if (!s2) { s2 = new Set(); adj.set(a, s2); } s2.add(b);
+    s2 = adj.get(b); if (!s2) { s2 = new Set(); adj.set(b, s2); } s2.add(a); };
+  for (let t = 0; t < idx.length; t += 3) { lien(idx[t], idx[t+1]); lien(idx[t+1], idx[t+2]); lien(idx[t], idx[t+2]); }
+  // composantes fines
+  const fin = new Uint8Array(nv);
+  for (let v = 0; v < nv; v++) if (ep[rep[v]] < cf.epaisseur) fin[rep[v]] = 1;
+  const vus = new Uint8Array(nv); const comps = [];
+  for (let v = 0; v < nv; v++) { const r = rep[v]; if (!fin[r] || vus[r]) continue;
+    const pile = [r]; vus[r] = 1; const c = [];
+    while (pile.length) { const u = pile.pop(); c.push(u); const s2 = adj.get(u); if (!s2) continue;
+      for (const w of s2) if (fin[w] && !vus[w]) { vus[w] = 1; pile.push(w); } }
+    comps.push(c); }
+  comps.sort((a, b) => b.length - a.length);
+  // les deux plus grandes = les deux voiles ; étiquette par le signe de x
+  const etiq = new Uint8Array(nv);
+  const deux = comps.slice(0, 2);
+  for (const c of deux) {
+    let sx = 0; for (const v of c) sx += P[v*3];
+    const lab = sx > 0 ? 1 : 2;
+    for (const v of c) etiq[v] = lab;
+    console.log('membrane composante', c.length, 'sommets, côté', sx > 0 ? '+x' : '-x');
+  }
+  // bouchage des trous (nervures épaisses encloses dans la voile)
+  const vu2 = new Uint8Array(nv); const trous = [];
+  for (let v = 0; v < nv; v++) { const r = rep[v]; if (etiq[r] || vu2[r]) continue;
+    const pile = [r]; vu2[r] = 1; const c = [];
+    while (pile.length) { const u = pile.pop(); c.push(u); const s2 = adj.get(u); if (!s2) continue;
+      for (const w of s2) if (!etiq[w] && !vu2[w]) { vu2[w] = 1; pile.push(w); } }
+    trous.push(c); }
+  trous.sort((a, b) => b.length - a.length);
+  let bouches = 0;
+  for (const c of trous.slice(1)) { const t = new Set();
+    for (const v of c) { const s2 = adj.get(v); if (!s2) continue; for (const w of s2) if (etiq[w]) t.add(etiq[w]); }
+    if (t.size === 1) { const a = [...t][0]; for (const v of c) etiq[v] = a; bouches += c.length; } }
+  console.log('membrane trous bouchés', bouches, 'sommets');
+  const sm = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
+  const out = {};
+  for (const b of cfg.bones) {
+    if (!b.membrane) continue;
+    const lab = b.membrane === '+x' ? 1 : 2;
+    const w = new Float32Array(nv);
+    for (let v = 0; v < nv; v++) {
+      if (etiq[rep[v]] !== lab) continue;
+      const g = sm((Math.abs(P[v*3]) - cf.x0) / (cf.x1 - cf.x0)) * sm((cf.zMax - P[v*3+2]) / (cf.zMax - cf.zPlein));
+      w[v] = g;
+    }
+    const ki = (b.pivotAxis || 'x') === 'x' ? 0 : (b.pivotAxis || 'x') === 'y' ? 1 : 2;
+    const cand = []; for (let v = 0; v < nv; v++) if (w[v] > 0.5) cand.push(v);
+    cand.sort((u, v2) => Math.abs(P[u*3+ki]) - Math.abs(P[v2*3+ki]));
+    const take = cand.slice(0, Math.max(1, Math.floor(cand.length * 0.03)));
+    const pivot = b.pivot || [0,1,2].map(d => take.reduce((s2, v) => s2 + P[v*3+d], 0) / take.length);
+    console.log('masque membrane', b.name, 'sommets>0.5', cand.length, 'pivot', pivot.map(v => v.toFixed(3)).join(','));
+    out[b.name] = { w, pivot };
+  }
+  return out;
+}
+
+/* ---- masque « sphère » : une boule de poids autour d'un point (paupières) ---- */
+function masksSphere(rigDoc) {
+  const pr = rigDoc.getRoot().listMeshes()[0].listPrimitives()[0];
+  const P = pr.getAttribute('POSITION').getArray();
+  const nv = P.length / 3;
+  const sm = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
+  const out = {};
+  for (const b of cfg.bones) {
+    if (!b.sphere) continue;
+    const [cx, cy, cz, rIn, rOut] = b.sphere;
+    const w = new Float32Array(nv);
+    let n1 = 0;
+    for (let v = 0; v < nv; v++) {
+      const dx = P[v*3]-cx, dy = P[v*3+1]-cy, dz = P[v*3+2]-cz;
+      const d = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      const g = sm((rOut - d) / (rOut - rIn));
+      if (g > 0) { w[v] = g; if (g > 0.5) n1++; }
+    }
+    console.log('masque sphère', b.name, 'sommets>0.5', n1, 'centre', cx, cy, cz);
+    out[b.name] = { w, pivot: [cx, cy, cz] };
+  }
+  return out;
+}
+
+/* ---- masque « demi-espaces » : produit de plans adoucis (mâchoire, zones) ---- */
+function masksHalf(rigDoc) {
+  const pr = rigDoc.getRoot().listMeshes()[0].listPrimitives()[0];
+  const P = pr.getAttribute('POSITION').getArray();
+  const nv = P.length / 3;
+  const sm = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
+  const out = {};
+  for (const b of cfg.bones) {
+    if (!b.halfspaces) continue;
+    const w = new Float32Array(nv);
+    let n1 = 0;
+    for (let v = 0; v < nv; v++) {
+      const x = P[v*3], y = P[v*3+1], z = P[v*3+2];
+      let g = 1;
+      for (const h of b.halfspaces) {
+        const s2 = h.a*x + h.b*y + h.c*z + h.d;
+        g *= sm((s2 - h.lo) / (h.hi - h.lo));
+        if (g <= 0) break;
+      }
+      if (g > 0) { w[v] = g; if (g > 0.5) n1++; }
+    }
+    console.log('masque demi-espaces', b.name, 'sommets>0.5', n1);
+    out[b.name] = { w, pivot: b.pivot };
+  }
+  return out;
+}
+
 /* ---------- programme ---------- */
 const doc = await io.read(cfg.in);
 const root = doc.getRoot();
-const surfaceMode = cfg.bones.some(b => b.gates);
-const M = surfaceMode ? null : await masks(doc);
-const SURF = surfaceMode ? masksSurface(doc) : null;
+const halfMode = cfg.bones.some(b => b.halfspaces);
+const sphereMode = cfg.bones.some(b => b.sphere);
+const membraneMode = cfg.bones.some(b => b.membrane);
+const surfaceMode = !membraneMode && cfg.bones.some(b => b.gates);
+const M = cfg.bones.some(b => b.parts || b.seedJoints) ? await masks(doc) : null;
+const SURF = (membraneMode || sphereMode || halfMode) ? Object.assign({}, membraneMode ? masksMembrane(doc) : {}, sphereMode ? masksSphere(doc) : {}, halfMode ? masksHalf(doc) : {}) : surfaceMode ? masksSurface(doc) : null;
 const scene = root.listScenes()[0];
 const buffer = root.listBuffers()[0];
 const skin = root.listSkins()[0];
@@ -209,10 +361,10 @@ const prim = root.listMeshes()[0].listPrimitives()[0];
 const pos = prim.getAttribute('POSITION').getArray();
 let rmn = [1e9,1e9,1e9], rmx = [-1e9,-1e9,-1e9];
 for (let i = 0; i < pos.length; i += 3) for (let d = 0; d < 3; d++) { rmn[d] = Math.min(rmn[d], pos[i+d]); rmx[d] = Math.max(rmx[d], pos[i+d]); }
-const sameSpace = surfaceMode || cfg.bones.some(b => b.seedJoints);
-const sc = sameSpace ? [1, 1, 1] : [0,1,2].map(d => (M.mx[d] - M.mn[d]) / (rmx[d] - rmn[d]));
-if (!surfaceMode) { /* recalage boîte */ }
-const toParts = p => sameSpace ? p : [0,1,2].map(d => M.mn[d] + (p[d] - rmn[d]) * sc[d]);
+const sameSpace = !M || cfg.bones.some(b => b.seedJoints);
+const sc = (sameSpace || !M) ? [1, 1, 1] : [0,1,2].map(d => (M.mx[d] - M.mn[d]) / (rmx[d] - rmn[d]));
+if (!surfaceMode && !membraneMode && !sphereMode && !halfMode) { /* recalage boîte */ }
+const toParts = p => (sameSpace || !M) ? p : [0,1,2].map(d => M.mn[d] + (p[d] - rmn[d]) * sc[d]);
 console.log('alignement échelle', sc.map(v => v.toFixed(3)).join(','));
 
 // échantillonnage trilinéaire d'un champ
@@ -238,8 +390,10 @@ for (const b of cfg.bones) {
   const parent = joints[jIndex.get(b.parent)];
   if (!parent) throw new Error('os parent inconnu : ' + b.parent);
   const pw = world.get(parent);
-  const pivotParts = surfaceMode ? SURF[b.name].pivot : M.fields[b.name].pivot;
-  const pivot = sameSpace ? pivotParts : [0,1,2].map(d => rmn[d] + (pivotParts[d] - M.mn[d]) / sc[d]);   // repère riggé
+  const mk = SURF && SURF[b.name];
+  const pivotParts = mk ? mk.pivot : M.fields[b.name].pivot;
+  const direct = !!mk;
+  const pivot = (sameSpace || direct) ? pivotParts : [0,1,2].map(d => rmn[d] + (pivotParts[d] - M.mn[d]) / sc[d]);   // repère riggé
   const inv = mInv(pw);
   const localT = [pivot[0]*inv[0] + pivot[1]*inv[4] + pivot[2]*inv[8] + inv[12],
                   pivot[0]*inv[1] + pivot[1]*inv[5] + pivot[2]*inv[9] + inv[13],
@@ -260,10 +414,10 @@ if (cfg.debugBand) { const [ax, lo2, hi2] = cfg.debugBand; let n = 0, sum = {}, 
   console.log('DEBUG bande', lo2, hi2, 'sommets', n, Object.entries(sum).map(([k, v]) => k + ' brut moyen ' + (v / n).toFixed(3)).join(', '));
   ex.forEach(e => console.log('   ex', e)); }
 for (let v = 0; v < nVerts; v++) {
-  const p = surfaceMode ? null : toParts([pos[v*3], pos[v*3+1], pos[v*3+2]]);
+  const p = M ? toParts([pos[v*3], pos[v*3+1], pos[v*3+2]]) : null;
   for (const nb of newBones) {
     let w;
-    if (surfaceMode) w = SURF[nb.cfg.name].w[v];
+    if (SURF && SURF[nb.cfg.name]) w = SURF[nb.cfg.name].w[v];
     else { const raw = sample(M.fields[nb.cfg.name].field, p); const lo = nb.cfg.lo ?? 0.25, hi = nb.cfg.hi ?? 0.75; w = smooth((raw - lo) / (hi - lo)); }
     if (w <= 0.001) continue;
     let rest = 0;
@@ -291,6 +445,7 @@ for (const j of allJoints) {
   parentWorldRot.set(j.getName(), pw ? mQuat(pw) : (world.get(j) ? mQuat(mMul(world.get(j), mInv(mFromTRS(j.getTranslation(), j.getRotation(), j.getScale())))) : [0,0,0,1]));
 }
 const AX = { X: [1,0,0], Y: [0,1,0], Z: [0,0,1] };
+const axeDe = tr => { if (!tr.axisVec) return AX[tr.axis]; const v = tr.axisVec, n = Math.hypot(v[0],v[1],v[2]); return [v[0]/n, v[1]/n, v[2]/n]; };
 function eased(t, vals, fps = 30) {
   const T = [], V = []; const end = t[t.length-1];
   for (let s = 0; s <= end + 1e-6; s += 1/fps) {
@@ -317,13 +472,25 @@ for (const [name, tracks] of Object.entries(cfg.animations || {})) {
     const node = nodeByName.get(tr.bone);
     if (!node) { console.warn('os inconnu', tr.bone); continue; }
     const qP = parentWorldRot.get(tr.bone), qRest = node.getRotation();
-    if (tr.path === 'translation') {
+    if (tr.path === 'scale') {
+      let [t, v] = tr.ease === false ? [tr.t, tr.v] : eased(tr.t, tr.v);
+      addChannel(anim, node, t, v, 'scale');
+    } else if (tr.path === 'translation') {
       const base = node.getTranslation(); const inv = qConj(qP);
       let [t, v] = tr.ease === false ? [tr.t, tr.v] : eased(tr.t, tr.v);
       addChannel(anim, node, t, v.map(d => { const l = qRot(inv, d); return [base[0]+l[0], base[1]+l[1], base[2]+l[2]]; }), 'translation');
+    } else if (tr.axes) {
+      // plusieurs axes composés dans le repère monde : tr.a = [[a0,a1,…] par image] (un angle par axe)
+      let [t, v] = tr.ease === false ? [tr.t, tr.a] : eased(tr.t, tr.a);
+      addChannel(anim, node, t, v.map(degs => {
+        let Q = [0,0,0,1];
+        tr.axes.forEach((ax, i) => { Q = qMul(qAxis(AX[ax], degs[i]), Q); });
+        return qMul(qConj(qP), qMul(Q, qMul(qP, qRest)));
+      }), 'rotation');
     } else {
       let [t, v] = tr.ease === false ? [tr.t, tr.a.map(x => [x])] : eased(tr.t, tr.a.map(x => [x]));
-      addChannel(anim, node, t, v.map(([deg]) => qMul(qConj(qP), qMul(qAxis(AX[tr.axis], deg), qMul(qP, qRest)))), 'rotation');
+      const ax = axeDe(tr);
+      addChannel(anim, node, t, v.map(([deg]) => qMul(qConj(qP), qMul(qAxis(ax, deg), qMul(qP, qRest)))), 'rotation');
     }
   }
 }
