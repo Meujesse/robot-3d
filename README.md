@@ -83,6 +83,10 @@ Insérer > Autres > coller :
 <iframe src="https://meujesse.github.io/robot-3d/lab.html?v=6" width="600" height="600" frameborder="0" allowtransparency="true" style="background:transparent;border:0" allow="autoplay; xr-spatial-tracking"></iframe>
 ```
 
+## Nika, la version fille de Noki
+
+Même robot, généré avec Tripo v3.1 « par parties » (29 pièces regroupées par `tools/group-nika.mjs` en corps, bras, antenne, œil, visière), texture 4K, voix « Robote Meujesse (Nika) ». Les pages de Noki acceptent `?perso=nika` : `lab.html?perso=nika&v=1..6`, `labels.html?perso=nika` ; `nika-test.html` liste ses animations (dont `blink`, la visière qui cligne). Genially « test Nika 3D » (Portfolio).
+
 ## Fichiers
 
 - `robot-source.png` : image d'origine (ChatGPT).
