@@ -26,6 +26,72 @@
     0.01
    ],
    "force": 1.0
+  },
+  {
+   "nom": "langue1",
+   "longueur": 0.33,
+   "rayon": 0.026,
+   "alphaMax": 1.0,
+   "emissif": [
+    0.34,
+    0.11,
+    0.01
+   ],
+   "force": 1.0,
+   "decalage": [
+    0.004,
+    0.012,
+    0.004
+   ],
+   "inclinaison": [
+    0.06,
+    0.3,
+    0.1
+   ]
+  },
+  {
+   "nom": "langue2",
+   "longueur": 0.29,
+   "rayon": 0.022,
+   "alphaMax": 1.0,
+   "emissif": [
+    0.3,
+    0.09,
+    0.01
+   ],
+   "force": 1.0,
+   "decalage": [
+    0.002,
+    -0.01,
+    -0.006
+   ],
+   "inclinaison": [
+    0.02,
+    -0.24,
+    -0.14
+   ]
+  },
+  {
+   "nom": "langue3",
+   "longueur": 0.24,
+   "rayon": 0.019,
+   "alphaMax": 1.0,
+   "emissif": [
+    0.34,
+    0.12,
+    0.02
+   ],
+   "force": 1.0,
+   "decalage": [
+    0.0,
+    0.004,
+    0.014
+   ],
+   "inclinaison": [
+    -0.1,
+    0.1,
+    0.26
+   ]
   }
  ]
 }

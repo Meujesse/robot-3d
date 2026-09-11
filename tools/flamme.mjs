@@ -20,7 +20,8 @@ const ji = noms.indexOf(cfg.os);
 if (ji < 0) throw new Error('os introuvable : ' + cfg.os);
 
 for (const couche of (cfg.couches || [cfg])) {
-const base = cfg.base, dir0 = cfg.direction;
+const base = (couche.base || cfg.base).map((v, d) => v + ((couche.decalage || [0,0,0])[d]));
+const dir0 = (couche.direction || cfg.direction).map((v, d) => v + ((couche.inclinaison || [0,0,0])[d]));
 const dl = Math.hypot(...dir0); const D = dir0.map(v => v / dl);
 // repère orthonormé autour de l'axe
 let up = Math.abs(D[1]) < 0.9 ? [0,1,0] : [1,0,0];
