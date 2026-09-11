@@ -127,12 +127,24 @@
   if (p.get('talk') === '0') F.talk = false;
   if (p.get('state') === '0') F.state = false;
 
-  const NAMES = { 2: 'V2 · il réagit au toucher', 3: 'V3 · il te regarde', 4: 'V4 · il se déplace', 5: 'V5 · il parle', 6: 'V6 · il change d’état' };
-  const HINTS = { 2: 'Touche le robot', 3: 'Bouge la souris autour de lui', 4: 'Touche-le, il décolle', 5: 'Il te parle tout seul', 6: 'Essaie les boutons en bas' };
+  // personnage : Noki (défaut) ou Nika, sa version fille (?perso=nika)
+  const PERSOS = {
+    noki: { model: 'robot-parts.glb?v=3', audio: 'audio/', elle: false },
+    nika: { model: 'nika/nika-parts.glb?v=1', audio: 'audio-nika/', elle: true },
+  };
+  const PERSO = PERSOS[p.get('perso')] || PERSOS.noki;
+  const E = PERSO.elle;
+  const NAMES = E
+    ? { 2: 'V2 · elle réagit au toucher', 3: 'V3 · elle te regarde', 4: 'V4 · elle se déplace', 5: 'V5 · elle parle', 6: 'V6 · elle change d’état' }
+    : { 2: 'V2 · il réagit au toucher', 3: 'V3 · il te regarde', 4: 'V4 · il se déplace', 5: 'V5 · il parle', 6: 'V6 · il change d’état' };
+  const HINTS = E
+    ? { 2: 'Touche la robote', 3: 'Bouge la souris autour d’elle', 4: 'Touche-la, elle décolle', 5: 'Elle te parle toute seule', 6: 'Essaie les boutons en bas' }
+    : { 2: 'Touche le robot', 3: 'Bouge la souris autour de lui', 4: 'Touche-le, il décolle', 5: 'Il te parle tout seul', 6: 'Essaie les boutons en bas' };
 
   const stage = document.getElementById('stage');
   const rig = document.getElementById('rig');
   const mv = document.getElementById('robot');
+  if (PERSO !== PERSOS.noki) mv.src = PERSO.model;
   const say = document.getElementById('say');
   const tag = document.getElementById('tag');
   const hint = document.getElementById('hint');
@@ -147,10 +159,10 @@
   const LINES = {
     hey: 'Hey Sacha ! Bonjour !', oui: 'Oui ?', ok: 'OK !', chatouille: 'Hé, ça chatouille !',
     vois: 'Je te vois !', decolle: 'Attention, je décolle !', bravo: 'Bravo ! Bonne réponse !',
-    faux: 'Hmm... pas tout à fait. Essaie encore !', dodo: 'Zzz... Hein ? Je suis réveillé !', coucou: 'Coucou ! Tu veux jouer ?',
+    faux: 'Hmm... pas tout à fait. Essaie encore !', dodo: E ? 'Zzz... Hein ? Je suis réveillée !' : 'Zzz... Hein ? Je suis réveillé !', coucou: 'Coucou ! Tu veux jouer ?',
   };
   const audios = {};
-  for (const k of Object.keys(LINES)) { const a = new Audio('audio/' + k + '.mp3'); a.preload = 'auto'; audios[k] = a; }
+  for (const k of Object.keys(LINES)) { const a = new Audio(PERSO.audio + k + '.mp3'); a.preload = 'auto'; audios[k] = a; }
   let actx = null, analyser = null, fxIn = null, sources = new WeakMap();
   const FX = p.get('fx') !== '0';
   let speaking = null;
