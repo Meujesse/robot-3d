@@ -262,6 +262,34 @@ function masksMembrane(rigDoc) {
     for (const v of c) { const s2 = adj.get(v); if (!s2) continue; for (const w of s2) if (etiq[w]) t.add(etiq[w]); }
     if (t.size === 1) { const a = [...t][0]; for (const v of c) etiq[v] = a; bouches += c.length; } }
   console.log('membrane trous bouchés', bouches, 'sommets');
+  // dilatation : les nervures épaisses de l'aile ne sont ni « fines » ni encloses
+  // (elles rejoignent le corps par la racine), donc elles restaient sur l'os du
+  // bras et l'aile se déchirait dès que le bras bougeait.
+  // Les nervures épaisses de l'aile ne sont ni « fines » ni encloses : elles
+  // rejoignent le corps par la racine. On absorbe donc, au-delà d'une distance
+  // au plan médian où le bras et l'aile ne se touchent plus, toute composante
+  // de surface qui touche une aile.
+  const XD = cf.dilateXmin ?? 0.10;
+  const jn2 = rigDoc.getRoot().listSkins()[0].listJoints().map(j => j.getName());
+  const interdits = new Set((cf.osInterdits || []).map(n => jn2.indexOf(n)).filter(i => i >= 0));
+  const JJ2 = pr.getAttribute('JOINTS_0').getArray(), WW2 = pr.getAttribute('WEIGHTS_0').getArray();
+  const dom = new Int32Array(nv);
+  for (let v = 0; v < nv; v++) { let b = -1, bw = 0; for (let k = 0; k < 4; k++) if (WW2[v*4+k] > bw) { bw = WW2[v*4+k]; b = JJ2[v*4+k]; } dom[v] = b; }
+  const dansAile = v => { const x = P[v*3], y = P[v*3+1], z = P[v*3+2];
+    return Math.abs(x) >= XD && y >= cf.yMin && y <= cf.yMax && z <= cf.zMax; };
+  const vu3 = new Uint8Array(nv); let absorbes = 0;
+  for (let v = 0; v < nv; v++) {
+    const r = rep[v]; if (etiq[r] || vu3[r] || !dansAile(r)) continue;
+    const pile = [r]; vu3[r] = 1; const c = []; const touche = new Set();
+    while (pile.length) { const u = pile.pop(); c.push(u); const s2 = adj.get(u); if (!s2) continue;
+      for (const w of s2) { if (etiq[w]) { touche.add(etiq[w]); continue; }
+        if (!vu3[w] && dansAile(w)) { vu3[w] = 1; pile.push(w); } } }
+    // garde-fou : on n'absorbe pas une composante qui contient un sommet du bras
+    let interdit = false;
+    if (interdits.size) for (const u of c) if (interdits.has(dom[u])) { interdit = true; break; }
+    if (touche.size === 1 && !interdit) { const lab = [...touche][0]; for (const u of c) etiq[u] = lab; absorbes += c.length; }
+  }
+  console.log('membrane nervures absorbées', absorbes, 'sommets (au-delà de |x| =', XD + ')');
   const sm = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
   const out = {};
   for (const b of cfg.bones) {
@@ -420,6 +448,17 @@ for (let v = 0; v < nVerts; v++) {
     if (SURF && SURF[nb.cfg.name]) w = SURF[nb.cfg.name].w[v];
     else { const raw = sample(M.fields[nb.cfg.name].field, p); const lo = nb.cfg.lo ?? 0.25, hi = nb.cfg.hi ?? 0.75; w = smooth((raw - lo) / (hi - lo)); }
     if (w <= 0.001) continue;
+    // « reste » : à qui va l'influence qui n'est pas reprise par le nouvel os.
+    // Sans ça, une aile greffée garde l'influence du bras sur toute sa racine et
+    // part en lamelles dès que le bras bouge.
+    if (nb.cfg.reste) {
+      const ri = jIndex.get(nb.cfg.reste);
+      if (ri === undefined) throw new Error('os « reste » inconnu : ' + nb.cfg.reste);
+      J[v*4] = nb.index; W[v*4] = w;
+      J[v*4+1] = ri;     W[v*4+1] = 1 - w;
+      J[v*4+2] = 0; W[v*4+2] = 0; J[v*4+3] = 0; W[v*4+3] = 0;
+      continue;
+    }
     let rest = 0;
     for (let k = 0; k < 4; k++) { W[v*4+k] *= (1 - w); rest += W[v*4+k]; }
     // remplace la plus faible influence par le nouvel os
