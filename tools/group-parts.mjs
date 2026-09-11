@@ -50,6 +50,7 @@ for (const [name, tracks] of Object.entries(cfg.animations)) {
   for (const tr of tracks) {
     const node = nodes[tr.node]; if (!node) { console.warn('groupe inconnu', tr.node); continue; }
     if (tr.path === 'translation') { const base = node.getTranslation(); addChannel(a, node, tr.t, tr.v.map(v => [base[0] + v[0], base[1] + v[1], base[2] + v[2]]), 'translation'); }
+    else if (tr.path === 'scale') addChannel(a, node, tr.t, tr.v, 'scale');
     else addChannel(a, node, tr.t, tr.a.map(x => quatAxis(AX[tr.axis], x)), 'rotation');
   }
 }
