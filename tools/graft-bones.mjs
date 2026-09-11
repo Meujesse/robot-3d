@@ -134,10 +134,64 @@ async function masks(rigDoc) {
   return { fields: out, org, h, dim, idx, mn, mx };
 }
 
+/* ---------- masque « surface » : graines par os dominant, barrière géométrique, lissage le long du maillage ---------- */
+function masksSurface(rigDoc) {
+  const root = rigDoc.getRoot();
+  const sk = root.listSkins()[0], jn = sk.listJoints().map(j => j.getName());
+  const prim = root.listMeshes()[0].listPrimitives()[0];
+  const P = prim.getAttribute('POSITION').getArray(), JJ = prim.getAttribute('JOINTS_0').getArray(), WW = prim.getAttribute('WEIGHTS_0').getArray();
+  const idx = prim.getIndices().getArray();
+  const nv = P.length / 3;
+  const dom = new Int32Array(nv);
+  for (let v = 0; v < nv; v++) { let b = -1, bi = -1; for (let k = 0; k < 4; k++) if (WW[v*4+k] > b) { b = WW[v*4+k]; bi = JJ[v*4+k]; } dom[v] = bi; }
+  // adjacence (sommets coïncidents fusionnés)
+  const key = new Map(); const rep = new Int32Array(nv);
+  for (let v = 0; v < nv; v++) { const k = `${Math.round(P[v*3]*4000)},${Math.round(P[v*3+1]*4000)},${Math.round(P[v*3+2]*4000)}`;
+    if (!key.has(k)) key.set(k, v); rep[v] = key.get(k); }
+  const nbr = new Map();
+  const add = (a, b) => { a = rep[a]; b = rep[b]; if (a === b) return; let s = nbr.get(a); if (!s) { s = []; nbr.set(a, s); } if (!s.includes(b)) s.push(b); };
+  for (let t = 0; t < idx.length/3; t++) { const [a, b, c] = [idx[t*3], idx[t*3+1], idx[t*3+2]]; add(a,b); add(b,a); add(b,c); add(c,b); add(a,c); add(c,a); }
+  const sm = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
+  const out = {};
+  for (const b of cfg.bones) {
+    const wanted = new Set((b.seedJoints || []).map(n => jn.indexOf(n)));
+    let w = new Float32Array(nv);
+    for (let v = 0; v < nv; v++) {
+      if (!wanted.has(dom[v])) continue;
+      let g = 1;
+      for (const gate of (b.gates || [])) {
+        const d = gate.axis === 'x' ? 0 : gate.axis === 'y' ? 1 : 2;
+        let val = P[v*3+d] * (gate.sign || 1);
+        if (gate.abs) val = Math.abs(P[v*3+d]);
+        g *= sm((val - gate.lo) / (gate.hi - gate.lo));
+      }
+      w[v] = g;
+    }
+    // lissage le long de la surface
+    for (let it = 0; it < (b.surfaceBlur ?? 6); it++) {
+      const n2 = new Float32Array(nv);
+      for (const [a, list] of nbr) { let s2 = w[a], c = 1; for (const o of list) { s2 += w[o]; c++; } n2[a] = s2 / c; }
+      for (let v = 0; v < nv; v++) w[v] = n2[rep[v]];
+    }
+    let mx = 0, sum = 0; for (let v = 0; v < nv; v++) { mx = Math.max(mx, w[v]); sum += w[v]; }
+    // pivot : barycentre des sommets de masque > 0.5 les plus proches du plan médian
+    const ki = (b.pivotAxis || 'x') === 'x' ? 0 : (b.pivotAxis || 'x') === 'y' ? 1 : 2;
+    const cand = []; for (let v = 0; v < nv; v++) if (w[v] > 0.5) cand.push(v);
+    cand.sort((u, v2) => Math.abs(P[u*3+ki]) - Math.abs(P[v2*3+ki]));
+    const take = cand.slice(0, Math.max(1, Math.floor(cand.length * 0.03)));
+    const pivot = b.pivot || [0,1,2].map(d => take.reduce((s2, v) => s2 + P[v*3+d], 0) / take.length);
+    console.log('masque surface', b.name, 'sommets>0.5', cand.length, 'max', mx.toFixed(2), 'somme', sum.toFixed(0), 'pivot', pivot.map(v => v.toFixed(3)).join(','));
+    out[b.name] = { w, pivot };
+  }
+  return out;
+}
+
 /* ---------- programme ---------- */
 const doc = await io.read(cfg.in);
 const root = doc.getRoot();
-const M = await masks(doc);
+const surfaceMode = cfg.bones.some(b => b.gates);
+const M = surfaceMode ? null : await masks(doc);
+const SURF = surfaceMode ? masksSurface(doc) : null;
 const scene = root.listScenes()[0];
 const buffer = root.listBuffers()[0];
 const skin = root.listSkins()[0];
@@ -155,8 +209,9 @@ const prim = root.listMeshes()[0].listPrimitives()[0];
 const pos = prim.getAttribute('POSITION').getArray();
 let rmn = [1e9,1e9,1e9], rmx = [-1e9,-1e9,-1e9];
 for (let i = 0; i < pos.length; i += 3) for (let d = 0; d < 3; d++) { rmn[d] = Math.min(rmn[d], pos[i+d]); rmx[d] = Math.max(rmx[d], pos[i+d]); }
-const sameSpace = cfg.bones.some(b => b.seedJoints);
+const sameSpace = surfaceMode || cfg.bones.some(b => b.seedJoints);
 const sc = sameSpace ? [1, 1, 1] : [0,1,2].map(d => (M.mx[d] - M.mn[d]) / (rmx[d] - rmn[d]));
+if (!surfaceMode) { /* recalage boîte */ }
 const toParts = p => sameSpace ? p : [0,1,2].map(d => M.mn[d] + (p[d] - rmn[d]) * sc[d]);
 console.log('alignement échelle', sc.map(v => v.toFixed(3)).join(','));
 
@@ -183,7 +238,7 @@ for (const b of cfg.bones) {
   const parent = joints[jIndex.get(b.parent)];
   if (!parent) throw new Error('os parent inconnu : ' + b.parent);
   const pw = world.get(parent);
-  const pivotParts = M.fields[b.name].pivot;
+  const pivotParts = surfaceMode ? SURF[b.name].pivot : M.fields[b.name].pivot;
   const pivot = sameSpace ? pivotParts : [0,1,2].map(d => rmn[d] + (pivotParts[d] - M.mn[d]) / sc[d]);   // repère riggé
   const inv = mInv(pw);
   const localT = [pivot[0]*inv[0] + pivot[1]*inv[4] + pivot[2]*inv[8] + inv[12],
@@ -205,11 +260,11 @@ if (cfg.debugBand) { const [ax, lo2, hi2] = cfg.debugBand; let n = 0, sum = {}, 
   console.log('DEBUG bande', lo2, hi2, 'sommets', n, Object.entries(sum).map(([k, v]) => k + ' brut moyen ' + (v / n).toFixed(3)).join(', '));
   ex.forEach(e => console.log('   ex', e)); }
 for (let v = 0; v < nVerts; v++) {
-  const p = toParts([pos[v*3], pos[v*3+1], pos[v*3+2]]);
+  const p = surfaceMode ? null : toParts([pos[v*3], pos[v*3+1], pos[v*3+2]]);
   for (const nb of newBones) {
-    const raw = sample(M.fields[nb.cfg.name].field, p);
-    const lo = nb.cfg.lo ?? 0.25, hi = nb.cfg.hi ?? 0.75;
-    const w = smooth((raw - lo) / (hi - lo));
+    let w;
+    if (surfaceMode) w = SURF[nb.cfg.name].w[v];
+    else { const raw = sample(M.fields[nb.cfg.name].field, p); const lo = nb.cfg.lo ?? 0.25, hi = nb.cfg.hi ?? 0.75; w = smooth((raw - lo) / (hi - lo)); }
     if (w <= 0.001) continue;
     let rest = 0;
     for (let k = 0; k < 4; k++) { W[v*4+k] *= (1 - w); rest += W[v*4+k]; }
@@ -252,7 +307,10 @@ function addChannel(anim, node, times, values, path) {
   const sampler = doc.createAnimationSampler().setInput(input).setOutput(output).setInterpolation('LINEAR');
   anim.addSampler(sampler).addChannel(doc.createAnimationChannel().setTargetNode(node).setTargetPath(path).setSampler(sampler));
 }
-for (const a of root.listAnimations()) if (cfg.dropExisting) a.dispose();
+for (const a of root.listAnimations()) {
+  const n = a.getName();
+  if (cfg.dropExisting || (cfg.dropAnimations || []).some(d => n.includes(d))) { console.log('animation retirée :', n); a.dispose(); }
+}
 for (const [name, tracks] of Object.entries(cfg.animations || {})) {
   const anim = doc.createAnimation(name);
   for (const tr of tracks) {
