@@ -57,7 +57,7 @@
         { id: 'pattes', label: 'les pattes', test: (y, z, x) => y < 0.38, prefs: ['walk', 'roar'] },
         { id: 'corps', label: 'le ventre', test: () => true, prefs: ['flap', 'wag', 'roar', 'look'] },
       ] },
-    d20: { model: 'd20/d20.glb?v=1', tag: 'Dé 20 · il réagit au toucher', hint: 'Touche ses yeux, sa bouche, ses faces…', elle: false, orbit: '-50deg 50deg 105%',
+    d20: { model: 'd20/d20.glb?v=4', tag: 'Dé 20 · il réagit au toucher', hint: 'Touche ses yeux, sa bouche, ses faces…', elle: false, orbit: '-50deg 50deg 105%',
       // le visage est sur la face haut-avant-gauche : x_n petit, y_n grand, z_n grand
       zones: [
         { id: 'yeux', label: 'ses yeux', test: (y, z, x) => y > 0.68 && x < 0.55 && z > 0.45, prefs: ['surprise', 'blink'] },
