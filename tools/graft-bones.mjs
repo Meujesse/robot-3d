@@ -427,6 +427,7 @@ for (const b of cfg.bones) {
                   pivot[0]*inv[1] + pivot[1]*inv[5] + pivot[2]*inv[9] + inv[13],
                   pivot[0]*inv[2] + pivot[1]*inv[6] + pivot[2]*inv[10] + inv[14]];
   const node = doc.createNode(b.name).setTranslation(localT).setRotation(qConj(mQuat(pw)));
+  if (b.restScale) node.setScale([b.restScale, b.restScale, b.restScale]);   // os « caché » par défaut
   parent.addChild(node);
   const gi = joints.length + newBones.length;
   newBones.push({ cfg: b, node, index: gi });

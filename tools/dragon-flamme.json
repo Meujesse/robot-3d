@@ -1,0 +1,31 @@
+{
+ "in": "/Users/jynchereze/Downloads/lisa-3d/dragon/dragon-os-full.glb",
+ "out": "/Users/jynchereze/Downloads/robot-3d/dragon/dragon-rig-full.glb",
+ "os": "feuBone",
+ "base": [
+  -0.487,
+  0.721,
+  0.08
+ ],
+ "direction": [
+  -0.93,
+  -0.1,
+  0.3
+ ],
+ "anneaux": 16,
+ "segments": 18,
+ "couches": [
+  {
+   "nom": "jet",
+   "longueur": 0.47,
+   "rayon": 0.055,
+   "alphaMax": 1.0,
+   "emissif": [
+    0.3,
+    0.09,
+    0.01
+   ],
+   "force": 1.0
+  }
+ ]
+}
