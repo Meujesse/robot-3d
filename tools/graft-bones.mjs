@@ -197,6 +197,8 @@ function masksSurface(rigDoc) {
    se fonde dans le dos sans entraîner l'épaule ni le bras. */
 function masksMembrane(rigDoc) {
   const cf = Object.assign({ epaisseur: 0.006, yMin: 0.50, yMax: 0.95, x0: 0.025, x1: 0.075, zMax: 0.02, zPlein: 0.005, cellule: 0.008, rayon: 0.020 }, cfg.membrane || {});
+  // axes : latéral (envergure des ailes) et profondeur (avant/arrière) selon l'export
+  const IL = (cf.lateral || 'x') === 'z' ? 2 : 0, ID = (cf.depth || 'z') === 'x' ? 0 : 2;
   const rt = rigDoc.getRoot();
   const pr = rt.listMeshes()[0].listPrimitives()[0];
   const P = pr.getAttribute('POSITION').getArray(), N = pr.getAttribute('NORMAL').getArray();
@@ -244,10 +246,18 @@ function masksMembrane(rigDoc) {
   const etiq = new Uint8Array(nv);
   const deux = comps.slice(0, 2);
   for (const c of deux) {
-    let sx = 0; for (const v of c) sx += P[v*3];
+    // une composante qui s'étend nettement des deux côtés du plan médian, ce sont
+    // les deux voiles reliées par le dos : on étiquette alors sommet par sommet
+    let np = 0, nn = 0; for (const v of c) { if (P[v*3+IL] > cf.x0) np++; else if (P[v*3+IL] < -cf.x0) nn++; }
+    if (np > 0.1 * c.length && nn > 0.1 * c.length) {
+      for (const v of c) etiq[v] = P[v*3+IL] > 0 ? 1 : 2;
+      console.log('membrane composante', c.length, 'sommets, à cheval sur le plan médian → séparée en deux', np, nn);
+      continue;
+    }
+    let sx = 0; for (const v of c) sx += P[v*3+IL];
     const lab = sx > 0 ? 1 : 2;
     for (const v of c) etiq[v] = lab;
-    console.log('membrane composante', c.length, 'sommets, côté', sx > 0 ? '+x' : '-x');
+    console.log('membrane composante', c.length, 'sommets, côté', (sx > 0 ? '+' : '-') + (cf.lateral || 'x'));
   }
   // bouchage des trous (nervures épaisses encloses dans la voile)
   const vu2 = new Uint8Array(nv); const trous = [];
@@ -275,7 +285,7 @@ function masksMembrane(rigDoc) {
   const JJ2 = pr.getAttribute('JOINTS_0').getArray(), WW2 = pr.getAttribute('WEIGHTS_0').getArray();
   const dom = new Int32Array(nv);
   for (let v = 0; v < nv; v++) { let b = -1, bw = 0; for (let k = 0; k < 4; k++) if (WW2[v*4+k] > bw) { bw = WW2[v*4+k]; b = JJ2[v*4+k]; } dom[v] = b; }
-  const dansAile = v => { const x = P[v*3], y = P[v*3+1], z = P[v*3+2];
+  const dansAile = v => { const x = P[v*3+IL], y = P[v*3+1], z = P[v*3+ID];
     return Math.abs(x) >= XD && y >= cf.yMin && y <= cf.yMax && z <= cf.zMax; };
   const vu3 = new Uint8Array(nv); let absorbes = 0;
   for (let v = 0; v < nv; v++) {
@@ -294,11 +304,11 @@ function masksMembrane(rigDoc) {
   const out = {};
   for (const b of cfg.bones) {
     if (!b.membrane) continue;
-    const lab = b.membrane === '+x' ? 1 : 2;
+    const lab = b.membrane.startsWith('+') ? 1 : 2;
     const w = new Float32Array(nv);
     for (let v = 0; v < nv; v++) {
       if (etiq[rep[v]] !== lab) continue;
-      const g = sm((Math.abs(P[v*3]) - cf.x0) / (cf.x1 - cf.x0)) * sm((cf.zMax - P[v*3+2]) / (cf.zMax - cf.zPlein));
+      const g = sm((Math.abs(P[v*3+IL]) - cf.x0) / (cf.x1 - cf.x0)) * sm((cf.zMax - P[v*3+ID]) / (cf.zMax - cf.zPlein));
       w[v] = g;
     }
     const ki = (b.pivotAxis || 'x') === 'x' ? 0 : (b.pivotAxis || 'x') === 'y' ? 1 : 2;
