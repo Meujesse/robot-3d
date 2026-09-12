@@ -11,7 +11,7 @@
   0.3,
   0.085
  ],
- "ecart": 0.01,
+ "ecart": 0.0,
  "courbure": 0.0,
  "zMax": 0.014,
  "zAxe": [
@@ -41,5 +41,5 @@
  "parois": true,
  "ecartHaut": 0.425,
  "ecartFondu": 0.075,
- "ecartZ": 0.02
+ "ecartZ": 0.0
 }
