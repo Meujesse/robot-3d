@@ -300,6 +300,11 @@ function masksMembrane(rigDoc) {
     if (touche.size === 1 && !interdit) { const lab = [...touche][0]; for (const u of c) etiq[u] = lab; absorbes += c.length; }
   }
   console.log('membrane nervures absorbées', absorbes, 'sommets (au-delà de |x| =', XD + ')');
+  if (cf.osSource) {   // une voile ne prend que des sommets que le rig avait mis sur ces os (jamais les cheveux)
+    const src = new Set(cf.osSource.map(n => jn2.indexOf(n))); let retires = 0;
+    for (let v = 0; v < nv; v++) if (etiq[v] && !src.has(dom[v])) { etiq[v] = 0; retires++; }
+    console.log('membrane sommets retirés hors os source', retires);
+  }
   const sm = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
   const out = {};
   for (const b of cfg.bones) {
@@ -353,11 +358,19 @@ function masksHalf(rigDoc) {
   const nv = P.length / 3;
   const sm = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
   const out = {};
+  // filtre optionnel sur l'os dominant d'origine : une aile ne prend que des
+  // sommets que le rig avait mis sur l'os du bras, jamais ceux de la tête
+  const jn3 = rigDoc.getRoot().listSkins()[0].listJoints().map(j => j.getName());
+  const JJ3 = pr.getAttribute('JOINTS_0').getArray(), WW3 = pr.getAttribute('WEIGHTS_0').getArray();
+  const dom3 = new Int32Array(nv);
+  for (let v = 0; v < nv; v++) { let bb = -1, bw = 0; for (let k = 0; k < 4; k++) if (WW3[v*4+k] > bw) { bw = WW3[v*4+k]; bb = JJ3[v*4+k]; } dom3[v] = bb; }
   for (const b of cfg.bones) {
     if (!b.halfspaces) continue;
+    const src = b.osSource ? new Set(b.osSource.map(n => jn3.indexOf(n))) : null;
     const w = new Float32Array(nv);
     let n1 = 0;
     for (let v = 0; v < nv; v++) {
+      if (src && !src.has(dom3[v])) continue;
       const x = P[v*3], y = P[v*3+1], z = P[v*3+2];
       let g = 1;
       for (const h of b.halfspaces) {
@@ -421,7 +434,12 @@ const smooth = x => { x = Math.max(0, Math.min(1, x)); return x*x*(3-2*x); };
 // création des os greffés
 const nVerts = pos.length / 3;
 const J = Array.from(prim.getAttribute('JOINTS_0').getArray());
-const W = Array.from(prim.getAttribute('WEIGHTS_0').getArray());
+// les exports Tripo stockent les poids en entiers normalisés (0..255) : on les
+// ramène en 0..1, sinon un os greffé sans « reste » pèse 1 contre 255
+const accW = prim.getAttribute('WEIGHTS_0');
+const echW = accW.getNormalized() ? (accW.getComponentType() === 5121 ? 255 : accW.getComponentType() === 5123 ? 65535 : 1) : 1;
+const W = Array.from(accW.getArray(), v => v / echW);
+if (echW !== 1) console.log('poids normalisés depuis des entiers /', echW);
 const ibmArr = Array.from(skin.getInverseBindMatrices().getArray());
 const newBones = [];
 for (const b of cfg.bones) {
@@ -560,6 +578,14 @@ for (const tr of (cfg.addToAll || [])) {
     if (!dur) continue;
     if (tr.path === 'scale') {                       // valeur constante (os caché)
       addChannel(anim, node, [0, dur], [tr.v, tr.v], 'scale');
+      continue;
+    }
+    if (tr.constant !== undefined) {                 // rotation constante : une pose de repos
+      let Q = [0,0,0,1];
+      const axes = tr.axes || [tr.axis], degs = Array.isArray(tr.constant) ? tr.constant : [tr.constant];
+      axes.forEach((ax, i) => { Q = qMul(qAxis(tr.axisVec ? axeDe(tr) : AX[ax], degs[i]), Q); });
+      const q = qMul(qConj(qP), qMul(Q, qMul(qP, qRest)));
+      addChannel(anim, node, [0, dur], [q, q], 'rotation');
       continue;
     }
     const per = tr.period || 0.4, fps = 30, T = [], V = [];

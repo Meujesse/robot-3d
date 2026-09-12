@@ -1,0 +1,44 @@
+{
+ "in": "/Users/jynchereze/Downloads/robot-3d/fee/fee.glb",
+ "out": "/Users/jynchereze/Downloads/robot-3d/fee/fee.glb",
+ "peau": [
+  236,
+  188,
+  158
+ ],
+ "cil": [
+  60,
+  40,
+  40
+ ],
+ "yeux": [
+  {
+   "os": "lidL",
+   "centre": [
+    0.086,
+    0.781,
+    -0.021
+   ],
+   "rayon": 0.034,
+   "normale": [
+    1,
+    0.05,
+    -0.05
+   ]
+  },
+  {
+   "os": "lidR",
+   "centre": [
+    0.074,
+    0.779,
+    0.046
+   ],
+   "rayon": 0.034,
+   "normale": [
+    1,
+    0.05,
+    0.05
+   ]
+  }
+ ]
+}

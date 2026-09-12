@@ -1,5 +1,5 @@
 {
- "in": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-plain.glb",
+ "in": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-jupe.glb",
  "out": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-os.glb",
  "grid": 110,
  "bones": [
@@ -24,9 +24,10 @@
     0.086,
     0.789,
     -0.021,
-    0.019,
-    0.027
-   ]
+    0.0001,
+    0.0002
+   ],
+   "restScale": 0.001
   },
   {
    "name": "lidR",
@@ -35,9 +36,10 @@
     0.074,
     0.787,
     0.046,
-    0.019,
-    0.027
-   ]
+    0.0001,
+    0.0002
+   ],
+   "restScale": 0.001
   }
  ],
  "animations": {
@@ -963,128 +965,90 @@
    {
     "bone": "lidL",
     "path": "scale",
+    "ease": false,
     "t": [
      0,
-     0.09,
-     0.2,
+     0.06,
+     0.07,
+     0.22,
+     0.23,
      0.34
     ],
     "v": [
      [
-      1,
-      1,
-      1
+      0.001,
+      0.001,
+      0.001
      ],
      [
-      0.92,
-      0.055,
-      1
-     ],
-     [
-      0.92,
-      0.055,
-      1
+      0.001,
+      0.001,
+      0.001
      ],
      [
       1,
       1,
       1
+     ],
+     [
+      1,
+      1,
+      1
+     ],
+     [
+      0.001,
+      0.001,
+      0.001
+     ],
+     [
+      0.001,
+      0.001,
+      0.001
      ]
     ]
    },
    {
     "bone": "lidR",
     "path": "scale",
+    "ease": false,
     "t": [
      0,
-     0.09,
-     0.2,
+     0.06,
+     0.07,
+     0.22,
+     0.23,
      0.34
     ],
     "v": [
      [
-      1,
-      1,
-      1
+      0.001,
+      0.001,
+      0.001
      ],
      [
-      0.92,
-      0.055,
-      1
-     ],
-     [
-      0.92,
-      0.055,
-      1
+      0.001,
+      0.001,
+      0.001
      ],
      [
       1,
       1,
       1
-     ]
-    ]
-   },
-   {
-    "bone": "lidL",
-    "path": "translation",
-    "t": [
-     0,
-     0.09,
-     0.2,
-     0.34
-    ],
-    "v": [
-     [
-      0,
-      0,
-      0
      ],
      [
-      0,
-      -0.011,
-      0
+      1,
+      1,
+      1
      ],
      [
-      0,
-      -0.011,
-      0
+      0.001,
+      0.001,
+      0.001
      ],
      [
-      0,
-      0,
-      0
-     ]
-    ]
-   },
-   {
-    "bone": "lidR",
-    "path": "translation",
-    "t": [
-     0,
-     0.09,
-     0.2,
-     0.34
-    ],
-    "v": [
-     [
-      0,
-      0,
-      0
-     ],
-     [
-      0,
-      -0.011,
-      0
-     ],
-     [
-      0,
-      -0.011,
-      0
-     ],
-     [
-      0,
-      0,
-      0
+      0.001,
+      0.001,
+      0.001
      ]
     ]
    }
@@ -1800,6 +1764,82 @@
    "Waist"
   ],
   "lateral": "z",
-  "depth": "x"
- }
+  "depth": "x",
+  "osSource": [
+   "L_UpperarmTwist01",
+   "R_UpperarmTwist01",
+   "L_Clavicle",
+   "R_Clavicle",
+   "L_Upperarm",
+   "R_Upperarm",
+   "Spine02",
+   "NeckTwist01",
+   "L_UpperarmTwist02",
+   "R_UpperarmTwist02"
+  ]
+ },
+ "addToAll": [
+  {
+   "bone": "L_Thigh",
+   "axes": [
+    "X",
+    "Z"
+   ],
+   "constant": [
+    -15,
+    3
+   ],
+   "skip": [
+    "walk"
+   ]
+  },
+  {
+   "bone": "R_Thigh",
+   "axes": [
+    "X",
+    "Z"
+   ],
+   "constant": [
+    15,
+    -3
+   ],
+   "skip": [
+    "walk"
+   ]
+  },
+  {
+   "bone": "L_Foot",
+   "axis": "Z",
+   "constant": -25,
+   "skip": [
+    "walk"
+   ]
+  },
+  {
+   "bone": "R_Foot",
+   "axis": "Z",
+   "constant": -25,
+   "skip": [
+    "walk"
+   ]
+  },
+  {
+   "bone": "lidL",
+   "path": "scale",
+   "v": [
+    0.001,
+    0.001,
+    0.001
+   ]
+  },
+  {
+   "bone": "lidR",
+   "path": "scale",
+   "v": [
+    0.001,
+    0.001,
+    0.001
+   ]
+  }
+ ]
 }
