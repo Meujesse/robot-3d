@@ -1,0 +1,31 @@
+{
+ "in": "../fee/fee-avant-fente.glb",
+ "out": "/tmp/fee-jupe.glb",
+ "parties": "../fee/fee-parts-full.glb",
+ "vetement": [
+  "meshes[3]"
+ ],
+ "corps": [
+  "meshes[5]",
+  "meshes[8]"
+ ],
+ "interdits": [
+  "L_Thigh",
+  "L_ThighTwist01",
+  "L_ThighTwist02",
+  "L_Calf",
+  "L_CalfTwist01",
+  "L_CalfTwist02",
+  "R_Thigh",
+  "R_ThighTwist01",
+  "R_ThighTwist02",
+  "R_Calf",
+  "R_CalfTwist01",
+  "R_CalfTwist02"
+ ],
+ "cible": "Waist",
+ "yMin": 0.3,
+ "yMax": 0.56,
+ "marge": 0.0,
+ "transition": 0.018
+}

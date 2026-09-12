@@ -1,0 +1,41 @@
+{
+ "in": "/tmp/fee-jupe.glb",
+ "out": "../fee/fee.glb",
+ "xc": 0.0041,
+ "y1": 0.272,
+ "y2": 0.408,
+ "W": 0.003,
+ "exposant": 0.35,
+ "pointChair": [
+  0.035,
+  0.3,
+  0.085
+ ],
+ "ecart": 0.0,
+ "courbure": 8.0,
+ "zMax": 0.014,
+ "zAxe": [
+  0.0096,
+  0.11
+ ],
+ "gauche": [
+  "L_Thigh",
+  "L_ThighTwist01",
+  "L_ThighTwist02",
+  "L_Calf",
+  "L_CalfTwist01",
+  "L_CalfTwist02",
+  "L_Foot",
+  "L_ToeBase"
+ ],
+ "droite": [
+  "R_Thigh",
+  "R_ThighTwist01",
+  "R_ThighTwist02",
+  "R_Calf",
+  "R_CalfTwist01",
+  "R_CalfTwist02",
+  "R_Foot",
+  "R_ToeBase"
+ ]
+}
