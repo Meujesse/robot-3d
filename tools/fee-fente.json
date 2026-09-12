@@ -4,15 +4,15 @@
  "xc": 0.0041,
  "y1": 0.272,
  "y2": 0.408,
- "W": 0.003,
+ "W": 0.0006,
  "exposant": 0.35,
  "pointChair": [
   0.035,
   0.3,
   0.085
  ],
- "ecart": 0.0,
- "courbure": 8.0,
+ "ecart": 0.01,
+ "courbure": 0.0,
  "zMax": 0.014,
  "zAxe": [
   0.0096,
@@ -37,5 +37,9 @@
   "R_CalfTwist02",
   "R_Foot",
   "R_ToeBase"
- ]
+ ],
+ "parois": true,
+ "ecartHaut": 0.425,
+ "ecartFondu": 0.075,
+ "ecartZ": 0.02
 }

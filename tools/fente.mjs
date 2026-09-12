@@ -188,7 +188,7 @@ function oreilles(p) {
 for (const cote of [1, -1]) {
   const bs = boucles(bords[cote]); let nt = 0;
   for (const idx of bs) {
-    if (process.env.MAXB && idx.length > +process.env.MAXB) continue;
+    if (cf.parois === false) continue;
     if (process.env.BBOX) { const b=[1e9,1e9,1e9,-1e9,-1e9,-1e9];
       for (const i of idx) for (let k=0;k<3;k++){b[k]=Math.min(b[k],V.POSITION[i*3+k]);b[3+k]=Math.max(b[3+k],V.POSITION[i*3+k]);}
       if (idx.length>8) console.log('     boucle', String(idx.length).padStart(4), 'bbox', b.map(v=>v.toFixed(3)).join(' ')); }
@@ -232,7 +232,7 @@ for (let i = n0; i < nV; i++) { if (!estParoi.has(i)) continue;
   }
   const orphelines = [];
   for (const [key, g] of util) if (g.n === 1) orphelines.push(g.dir);
-  if (orphelines.length) {
+  if (orphelines.length && cf.parois !== false) {
     const sortantes = new Map();
     for (const [ka, kb] of orphelines) { if (!sortantes.has(ka)) sortantes.set(ka, []); sortantes.get(ka).push(kb); }
     let nb = 0, nt = 0;
@@ -271,7 +271,9 @@ if (cf.ecart) {
       if (iG.has(j)) p += w; else if (iD.has(j)) p -= w;
     }
     if (Math.abs(p) < 0.25) continue;
-    V.POSITION[i * 3] += Math.sign(p) * cf.ecart * a * Math.min(1, Math.abs(p));
+    const f = a * Math.min(1, Math.abs(p)), sg = Math.sign(p);
+    V.POSITION[i * 3] += sg * cf.ecart * f;
+    if (cf.ecartZ) V.POSITION[i * 3 + 2] -= sg * cf.ecartZ * f;
     n++;
   }
   console.log('jambes écartées :', n, 'sommets, ±', (cf.ecart * 1000).toFixed(1), 'mm');
