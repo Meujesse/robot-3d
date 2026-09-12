@@ -27,11 +27,22 @@ const prim=doc.getRoot().listMeshes()[0].listPrimitives()[0];
 const P=prim.getAttribute('POSITION').getArray(),J=prim.getAttribute('JOINTS_0').getArray(),W=prim.getAttribute('WEIGHTS_0').getArray();
 const idx=prim.getIndices().getArray();
 const n=P.length/3; const out=new Float32Array(n*3);
-const M=joints.map((j,k)=>mMul(world.get(j)||[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],[...ibm.slice(k*16,k*16+16)]));
+/* le nœud qui porte le maillage peut avoir sa propre transformation (export Tripo) :
+   les matrices d'os doivent être ramenées dans son repère, sinon tout paraît étiré */
+const mInv=m=>{const r=[m[0],m[4],m[8],m[1],m[5],m[9],m[2],m[6],m[10]];const det=r[0]*(r[4]*r[8]-r[5]*r[7])-r[1]*(r[3]*r[8]-r[5]*r[6])+r[2]*(r[3]*r[7]-r[4]*r[6]);
+  const i=[(r[4]*r[8]-r[5]*r[7])/det,(r[2]*r[7]-r[1]*r[8])/det,(r[1]*r[5]-r[2]*r[4])/det,(r[5]*r[6]-r[3]*r[8])/det,(r[0]*r[8]-r[2]*r[6])/det,(r[2]*r[3]-r[0]*r[5])/det,(r[3]*r[7]-r[4]*r[6])/det,(r[1]*r[6]-r[0]*r[7])/det,(r[0]*r[4]-r[1]*r[3])/det];
+  const t=[m[12],m[13],m[14]]; const tx=-(i[0]*t[0]+i[1]*t[1]+i[2]*t[2]),ty=-(i[3]*t[0]+i[4]*t[1]+i[5]*t[2]),tz=-(i[6]*t[0]+i[7]*t[1]+i[8]*t[2]);
+  return [i[0],i[3],i[6],0, i[1],i[4],i[7],0, i[2],i[5],i[8],0, tx,ty,tz,1];};
+const meshNode=doc.getRoot().listNodes().find(n=>n.getMesh()===doc.getRoot().listMeshes()[0]);
+const Minv=meshNode&&world.get(meshNode)?mInv(world.get(meshNode)):[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1];
+const M=joints.map((j,k)=>mMul(Minv,mMul(world.get(j)||[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1],[...ibm.slice(k*16,k*16+16)])));
 for(let i=0;i<n;i++){ let o=[0,0,0];
   for(let k=0;k<4;k++){ const w=W[i*4+k]; if(!w)continue; const m=M[J[i*4+k]];
     for(let a=0;a<3;a++) o[a]+=w*(m[a]*P[i*3]+m[4+a]*P[i*3+1]+m[8+a]*P[i*3+2]+m[12+a]); }
   out[i*3]=o[0]; out[i*3+1]=o[1]; out[i*3+2]=o[2]; }
+if(process.env.DEBUG_QA){ let dm=0; for(let i=0;i<n;i+=97){ dm=Math.max(dm,Math.hypot(out[i*3]-P[i*3],out[i*3+1]-P[i*3+1],out[i*3+2]-P[i*3+2])); }
+  const ex=[0,1000,50000].map(i=>P.slice(i*3,i*3+3).map(v=>v.toFixed(3)).join(',')+' → '+[out[i*3],out[i*3+1],out[i*3+2]].map(v=>v.toFixed(3)).join(','));
+  console.log('DEBUG déplacement max', dm.toFixed(3), '| joints', joints.length, '| ex', ex.join(' ; ')); }
 const pires=[];
 for(let t=0;t<idx.length;t+=3){
   for(const [a,b] of [[idx[t],idx[t+1]],[idx[t+1],idx[t+2]],[idx[t],idx[t+2]]]){

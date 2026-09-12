@@ -415,9 +415,14 @@ const W = Array.from(prim.getAttribute('WEIGHTS_0').getArray());
 const ibmArr = Array.from(skin.getInverseBindMatrices().getArray());
 const newBones = [];
 for (const b of cfg.bones) {
-  const parent = joints[jIndex.get(b.parent)];
-  if (!parent) throw new Error('os parent inconnu : ' + b.parent);
-  const pw = world.get(parent);
+  // le parent peut être un os déjà greffé (chaîne de queue, par exemple) :
+  // son repère monde est alors une simple translation sur son pivot
+  let parent = joints[jIndex.get(b.parent)], pw = parent ? world.get(parent) : null;
+  if (!parent) {
+    const nbp = newBones.find(x => x.cfg.name === b.parent);
+    if (!nbp) throw new Error('os parent inconnu : ' + b.parent);
+    parent = nbp.node; pw = mFromTRS(nbp.pivot, [0,0,0,1], [1,1,1]);
+  }
   const mk = SURF && SURF[b.name];
   const pivotParts = mk ? mk.pivot : M.fields[b.name].pivot;
   const direct = !!mk;
@@ -430,7 +435,7 @@ for (const b of cfg.bones) {
   if (b.restScale) node.setScale([b.restScale, b.restScale, b.restScale]);   // os « caché » par défaut
   parent.addChild(node);
   const gi = joints.length + newBones.length;
-  newBones.push({ cfg: b, node, index: gi });
+  newBones.push({ cfg: b, node, index: gi, pivot });
   ibmArr.push(1,0,0,0, 0,1,0,0, 0,0,1,0, -pivot[0],-pivot[1],-pivot[2],1);
   console.log('os greffé', b.name, 'sur', b.parent, 'pivot riggé', pivot.map(v => v.toFixed(3)).join(','));
 }
