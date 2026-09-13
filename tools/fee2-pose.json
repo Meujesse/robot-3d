@@ -1,2 +1,37 @@
-{ "in": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-jupe.glb", "out": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-jupe.glb",
-  "poses": [ {"bone":"L_Thigh","axes":["X","Z"],"a":[-19,3]}, {"bone":"R_Thigh","axes":["X","Z"],"a":[19,-3]} ] }
+{
+ "in": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-jupe.glb",
+ "out": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-jupe.glb",
+ "poses": [
+  {
+   "bone": "L_Thigh",
+   "axes": [
+    "X",
+    "Z"
+   ],
+   "a": [
+    -25,
+    10
+   ]
+  },
+  {
+   "bone": "L_Calf",
+   "axes": [
+    "Z"
+   ],
+   "a": [
+    -12
+   ]
+  },
+  {
+   "bone": "R_Thigh",
+   "axes": [
+    "X",
+    "Z"
+   ],
+   "a": [
+    18,
+    -4
+   ]
+  }
+ ]
+}
