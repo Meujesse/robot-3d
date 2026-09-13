@@ -1,0 +1,44 @@
+{
+ "in": "/Users/jynchereze/Downloads/robot-3d/dragon/dragon-ferme.glb",
+ "out": "/Users/jynchereze/Downloads/robot-3d/dragon/dragon-ferme.glb",
+ "peau": [
+  162,
+  226,
+  182
+ ],
+ "cil": [
+  35,
+  70,
+  55
+ ],
+ "yeux": [
+  {
+   "os": "lidL",
+   "centre": [
+    0.383,
+    0.663,
+    -0.014
+   ],
+   "rayon": 0.058,
+   "normale": [
+    0.83,
+    0.35,
+    0.44
+   ]
+  },
+  {
+   "os": "lidR",
+   "centre": [
+    0.36,
+    0.638,
+    0.107
+   ],
+   "rayon": 0.058,
+   "normale": [
+    0.85,
+    0.32,
+    0.42
+   ]
+  }
+ ]
+}
