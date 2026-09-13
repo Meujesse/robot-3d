@@ -1,0 +1,31 @@
+{
+ "in": "/Users/jynchereze/Downloads/lisa-3d/fee2/fee2-plain.glb",
+ "out": "/Users/jynchereze/Downloads/robot-3d/fee/fee-eyes-closed.webp",
+ "taille": 2048,
+ "peau": [
+  240,
+  178,
+  138
+ ],
+ "yeux": [
+  {
+   "centre": [
+    0.07,
+    0.789,
+    -0.021
+   ],
+   "rayon": 0.038,
+   "decalageTrait": -0.001
+  },
+  {
+   "centre": [
+    0.058,
+    0.787,
+    0.046
+   ],
+   "rayon": 0.038,
+   "decalageTrait": -0.001
+  }
+ ],
+ "peauFixe": true
+}

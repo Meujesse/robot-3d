@@ -3,10 +3,9 @@
 #   1. les pétales de la jupe reconnus à leur couleur quittent les os des jambes et des bras
 #   2. greffe des ailes (membrane, axes latéral z / profondeur x, sans les cheveux) et pose de repos
 #   3. allègement (draco, webp 2048, simplification 15 %) dans fee/fee.glb
-#   4. paupières en géométrie sur les os lidL/lidR
 set -e
 cd "$(dirname "$0")"
 node jupe-couleur.mjs fee2-jupe.json
+node pose-repos.mjs fee2-pose.json
 node graft-bones.mjs fee2-rig.json
 PATH="$PWD/node_modules/.bin:$PATH" gltf-transform optimize /Users/jynchereze/Downloads/lisa-3d/fee2/fee2-os.glb ../fee/fee.glb --compress draco --texture-compress webp --texture-size 2048 --simplify true --simplify-ratio 0.15 --simplify-error 0.0008 --join false
-node paupieres.mjs fee2-paupieres.json
