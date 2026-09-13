@@ -573,11 +573,18 @@ for (const tr of (cfg.addToAll || [])) {
   const qP = parentWorldRot.get(tr.bone), qRest = node.getRotation();
   for (const anim of root.listAnimations()) {
     if ((tr.skip || []).includes(anim.getName())) continue;
-    if (anim.listChannels().some(c => c.getTargetNode() === node)) continue;   // déjà animé
+    const chemin = tr.path || 'rotation';
+    if (anim.listChannels().some(c => c.getTargetNode() === node && c.getTargetPath() === chemin)) continue;   // déjà animé sur ce chemin
     let dur = 0; for (const s of anim.listSamplers()) { const arr = s.getInput().getArray(); dur = Math.max(dur, arr[arr.length-1]); }
     if (!dur) continue;
     if (tr.path === 'scale') {                       // valeur constante (os caché)
       addChannel(anim, node, [0, dur], [tr.v, tr.v], 'scale');
+      continue;
+    }
+    if (tr.path === 'translation' && tr.constant) {  // décalage constant (axes monde)
+      const base = node.getTranslation(), l = qRot(qConj(qP), tr.constant);
+      const v = [base[0] + l[0], base[1] + l[1], base[2] + l[2]];
+      addChannel(anim, node, [0, dur], [v, v], 'translation');
       continue;
     }
     if (tr.constant !== undefined) {                 // rotation constante : une pose de repos

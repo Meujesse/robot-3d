@@ -2776,6 +2776,38 @@
     ]
    },
    {
+    "bone": "machoire",
+    "path": "translation",
+    "t": [
+     0,
+     0.35,
+     1.8,
+     2.2
+    ],
+    "v": [
+     [
+      0.04,
+      -0.015,
+      0
+     ],
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      0,
+      0,
+      0
+     ],
+     [
+      0.04,
+      -0.015,
+      0
+     ]
+    ]
+   },
+   {
     "bone": "Head",
     "axis": "Y",
     "t": [
@@ -2828,6 +2860,27 @@
     0.9
    ],
    "constant": 46,
+   "skip": [
+    "roar",
+    "feu",
+    "fly",
+    "jump",
+    "pounce",
+    "trot",
+    "flap",
+    "stretch",
+    "roll",
+    "bouche"
+   ]
+  },
+  {
+   "bone": "machoire",
+   "path": "translation",
+   "constant": [
+    0.04,
+    -0.015,
+    0
+   ],
    "skip": [
     "roar",
     "feu",
