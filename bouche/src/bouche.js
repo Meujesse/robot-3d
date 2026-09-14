@@ -262,7 +262,7 @@ export class Bouche {
     this.ui.survol && this.ui.survol(d && d !== this.etat.selection ? this.fiche(d.fdi) : null, this._souris);
   }
   _teinter(d, on) {
-    const m = d.couches.email.material;
+    const m = d.couches.email.material; if (!m.emissive) return; // en mode radio, le matériau n'a pas d'émissif
     m.emissive.set(on ? C.ciel : 0x000000); m.emissiveIntensity = on ? 0.55 : 0;
   }
   _choisir() {
