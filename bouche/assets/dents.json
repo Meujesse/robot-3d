@@ -1,0 +1,35 @@
+{
+  "commentaire": "Numérotation FDI (ISO 3950) à deux chiffres : le premier chiffre est le quadrant (1 maxillaire droit, 2 maxillaire gauche, 3 mandibule gauche, 4 mandibule droit, côté du patient, sens horaire vu de face), le second la position depuis la ligne médiane (1 incisive centrale … 8 troisième molaire). Un numéro se lit chiffre par chiffre : 36 se dit « trois-six ». Sources : FDI World Dental Federation notation (Wikipédia EN), ISO 3950:2016, Dentition (Wikipédia FR).",
+  "quadrants": {
+    "1": { "nom": "Maxillaire droit", "arcade": "sup", "cote": "droit" },
+    "2": { "nom": "Maxillaire gauche", "arcade": "sup", "cote": "gauche" },
+    "3": { "nom": "Mandibule gauche", "arcade": "inf", "cote": "gauche" },
+    "4": { "nom": "Mandibule droit", "arcade": "inf", "cote": "droit" }
+  },
+  "positions": {
+    "1": { "nom": "Incisive centrale", "type": "incisive", "fonction": "Sectionner les aliments", "racines": 1 },
+    "2": { "nom": "Incisive latérale", "type": "incisive", "fonction": "Sectionner les aliments", "racines": 1 },
+    "3": { "nom": "Canine", "type": "canine", "fonction": "Déchiqueter les aliments", "racines": 1, "note": "La racine la plus longue de la bouche." },
+    "4": { "nom": "Première prémolaire", "type": "premolaire", "fonction": "Broyer les aliments", "racines": 1, "note": "Au maxillaire, elle a souvent deux racines." },
+    "5": { "nom": "Deuxième prémolaire", "type": "premolaire", "fonction": "Broyer les aliments", "racines": 1 },
+    "6": { "nom": "Première molaire", "type": "molaire", "fonction": "Mastiquer, broyer", "racines": "3 au maxillaire, 2 à la mandibule", "note": "Première dent définitive à sortir, vers 6 ans : la « dent de six ans »." },
+    "7": { "nom": "Deuxième molaire", "type": "molaire", "fonction": "Mastiquer, broyer", "racines": "3 au maxillaire, 2 à la mandibule" },
+    "8": { "nom": "Troisième molaire", "type": "molaire", "fonction": "Mastiquer, broyer", "racines": "variable", "note": "La « dent de sagesse », souvent absente ou incluse." }
+  },
+  "formule": "32 dents permanentes : 8 incisives, 4 canines, 8 prémolaires, 12 molaires. 20 dents temporaires chez l'enfant (quadrants 5 à 8, positions 1 à 5).",
+  "couches": [
+    { "cle": "email", "nom": "Émail", "couleur": "#f4f1ea", "texte": "Le tissu le plus dur du corps humain, minéralisé à 97 % par l'hydroxyapatite. Il recouvre la couronne. Sans cellules, il ne se répare pas.", "etymo": "Du francique smalt, « fondu ». On dit aussi adamantin, du grec adamas, « indomptable »." },
+    { "cle": "dentine", "nom": "Dentine", "couleur": "#e8c98a", "texte": "La masse principale de la dent, minéralisée à 70 %. Traversée de tubules qui la relient à la pulpe : c'est elle qui transmet la sensibilité au chaud et au froid.", "etymo": "Du latin dens, dentis, « dent ». On dit aussi ivoire." },
+    { "cle": "pulpe", "nom": "Pulpe", "couleur": "#d94a6a", "texte": "Le tissu vivant de la dent : nerfs et vaisseaux sanguins, logés dans la chambre pulpaire et les canaux radiculaires. Une pulpite, c'est son inflammation.", "etymo": "Du latin pulpa, « chair ». Endodontie : endo- (dedans) + odous, odontos (dent)." },
+    { "cle": "cement", "nom": "Cément", "couleur": "#d6c39b", "texte": "Fine couche minéralisée qui recouvre la racine et sert d'ancrage aux fibres du ligament.", "etymo": "Du latin caementum, « moellon, mortier »." },
+    { "cle": "ligament", "nom": "Ligament alvéolo-dentaire", "couleur": "#f2a6b8", "texte": "Aussi appelé desmodonte. Il suspend la dent dans son alvéole et forme avec l'os une véritable articulation, richement innervée de mécanorécepteurs.", "etymo": "Desmodonte : desmos (lien) + odontos (dent). Parodonte : para- (autour) + odontos : tout ce qui entoure la dent." },
+    { "cle": "os", "nom": "Os alvéolaire", "couleur": "#e9dcc5", "texte": "La partie de l'os des mâchoires qui forme l'alvéole et maintient la racine.", "etymo": "Alvéole : du latin alveolus, « petite cavité »." },
+    { "cle": "gencive", "nom": "Gencive", "couleur": "#e98a9d", "texte": "Le tissu mou qui entoure le collet et protège le parodonte. Gingivite : son inflammation.", "etymo": "Du latin gingiva. Gingivite : gingiv- + -ite (inflammation)." }
+  ],
+  "reperes": [
+    { "cle": "couronne", "nom": "Couronne", "texte": "La partie visible, recouverte d'émail." },
+    { "cle": "collet", "nom": "Collet", "texte": "La jonction entre couronne et racine, là où l'émail rejoint le cément." },
+    { "cle": "racine", "nom": "Racine", "texte": "La partie implantée dans l'os, recouverte de cément." },
+    { "cle": "apex", "nom": "Apex", "texte": "La pointe de la racine. Le foramen apical y laisse passer nerfs et vaisseaux." }
+  ]
+}
