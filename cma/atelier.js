@@ -75,7 +75,9 @@ function parle(html, pose, audioKey){
   if (pose) julieImg.src = 'img/julie-' + pose + '.png';
   if (audioKey) joue(audioKey);
 }
+const MUET = new URLSearchParams(location.search).has('muet');
 function joue(key){
+  if (MUET) return;
   Object.values(sons).forEach(a => { try{ a.pause(); a.currentTime = 0; }catch(e){} });
   const a = sons[key] || (sons[key] = new Audio(`audio/${lang}-${key}.mp3`));
   a.play().catch(()=>{});

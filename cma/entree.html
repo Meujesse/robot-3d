@@ -88,7 +88,8 @@ function fit(){const k=Math.min(innerWidth/1600,innerHeight/900);if(k>0)stage.st
 document.querySelectorAll('.carte').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
 const bulle=document.getElementById('bulle'); setTimeout(()=>bulle.classList.add('on'),400);
 const audio=new Audio('audio/fr-entree.mp3'); const son=document.getElementById('son');
-function parle(){audio.currentTime=0;audio.play().catch(()=>{})}
+const MUET=new URLSearchParams(location.search).has('muet');
+function parle(){if(MUET)return;audio.currentTime=0;audio.play().catch(()=>{})}
 son.addEventListener('click',parle);
 addEventListener('pointerdown',function once(){parle();removeEventListener('pointerdown',once)},{once:true});
 const fx=document.getElementById('fx');const r=(a,b)=>a+Math.random()*(b-a);

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Crée ta bague unique · Hub des Métiers d'Art</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="creer.css">
+</head>
+<body>
+<div id="stage">
+  <img id="fond" src="img/atelier-etabli.jpg" alt="">
+  <div id="voile"></div>
+  <div id="scene3d"></div>
+  <div id="zone-depot"><div class="halo"></div><div class="cible"></div></div>
+  <div id="fx"></div>
+
+  <header id="tete">
+    <div class="sur">Atelier libre · Bijouterie &amp; Métaux</div>
+    <h1>Crée ta bague unique</h1>
+  </header>
+
+  <nav id="etapes">
+    <button data-e="metal"><i>1</i>Métal</button>
+    <button data-e="pierre"><i>2</i>Pierre</button>
+    <button data-e="serti"><i>3</i>Serti</button>
+    <button data-e="fabrication"><i>4</i>Fabrication</button>
+    <button data-e="fin"><i>5</i>Ta bague</button>
+  </nav>
+
+  <section id="panneau"></section>
+
+  <aside id="fiche">
+    <div class="fiche-sur" id="fiche-sur">Fiche découverte</div>
+    <h2 id="fiche-titre"></h2>
+    <div id="fiche-corps"></div>
+  </aside>
+
+  <div id="plateau" hidden>
+    <div class="plateau-titre">Tes outils</div>
+    <div id="outils"></div>
+  </div>
+
+  <div id="julie">
+    <div id="bulle"><span id="bulle-texte"></span></div>
+    <img id="julie-img" src="img/julie-montre.png" alt="Julie">
+  </div>
+
+  <div id="intro">
+    <div class="carte">
+      <div class="carte-sur">Nouvelle mission</div>
+      <h1>À toi de créer</h1>
+      <p>Tu as fabriqué ta première bague. Maintenant, c'est toi le créateur : choisis le métal, la pierre et le serti, découvre ce qui les rend précieux, puis fabrique une bague qui n'existe nulle part ailleurs.</p>
+      <button id="btn-start">Ouvrir l'atelier libre</button>
+    </div>
+  </div>
+
+  <div id="apercu" hidden>
+    <div class="apercu-boite">
+      <img id="apercu-img" alt="Ta fiche">
+      <p>Si le téléchargement ne démarre pas, fais un clic droit sur l'image puis « Enregistrer l'image ».</p>
+      <button id="apercu-fermer">Fermer</button>
+    </div>
+  </div>
+
+  <footer id="sources"></footer>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module" src="creer.js"></script>
+</body>
+</html>
