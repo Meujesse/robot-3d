@@ -7,9 +7,16 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
+// Petit studio d'éclairage pour l'environnement (reflets et lumière indirecte), sans dépendre de RoomEnvironment
+export function studio() {
+  const s = new THREE.Scene(); const g = new THREE.BoxGeometry();
+  const boite = new THREE.Mesh(g, new THREE.MeshStandardMaterial({ color: 0x8a9099, side: THREE.BackSide, roughness: 1 })); boite.scale.setScalar(20); s.add(boite);
+  const lampe = (x, y, z, sx, sy, sz, c, i) => { const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ color: c })); m.material.color.multiplyScalar(i); m.position.set(x, y, z); m.scale.set(sx, sy, sz); s.add(m); };
+  lampe(0, 9.5, 0, 8, 0.2, 8, 0xffffff, 6); lampe(-9.5, 4, 0, 0.2, 5, 6, 0xfff1dc, 3); lampe(9.5, 4, 0, 0.2, 5, 6, 0xdde9f7, 2.5); lampe(0, 4, -9.5, 6, 5, 0.2, 0xffffff, 2);
+  return s;
+}
 const DRACO = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
 const C = { rouge: 0xe4003a, violet: 0x522583, bleu: 0x4c76ba, ciel: 0xb0d8f4, jaune: 0xf5a04c, noir: 0x230000 };
 
@@ -40,7 +47,7 @@ export class Villa {
     this.controls.addEventListener('end', () => { setTimeout(() => { this._drag = false; }, 60); });
     // lumière douce, ambiance méditerranéenne
     // éclairage : environnement neutre (reflets, lumière indirecte), soleil chaud avec ombres douces, ciel bleuté
-    const pm = new THREE.PMREMGenerator(this.renderer); this.scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; this.scene.environmentIntensity = 0.55; pm.dispose();
+    const pm = new THREE.PMREMGenerator(this.renderer); this.scene.environment = pm.fromScene(studio(), 0.04).texture; this.scene.environmentIntensity = 0.55; pm.dispose();
     this.hemi = new THREE.HemisphereLight(0xffffff, 0xcfd8e3, 0.55); this.scene.add(this.hemi);
     this.soleil = new THREE.DirectionalLight(0xfff1dc, 2.2); this.soleil.position.set(18, 40, 26); this.scene.add(this.soleil);
     this.soleil.castShadow = true; this.soleil.shadow.mapSize.set(2048, 2048); this.soleil.shadow.bias = -0.0004; this.soleil.shadow.normalBias = 0.02; this.soleil.shadow.radius = 4;
