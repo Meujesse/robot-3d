@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Défi · Le bon ordre</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--or:#e2b45a;--creme:#fff4dc;--encre:#1a1410}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0a0705;overflow:hidden;font-family:Nunito,system-ui,sans-serif}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;overflow:hidden}
+#fond{position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px);object-fit:cover;filter:blur(5px) brightness(.5) saturate(1.1);animation:derive 26s ease-in-out infinite alternate}
+@keyframes derive{from{transform:scale(1.02) translate(0,0)}to{transform:scale(1.07) translate(-14px,-8px)}}
+/* halo de la lampe qui vacille doucement */
+#lampe{position:absolute;left:180px;top:60px;width:700px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(255,196,110,.34),rgba(255,196,110,0) 65%);mix-blend-mode:screen;animation:vacille 5.3s ease-in-out infinite}
+@keyframes vacille{0%,100%{opacity:.85}45%{opacity:1}50%{opacity:.78}55%{opacity:.95}}
+#voile{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,7,5,.15) 0%,rgba(10,7,5,.05) 60%,rgba(10,7,5,.45) 100%),radial-gradient(ellipse at 40% 50%,rgba(0,0,0,0) 45%,rgba(0,0,0,.55) 100%)}
+/* poussières dans la lumière */
+.pous{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,230,180,.8);filter:blur(.4px);animation:flotte var(--d) linear infinite;animation-delay:var(--r);opacity:0}
+@keyframes flotte{0%{transform:translate(0,0);opacity:0}15%{opacity:.8}85%{opacity:.6}100%{transform:translate(var(--x),-160px);opacity:0}}
+/* cadre de parchemin où se pose la question Genially */
+#cadre{position:absolute;left:150px;top:118px;width:1000px;height:680px;border-radius:30px;background:linear-gradient(180deg,rgba(251,243,226,.94),rgba(239,226,196,.94));box-shadow:0 40px 100px rgba(0,0,0,.65),inset 0 0 0 2px rgba(226,180,90,.55),inset 0 0 0 10px rgba(255,255,255,.35)}
+#cadre::before{content:"";position:absolute;inset:18px;border-radius:20px;border:1px dashed rgba(138,90,22,.35)}
+#tete{position:absolute;left:150px;top:36px;width:1000px;display:flex;align-items:baseline;gap:18px}
+#tete .sur{font:800 13px/1 Nunito;letter-spacing:.3em;text-transform:uppercase;color:var(--or);text-shadow:0 2px 10px #000}
+#tete h1{margin:0;font:700 40px/1 Cinzel,serif;color:#fff;text-shadow:0 3px 24px rgba(0,0,0,.9)}
+#julie{position:absolute;right:40px;bottom:-14px;height:700px;filter:drop-shadow(0 14px 20px rgba(0,0,0,.7));animation:respire 4.6s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes respire{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.008)}}
+#bulle{position:absolute;right:300px;top:150px;width:230px;background:var(--creme);color:var(--encre);border-radius:18px;padding:14px 16px;font:700 16px/1.35 Nunito;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+#bulle::after{content:"";position:absolute;right:-13px;top:34px;border:13px solid transparent;border-left-color:var(--creme);border-right:0}
+.etinc{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffcf6a;box-shadow:0 0 6px #ff9a2a;animation:etinc var(--d) ease-out infinite;animation-delay:var(--r);opacity:0}
+@keyframes etinc{0%{transform:translate(0,0);opacity:0}10%{opacity:1}100%{transform:translate(var(--x),var(--y));opacity:0}}
+@media (prefers-reduced-motion: reduce){#fond,#lampe,.pous,.etinc,#julie{animation:none!important}}
+</style>
+</head>
+<body>
+<div id="stage">
+ <img id="fond" src="img/atelier-etabli.jpg" alt="">
+ <div id="lampe"></div>
+ <div id="voile"></div>
+ <div id="fx"></div>
+ <div id="tete"><span class="sur">Défi</span><h1>Le bon ordre</h1></div>
+ <div id="cadre"></div>
+ <img id="julie" src="img/julie-reflechit.png" alt="Julie">
+ <div id="bulle">Tu te souviens de l'ordre des gestes ? Glisse les étiquettes, puis valide.</div>
+</div>
+<script>
+const stage=document.getElementById('stage');
+function fit(){const k=Math.min(innerWidth/1600,innerHeight/900);if(k>0)stage.style.setProperty('--s',k)}addEventListener('resize',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
+const fx=document.getElementById('fx');const r=(a,b)=>a+Math.random()*(b-a);
+for(let i=0;i<40;i++){const p=document.createElement('div');p.className='pous';p.style.left=r(200,1500)+'px';p.style.top=r(200,880)+'px';p.style.setProperty('--d',r(9,17)+'s');p.style.setProperty('--r',-r(0,17)+'s');p.style.setProperty('--x',r(-40,40)+'px');fx.appendChild(p)}
+for(let i=0;i<10;i++){const s=document.createElement('div');s.className='etinc';s.style.left=r(1450,1560)+'px';s.style.top=r(60,140)+'px';s.style.setProperty('--d',r(1.6,2.8)+'s');s.style.setProperty('--r',-r(0,3)+'s');s.style.setProperty('--x',r(-50,50)+'px');s.style.setProperty('--y',r(-60,-20)+'px');fx.appendChild(s)}
+</script>
+</body>
+</html>
