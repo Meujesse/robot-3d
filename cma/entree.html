@@ -84,7 +84,7 @@ html,body{margin:0;height:100%;background:#050810;overflow:hidden;font-family:Nu
 </div>
 <script>
 const stage=document.getElementById('stage');
-function fit(){stage.style.setProperty('--s',Math.min(innerWidth/1600,innerHeight/900))}addEventListener('resize',fit);fit();
+function fit(){const k=Math.min(innerWidth/1600,innerHeight/900);if(k>0)stage.style.setProperty('--s',k)}addEventListener('resize',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
 document.querySelectorAll('.carte').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
 const bulle=document.getElementById('bulle'); setTimeout(()=>bulle.classList.add('on'),400);
 const audio=new Audio('audio/fr-entree.mp3'); const son=document.getElementById('son');

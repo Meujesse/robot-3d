@@ -80,7 +80,7 @@ html,body{margin:0;height:100%;background:#050912;overflow:hidden}
 </div>
 <script>
 const stage=document.getElementById('stage'),fx=document.getElementById('fx');
-function fit(){stage.style.setProperty('--s',Math.min(innerWidth/1672,innerHeight/941))}addEventListener('resize',fit);fit();
+function fit(){const k=Math.min(innerWidth/1672,innerHeight/941);if(k>0)stage.style.setProperty('--s',k)}addEventListener('resize',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
 const r=(a,b)=>a+Math.random()*(b-a);
 // étoiles dans le ciel (bande haute), jamais sur les îles
 for(let i=0;i<60;i++){const e=document.createElement('div');e.className='etoile';e.style.left=r(20,1650)+'px';e.style.top=r(6,120)+'px';e.style.setProperty('--d',r(2.5,6)+'s');e.style.setProperty('--r',-r(0,6)+'s');fx.appendChild(e)}

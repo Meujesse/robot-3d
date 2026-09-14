@@ -62,8 +62,8 @@ const L = () => T[lang];
 
 /* ---------- mise à l'échelle ---------- */
 const stage = document.getElementById('stage');
-function fit(){ const s = Math.min(innerWidth/1600, innerHeight/900); stage.style.setProperty('--s', s); }
-addEventListener('resize', fit); fit();
+function fit(){ const s = Math.min(innerWidth/1600, innerHeight/900); if (s>0) stage.style.setProperty('--s', s); }
+addEventListener('resize', fit); new ResizeObserver(fit).observe(document.documentElement); fit();
 
 /* ---------- état ---------- */
 let etape = 0, enCours = false, fini = false;
