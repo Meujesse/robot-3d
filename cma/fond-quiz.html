@@ -20,14 +20,14 @@ html,body{margin:0;height:100%;background:#0a0705;overflow:hidden;font-family:Nu
 .pous{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,230,180,.8);filter:blur(.4px);animation:flotte var(--d) linear infinite;animation-delay:var(--r);opacity:0}
 @keyframes flotte{0%{transform:translate(0,0);opacity:0}15%{opacity:.8}85%{opacity:.6}100%{transform:translate(var(--x),-160px);opacity:0}}
 /* cadre de parchemin où se pose la question Genially */
-#cadre{position:absolute;left:150px;top:118px;width:1000px;height:680px;border-radius:30px;background:linear-gradient(180deg,rgba(251,243,226,.94),rgba(239,226,196,.94));box-shadow:0 40px 100px rgba(0,0,0,.65),inset 0 0 0 2px rgba(226,180,90,.55),inset 0 0 0 10px rgba(255,255,255,.35)}
+#cadre{position:absolute;left:150px;top:118px;width:900px;height:680px;border-radius:30px;background:linear-gradient(180deg,rgba(251,243,226,.94),rgba(239,226,196,.94));box-shadow:0 40px 100px rgba(0,0,0,.65),inset 0 0 0 2px rgba(226,180,90,.55),inset 0 0 0 10px rgba(255,255,255,.35)}
 #cadre::before{content:"";position:absolute;inset:18px;border-radius:20px;border:1px dashed rgba(138,90,22,.35)}
-#tete{position:absolute;left:150px;top:36px;width:1000px;display:flex;align-items:baseline;gap:18px}
+#tete{position:absolute;left:150px;top:36px;width:900px;display:flex;align-items:baseline;gap:18px}
 #tete .sur{font:800 13px/1 Nunito;letter-spacing:.3em;text-transform:uppercase;color:var(--or);text-shadow:0 2px 10px #000}
 #tete h1{margin:0;font:700 40px/1 Cinzel,serif;color:#fff;text-shadow:0 3px 24px rgba(0,0,0,.9)}
 #julie{position:absolute;right:40px;bottom:-14px;height:700px;filter:drop-shadow(0 14px 20px rgba(0,0,0,.7));animation:respire 4.6s ease-in-out infinite;transform-origin:50% 100%}
 @keyframes respire{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.008)}}
-#bulle{position:absolute;right:300px;top:150px;width:230px;background:var(--creme);color:var(--encre);border-radius:18px;padding:14px 16px;font:700 16px/1.35 Nunito;box-shadow:0 14px 40px rgba(0,0,0,.55)}
+#bulle{position:absolute;right:300px;top:150px;width:200px;background:var(--creme);color:var(--encre);border-radius:18px;padding:14px 16px;font:700 16px/1.35 Nunito;box-shadow:0 14px 40px rgba(0,0,0,.55)}
 #bulle::after{content:"";position:absolute;right:-13px;top:34px;border:13px solid transparent;border-left-color:var(--creme);border-right:0}
 .etinc{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffcf6a;box-shadow:0 0 6px #ff9a2a;animation:etinc var(--d) ease-out infinite;animation-delay:var(--r);opacity:0}
 @keyframes etinc{0%{transform:translate(0,0);opacity:0}10%{opacity:1}100%{transform:translate(var(--x),var(--y));opacity:0}}
