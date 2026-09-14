@@ -1,0 +1,395 @@
+{
+ "commentaire": "Villa fictive « Villa Azur » située dans un quartier réel (Saint-Jean-Cap-Ferrat). Contenus de démonstration écrits par Meujesse Learning : les conseils photo sont des bonnes pratiques génériques, à remplacer par la méthode 3R de Filioform.",
+ "villa": {
+  "url": "assets/villa-maquette.glb",
+  "taille": 24,
+  "rotation": 0.62,
+  "nom": "Villa Azur",
+  "surface": "185 m² habitables, terrasse 90 m², piscine à débordement",
+  "pitch": "Plain-pied contemporain, vue mer, cinq pièces à visiter."
+ },
+ "alice": {
+  "url": "assets/alice-rig.glb",
+  "taille": 1.68
+ },
+ "quartier": {
+  "image": "assets/quartier.png",
+  "lieu": "Saint-Jean-Cap-Ferrat, Alpes-Maritimes",
+  "villa_px": [
+   564,
+   590
+  ],
+  "taille": [
+   1280,
+   1280
+  ],
+  "credit": "© OpenStreetMap contributors",
+  "note": "Villa fictive placée dans un quartier réel, pour la démonstration."
+ },
+ "pieces": [
+  {
+   "cle": "entree",
+   "nom": "Entrée",
+   "url": "assets/entree.glb",
+   "taille": 5.5,
+   "coin": [
+    -1,
+    1
+   ],
+   "position": [
+    -0.393,
+    0.077,
+    -0.065
+   ],
+   "surface": "12 m²",
+   "description": "Porte pivotante en bois sombre, puits de lumière, escalier suspendu.",
+   "sujet": [
+    0.3,
+    0.3,
+    -0.2
+   ],
+   "sujetNom": "L’escalier suspendu",
+   "points": [
+    {
+     "cle": "porte",
+     "titre": "Porte pivotante",
+     "texte": "Bois massif toute hauteur : la première impression du bien.",
+     "pos": [
+      -0.2,
+      0.3,
+      -0.42
+     ]
+    },
+    {
+     "cle": "escalier",
+     "titre": "Escalier suspendu",
+     "texte": "Marches en chêne sans contremarche, garde-corps en verre.",
+     "pos": [
+      0.3,
+      0.35,
+      -0.2
+     ]
+    },
+    {
+     "cle": "console",
+     "titre": "Console et miroir",
+     "texte": "Un miroir agrandit l’entrée sur les photos : on le cadre de trois quarts pour éviter le reflet du photographe.",
+     "pos": [
+      0.05,
+      0.2,
+      -0.42
+     ]
+    },
+    {
+     "cle": "lumiere",
+     "titre": "Puits de lumière",
+     "texte": "Lumière zénithale naturelle : à photographier en milieu de journée.",
+     "pos": [
+      0.0,
+      0.8,
+      0.0
+     ]
+    }
+   ],
+   "alice": [
+    -0.3,
+    0,
+    0.35
+   ],
+   "aliceTexte": "Bienvenue dans la Villa Azur. On entre par ce hall baigné de lumière : la porte pivotante donne le ton, et l’escalier suspendu mène à la suite parentale. Regardez comme le miroir agrandit l’espace.",
+   "aliceAudio": "assets/audio/entree.mp3"
+  },
+  {
+   "cle": "sejour",
+   "nom": "Séjour",
+   "url": "assets/sejour.glb",
+   "taille": 7.5,
+   "coin": [
+    -1,
+    1
+   ],
+   "position": [
+    0.227,
+    0.07,
+    0.062
+   ],
+   "surface": "48 m²",
+   "description": "Double exposition, cheminée contemporaine, baie vitrée sur la mer.",
+   "sujet": [
+    0.01,
+    0.22,
+    -0.38
+   ],
+   "sujetNom": "La cheminée",
+   "points": [
+    {
+     "cle": "cheminee",
+     "titre": "Cheminée",
+     "texte": "Foyer fermé encastré dans un mur en pierre claire : le point focal de la pièce.",
+     "pos": [
+      0.01,
+      0.28,
+      -0.4
+     ]
+    },
+    {
+     "cle": "baie",
+     "titre": "Baie vitrée",
+     "texte": "Vue mer plein sud. En photo, on expose pour l’extérieur puis on rattrape l’intérieur (bracketing).",
+     "pos": [
+      0.44,
+      0.3,
+      0.05
+     ]
+    },
+    {
+     "cle": "canapes",
+     "titre": "Canapés",
+     "texte": "Deux canapés en vis-à-vis : on cadre depuis l’angle pour montrer la circulation.",
+     "pos": [
+      -0.1,
+      0.12,
+      0.25
+     ]
+    },
+    {
+     "cle": "parquet",
+     "titre": "Parquet chêne",
+     "texte": "Lames larges huilées, pose à l’anglaise, chauffage au sol.",
+     "pos": [
+      -0.35,
+      0.02,
+      0.2
+     ]
+    }
+   ],
+   "alice": [
+    -0.3,
+    0,
+    0.32
+   ],
+   "aliceTexte": "Le séjour, c’est le cœur de la villa : quarante-huit mètres carrés, une cheminée contemporaine et cette baie vitrée qui cadre la mer. C’est ici qu’on fait la photo principale de l’annonce.",
+   "aliceAudio": "assets/audio/sejour.mp3"
+  },
+  {
+   "cle": "cuisine",
+   "nom": "Cuisine",
+   "url": "assets/cuisine.glb",
+   "taille": 6.5,
+   "coin": [
+    1,
+    1
+   ],
+   "position": [
+    0.003,
+    0.096,
+    -0.251
+   ],
+   "surface": "26 m²",
+   "description": "Îlot central en marbre, façades noires mates, coin repas sous la fenêtre.",
+   "sujet": [
+    0.05,
+    0.15,
+    0.1
+   ],
+   "sujetNom": "L’îlot central",
+   "points": [
+    {
+     "cle": "ilot",
+     "titre": "Îlot en marbre",
+     "texte": "Plan de travail en marbre de Carrare, trois tabourets : la pièce se photographie depuis l’îlot.",
+     "pos": [
+      0.05,
+      0.16,
+      0.1
+     ]
+    },
+    {
+     "cle": "facades",
+     "titre": "Façades noires",
+     "texte": "Noir mat sans poignées, électroménager intégré. Attention aux reflets sur les surfaces sombres.",
+     "pos": [
+      -0.4,
+      0.32,
+      -0.1
+     ]
+    },
+    {
+     "cle": "repas",
+     "titre": "Coin repas",
+     "texte": "Table pour six sous la fenêtre cintrée : on capte la lumière naturelle du matin.",
+     "pos": [
+      0.1,
+      0.15,
+      -0.3
+     ]
+    },
+    {
+     "cle": "suspensions",
+     "titre": "Suspensions",
+     "texte": "Trois suspensions noires : on les allume pour donner de la chaleur à la photo.",
+     "pos": [
+      -0.05,
+      0.45,
+      0.05
+     ]
+    }
+   ],
+   "alice": [
+    0.3,
+    0,
+    0.35
+   ],
+   "aliceTexte": "La cuisine ouverte, avec son îlot en marbre et ses façades noires. Petit conseil de pro : on allume toutes les suspensions avant de photographier, ça réchauffe l’image.",
+   "aliceAudio": "assets/audio/cuisine.mp3"
+  },
+  {
+   "cle": "chambre",
+   "nom": "Suite parentale",
+   "url": "assets/chambre.glb",
+   "taille": 6.5,
+   "coin": [
+    -1,
+    1
+   ],
+   "position": [
+    0.387,
+    0.093,
+    -0.245
+   ],
+   "surface": "22 m² + salle d’eau",
+   "description": "Lit king-size, dressing vitré, baignoire îlot dans la salle d’eau attenante.",
+   "sujet": [
+    0.05,
+    0.15,
+    -0.1
+   ],
+   "sujetNom": "Le lit",
+   "points": [
+    {
+     "cle": "lit",
+     "titre": "Lit king-size",
+     "texte": "Tête de lit capitonnée, linge tendu et lissé avant la photo : un lit froissé fait perdre des clics.",
+     "pos": [
+      0.05,
+      0.15,
+      -0.1
+     ]
+    },
+    {
+     "cle": "dressing",
+     "titre": "Dressing vitré",
+     "texte": "Portes en verre fumé sur toute la hauteur.",
+     "pos": [
+      -0.2,
+      0.3,
+      -0.42
+     ]
+    },
+    {
+     "cle": "baignoire",
+     "titre": "Baignoire îlot",
+     "texte": "Salle d’eau attenante : la baignoire se cadre depuis la chambre pour montrer la continuité.",
+     "pos": [
+      0.35,
+      0.12,
+      0.2
+     ]
+    },
+    {
+     "cle": "rideaux",
+     "titre": "Rideaux en lin",
+     "texte": "On les ouvre en grand : la lumière naturelle avant tout.",
+     "pos": [
+      0.42,
+      0.35,
+      -0.25
+     ]
+    }
+   ],
+   "alice": [
+    -0.3,
+    0,
+    0.35
+   ],
+   "aliceTexte": "La suite parentale, avec son dressing vitré et sa salle d’eau ouverte. Pour la photo, on lisse le linge de lit, on ouvre les rideaux et on cadre la baignoire depuis la chambre.",
+   "aliceAudio": "assets/audio/chambre.mp3"
+  },
+  {
+   "cle": "terrasse",
+   "nom": "Terrasse et piscine",
+   "url": "assets/terrasse.glb",
+   "taille": 9,
+   "coin": [
+    -1,
+    1
+   ],
+   "position": [
+    -0.356,
+    0.047,
+    0.169
+   ],
+   "surface": "90 m², bassin 12 × 4 m",
+   "description": "Piscine à débordement, pergola, salon d’extérieur, oliviers en pot.",
+   "sujet": [
+    0.05,
+    0.05,
+    0.3
+   ],
+   "sujetNom": "La piscine",
+   "points": [
+    {
+     "cle": "piscine",
+     "titre": "Piscine à débordement",
+     "texte": "Ligne d’eau qui se fond dans l’horizon : la photo signature du bien, à faire au coucher du soleil.",
+     "pos": [
+      0.05,
+      0.05,
+      0.3
+     ]
+    },
+    {
+     "cle": "pergola",
+     "titre": "Pergola",
+     "texte": "Salon d’extérieur ombragé, éclairage intégré pour les photos de nuit.",
+     "pos": [
+      -0.15,
+      0.35,
+      -0.15
+     ]
+    },
+    {
+     "cle": "bains",
+     "titre": "Bains de soleil",
+     "texte": "On les aligne parallèles au bassin : les lignes propres rassurent l’œil.",
+     "pos": [
+      -0.25,
+      0.08,
+      0.15
+     ]
+    },
+    {
+     "cle": "oliviers",
+     "titre": "Oliviers",
+     "texte": "Deux sujets en pot qui cadrent la vue.",
+     "pos": [
+      0.3,
+      0.3,
+      -0.3
+     ]
+    }
+   ],
+   "alice": [
+    -0.32,
+    0,
+    0.42
+   ],
+   "aliceTexte": "Et pour finir, la terrasse : quatre-vingt-dix mètres carrés, une pergola et la piscine à débordement. La photo qui fait ouvrir l’annonce, c’est celle-ci, au coucher du soleil.",
+   "aliceAudio": "assets/audio/terrasse.mp3"
+  }
+ ],
+ "alicePhoto": "Passons en mode photographe. Choisissez votre hauteur, votre focale, gardez l’appareil de niveau, et déclenchez : je vous dis ce qui fonctionne.",
+ "aliceBienvenue": "Bonjour, je m’appelle Alice et je serai votre guide. Cliquez sur une pièce de la maquette pour y entrer, ou passez en vue plan pour comprendre la circulation.",
+ "aliceBienvenueAudio": "assets/audio/bienvenue.mp3",
+ "alicePhotoAudio": "assets/audio/photo.mp3"
+}
