@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bijouterie & Métaux · Hub des Métiers d'Art</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--or:#e2b45a;--or2:#f6dc98;--cuivre:#c9762b;--creme:#fff4dc;--encre:#1a1410}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#050810;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:var(--creme)}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;overflow:hidden}
+#fond{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.62) saturate(1.05);animation:zoom 30s ease-in-out infinite alternate}
+@keyframes zoom{from{transform:scale(1)}to{transform:scale(1.06)}}
+#voile{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,8,16,.75) 0%,rgba(5,8,16,.35) 55%,rgba(5,8,16,0) 100%)}
+#tete{position:absolute;left:60px;top:44px;max-width:760px}
+#tete .sur{font:700 13px/1 Nunito;letter-spacing:.32em;text-transform:uppercase;color:var(--or)}
+#tete h1{margin:8px 0 10px;font:700 54px/1.02 Cinzel;color:#fff;text-shadow:0 4px 30px rgba(0,0,0,.8)}
+#tete p{margin:0;font:600 18px/1.45 Nunito;color:rgba(255,244,220,.9);max-width:640px}
+#cartes{position:absolute;left:60px;top:270px;display:flex;gap:22px}
+.carte{width:255px;height:340px;perspective:1200px;cursor:pointer}
+.carte .int{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.2,.8,.2,1);transform-style:preserve-3d}
+.carte.on .int{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;border-radius:22px;backface-visibility:hidden;padding:22px;display:flex;flex-direction:column;justify-content:flex-end;border:1px solid rgba(226,180,90,.45);box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.face.av{background:linear-gradient(180deg,rgba(40,26,14,.35),rgba(12,8,5,.92) 70%)}
+.face.av .ico{font-size:54px;position:absolute;left:22px;top:22px;filter:drop-shadow(0 6px 12px rgba(0,0,0,.6))}
+.face.av .num{position:absolute;right:20px;top:18px;font:700 12px/1 Nunito;letter-spacing:.25em;color:var(--or)}
+.face.av h2{margin:0;font:700 24px/1.1 Cinzel;color:#fff}
+.face.av .tag{margin-top:8px;font:700 12px/1.3 Nunito;letter-spacing:.12em;text-transform:uppercase;color:var(--or)}
+.face.av .cta{margin-top:14px;font:700 13px/1 Nunito;color:rgba(255,244,220,.7)}
+.face.ar{transform:rotateY(180deg);background:linear-gradient(180deg,#fbf3e2,#efe2c4);color:var(--encre);justify-content:flex-start}
+.face.ar h3{margin:0 0 8px;font:700 19px/1.15 Cinzel;color:#5a3a0c}
+.face.ar p{margin:0 0 8px;font:600 13.5px/1.4 Nunito}
+.face.ar .form{margin-top:auto;font:700 11.5px/1.35 Nunito;color:#8a5a16;border-top:1px solid rgba(138,90,22,.3);padding-top:8px}
+.carte:hover .face.av{border-color:var(--or)}
+#video{position:absolute;left:60px;bottom:52px;width:532px;height:150px;border-radius:18px;border:1px dashed rgba(226,180,90,.6);background:rgba(5,8,16,.55);display:flex;align-items:center;gap:18px;padding:16px 20px}
+#video .play{width:70px;height:70px;border-radius:50%;background:linear-gradient(180deg,var(--or2),var(--or));display:grid;place-items:center;color:#2a1a05;font-size:26px;flex:none;box-shadow:0 10px 30px rgba(226,180,90,.35)}
+#video b{display:block;font:700 15px/1.2 Nunito;color:#fff}
+#video span{font:600 13px/1.35 Nunito;color:rgba(255,244,220,.75)}
+#julie{position:absolute;right:70px;bottom:0;width:340px;height:700px}
+#julie img{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);height:640px;filter:drop-shadow(0 14px 20px rgba(0,0,0,.7));animation:respire 4.6s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes respire{0%,100%{transform:translateX(-50%) scaleY(1)}50%{transform:translateX(-50%) scaleY(1.008)}}
+#bulle{position:absolute;right:390px;bottom:470px;width:360px;background:var(--creme);color:var(--encre);border-radius:18px;padding:16px 18px;font:600 17px/1.35 Nunito;box-shadow:0 14px 40px rgba(0,0,0,.5);opacity:0;transform:translateY(8px);transition:.5s .4s}
+#bulle.on{opacity:1;transform:none}
+#bulle::after{content:"";position:absolute;right:-14px;top:50%;border:14px solid transparent;border-left-color:var(--creme);border-right:0;transform:translateY(-50%)}
+#mission{position:absolute;right:70px;bottom:40px;width:340px;text-align:center}
+#mission .btn{display:inline-block;font:800 17px/1 Nunito;color:#2a1a05;background:linear-gradient(180deg,var(--or2),var(--or));border-radius:999px;padding:16px 26px;box-shadow:0 10px 30px rgba(226,180,90,.4);animation:pulse 2.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+#mission small{display:block;margin-top:8px;font:700 12px/1.3 Nunito;color:rgba(255,244,220,.75);text-shadow:0 1px 6px #000}
+#son{position:absolute;right:24px;top:24px;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,244,220,.35);background:rgba(0,0,0,.45);color:#fff;font-size:18px;cursor:pointer;display:grid;place-items:center}
+.etinc{position:absolute;width:4px;height:4px;border-radius:50%;background:#ffcf6a;box-shadow:0 0 6px #ff9a2a;animation:etinc var(--d) ease-out infinite;animation-delay:var(--r);opacity:0;pointer-events:none}
+@keyframes etinc{0%{transform:translate(0,0);opacity:0}10%{opacity:1}100%{transform:translate(var(--x),var(--y));opacity:0}}
+</style>
+</head>
+<body>
+<div id="stage">
+ <img id="fond" src="img/atelier-etabli.jpg" alt="">
+ <div id="voile"></div>
+ <div id="fx"></div>
+ <div id="tete">
+  <div class="sur">District 4 · Bijouterie &amp; Métaux</div>
+  <h1>Façonner l'éclat, créer l'émotion</h1>
+  <p>Or, argent, acier, fer forgé. Dans cet univers, les artisans transforment le métal en bijoux, en couverts, en grilles et en lames. Retourne les cartes, puis accepte ta mission.</p>
+ </div>
+ <div id="cartes">
+  <div class="carte"><div class="int">
+   <div class="face av"><div class="ico">💍</div><div class="num">MÉTIER 1</div><h2>Bijoutier-joaillier</h2><div class="tag">or · argent · pierres</div><div class="cta">Clique pour retourner</div></div>
+   <div class="face ar"><h3>Bijoutier-joaillier</h3><p>Il réalise des bijoux en métal précieux ou non, en petite série ou en pièce unique. Le joaillier prévoit l'emplacement des pierres précieuses ou fines et prépare leur logement.</p><p>Ses techniques : fonte à la cire perdue, soudure, martelage, sciage, limage, sertissage, polissage.</p><div class="form">Formation : CAP art et techniques de la bijouterie-joaillerie (2 ans), puis BMA art du bijou.</div></div>
+  </div></div>
+  <div class="carte"><div class="int">
+   <div class="face av"><div class="ico">🍴</div><div class="num">MÉTIER 2</div><h2>Orfèvre</h2><div class="tag">arts de la table · décoration</div><div class="cta">Clique pour retourner</div></div>
+   <div class="face ar"><h3>Orfèvre</h3><p>Il fabrique des objets en or, en argent massif ou en métal argenté : couverts, plats, objets de décoration ou de culte.</p><p>À froid, il rétreint, plane, repousse ou estampe le métal. À chaud, il coule à la cire perdue.</p><div class="form">Formation : CAP orfèvre (options monteur, polisseur-aviveur, planeur, tourneur-repousseur), puis BMA orfèvrerie.</div></div>
+  </div></div>
+  <div class="carte"><div class="int">
+   <div class="face av"><div class="ico">🔨</div><div class="num">MÉTIER 3</div><h2>Ferronnier-forgeron</h2><div class="tag">fer · forge · enclume</div><div class="cta">Clique pour retourner</div></div>
+   <div class="face ar"><h3>Ferronnier-forgeron</h3><p>Il met le fer en forme à chaud : grilles, garde-corps, rampes d'escalier, mobilier et objets décoratifs.</p><p>Sa technique, c'est le forgeage : le battage du métal au marteau sur une enclume, puis la finition (polissage, peinture, patine ou aspect brut).</p><div class="form">Formation : CAP ferronnier d'art (2 ans), puis BMA ferronnier d'art.</div></div>
+  </div></div>
+ </div>
+ <div id="video"><div class="play">▶</div><div><b>Rencontre l'artisan</b><span>Emplacement réservé à votre vidéo témoignage d'artisan (livrable prévu au contrat SAVALART). Dans le hub complet : portrait, atelier en 360° et gestes filmés.</span></div></div>
+ <div id="julie"><img src="img/julie-accueil.png" alt="Julie"></div>
+ <div id="bulle">Salut ! Ici on façonne l'or, l'argent et le fer. Retourne les trois cartes, puis accepte ta mission : <b>fabriquer ta première bague</b>.</div>
+ <div id="mission"><div class="btn">⚒ Accepter la mission</div><small>Clique sur la flèche de la page pour entrer dans l'atelier</small></div>
+ <button id="son" title="Écouter Julie">🔊</button>
+</div>
+<script>
+const stage=document.getElementById('stage');
+function fit(){stage.style.setProperty('--s',Math.min(innerWidth/1600,innerHeight/900))}addEventListener('resize',fit);fit();
+document.querySelectorAll('.carte').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
+const bulle=document.getElementById('bulle'); setTimeout(()=>bulle.classList.add('on'),400);
+const audio=new Audio('audio/fr-entree.mp3'); const son=document.getElementById('son');
+function parle(){audio.currentTime=0;audio.play().catch(()=>{})}
+son.addEventListener('click',parle);
+addEventListener('pointerdown',function once(){parle();removeEventListener('pointerdown',once)},{once:true});
+const fx=document.getElementById('fx');const r=(a,b)=>a+Math.random()*(b-a);
+for(let i=0;i<14;i++){const s=document.createElement('div');s.className='etinc';s.style.left=r(1180,1300)+'px';s.style.top=r(420,520)+'px';s.style.setProperty('--d',r(1.4,2.6)+'s');s.style.setProperty('--r',-r(0,3)+'s');s.style.setProperty('--x',r(-60,60)+'px');s.style.setProperty('--y',r(-120,-40)+'px');fx.appendChild(s)}
+</script>
+</body>
+</html>
