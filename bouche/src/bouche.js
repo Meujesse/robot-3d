@@ -31,8 +31,9 @@ const C = { rouge: 0xe4003a, violet: 0x522583, noir: 0x230000, rose: 0xe60064, p
 const COUL = { email: 0xf4f1ea, cement: 0xdccaa4, dentine: 0xe8c98a, pulpe: 0xd94a6a, gencive: 0xe98a9d };
 
 export class Bouche {
-  constructor({ conteneur, base = '', donnees, ui = {} }) {
-    this.el = conteneur; this.base = base; this.donnees = donnees; this.ui = ui;
+  constructor({ conteneur, base = '', urls = null, donnees, ui = {} }) {
+    this.el = conteneur; this.base = base; this.urls = urls; this.donnees = donnees; this.ui = ui;
+    this.liste = [];               // toutes les dents, dans l'ordre de pose
     this.dents = new Map();        // fdi -> { fdi, arcade, pos, cote, groupe, couches:{email,dentine,pulpe}, dim, centre, axe }
     this.etat = { survol: null, selection: null, couche: 'email', coupe: false, radio: false, ouvert: false, etiquettes: false };
     this.horloge = new THREE.Clock();
@@ -102,7 +103,7 @@ export class Bouche {
     const noms = ['incisive-sup', 'incisive-inf', 'canine', 'premolaire', 'molaire-sup', 'molaire-inf'];
     const modeles = {};
     await Promise.all(noms.map(async n => {
-      try { const g = await loader.loadAsync(this.base + n + '.glb'); modeles[n] = this._preparer(g, n); }
+      try { const g = await loader.loadAsync(this.urls && this.urls[n] ? this.urls[n] : this.base + n + '.glb'); modeles[n] = this._preparer(g, n); }
       catch (e) { modeles[n] = null; }
     }));
     for (const n of noms) { let k = n, tours = 0; while (!modeles[k] && tours++ < 6) k = REPLI[k]; if (!modeles[n]) modeles[n] = modeles[k]; }
@@ -195,7 +196,7 @@ export class Bouche {
     groupe.name = 'dent-' + d.fdi; groupe.userData.fdi = d.fdi; groupe.userData.dent = d;
     groupe.userData.base = groupe.position.clone();
     (d.arcade === 'sup' ? this.maxillaire : this.mandibule).add(groupe);
-    this.dents.set(d.fdi, d);
+    this.dents.set(d.fdi, d); this.liste.push(d);
   }
 
   _materiau(k, d) {
@@ -233,7 +234,7 @@ export class Bouche {
     const socleG = new THREE.ExtrudeGeometry(forme, { depth: 6, bevelEnabled: true, bevelSize: 2, bevelThickness: 2, bevelSegments: 4 });
     socleG.rotateX(Math.PI / 2); if (signe < 0) socleG.scale(1, -1, 1); // maxillaire : plaque vers le haut ; mandibule : vers le bas
     const socle = new THREE.Mesh(socleG, new THREE.MeshPhysicalMaterial({ color: 0xf2b8c6, roughness: 0.6, transparent: true, opacity: 1, side: THREE.DoubleSide }));
-    socle.position.y = yBase - signe * (hCouronne + 21); socle.name = 'socle';
+    socle.position.y = yBase - signe * (hCouronne + 25); socle.name = 'socle';
     const grp = new THREE.Group(); grp.add(gencive, socle); grp.name = 'gencive-' + arcade;
     (arcade === 'sup' ? this.maxillaire : this.mandibule).add(grp);
     this['gencive_' + arcade] = grp;
@@ -248,7 +249,7 @@ export class Bouche {
   _picking(force) {
     if (this._drag && !force) return null;
     this.raycaster.setFromCamera(this.pointeur, this.camera);
-    const cibles = []; for (const d of this.dents.values()) if (d.groupe.visible) cibles.push(d.couches.email);
+    const cibles = []; for (const d of this.liste) if (d.groupe.visible) cibles.push(d.couches.email);
     const hits = this.raycaster.intersectObjects(cibles, false);
     return hits.length ? this.dents.get(hits[0].object.userData.fdi) : null;
   }
@@ -283,7 +284,7 @@ export class Bouche {
     if (this.etat.selection && this.etat.selection !== d) this._reposer(this.etat.selection);
     this.etat.selection = d; this._teinter(d, false); this.ui.survol && this.ui.survol(null);
     // tout le reste s'efface
-    for (const x of this.dents.values()) this._opacite(x, x === d ? 1 : 0.05);
+    for (const x of this.liste) this._opacite(x, x === d ? 1 : 0.05);
     this._opaciteGencive(0.04);
     // la dent sort de son alvéole de 5 mm le long de son axe
     const axe = new THREE.Vector3(0, 1, 0).applyQuaternion(d.groupe.quaternion);
@@ -296,7 +297,7 @@ export class Bouche {
   liberer() {
     const d = this.etat.selection; if (!d) return;
     this._reposer(d); this.etat.selection = null;
-    for (const x of this.dents.values()) this._opacite(x, 1);
+    for (const x of this.liste) this._opacite(x, 1);
     this._opaciteGencive(1);
     this.etat.couche = 'email'; this.etat.coupe = false; this._appliquerCouche();
     this._cadrer(true);
@@ -340,7 +341,7 @@ export class Bouche {
   // Mode radio : matériaux additifs/soustractifs sur fond sombre
   radio(on) {
     this.etat.radio = on;
-    for (const d of this.dents.values()) {
+    for (const d of this.liste) {
       for (const k in d.couches) {
         const mesh = d.couches[k];
         if (on) {
@@ -402,7 +403,7 @@ export class Bouche {
   // Centres de toutes les dents à l'écran (pour les pastilles FDI)
   centres() {
     const w = this.el.clientWidth, h = this.el.clientHeight; const out = [];
-    for (const d of this.dents.values()) {
+    for (const d of this.liste) {
       const p = new THREE.Vector3(0, -0.5, 0).applyMatrix4(d.groupe.matrixWorld); const v = p.project(this.camera);
       const cam = this.camera.position.clone().sub(p).normalize(); const nrm = new THREE.Vector3(0, 0, 1).applyQuaternion(d.groupe.getWorldQuaternion(new THREE.Quaternion()));
       out.push({ fdi: d.fdi, x: (v.x + 1) / 2 * w, y: (1 - v.y) / 2 * h, visible: nrm.dot(cam) > -0.15 });

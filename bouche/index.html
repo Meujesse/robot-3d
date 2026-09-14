@@ -131,9 +131,9 @@ const ETQ = {
   collet: { cls: 'c-bleu', b: 'Collet', s: 'Là où l’émail rejoint le cément.', ang: 0, g: false },
   racine: { cls: 'c-bleu', b: 'Racine', s: 'Implantée dans l’os, recouverte de cément.', ang: 10, g: true },
   apex: { cls: 'c-bleu', b: 'Apex', s: 'La pointe de la racine : le foramen apical laisse passer nerfs et vaisseaux.', ang: 30, g: false },
-  email: { cls: '', b: 'Émail', s: 'Le tissu le plus dur du corps : 97 % de minéral.', ang: -28, g: true },
+  email: { cls: '', b: 'Émail', s: 'Le tissu le plus dur du corps : 97 % de minéral.', ang: -28, g: false },
   dentine: { cls: 'c-dentine', b: 'Dentine', s: 'La masse de la dent, 70 % de minéral, sensible.', ang: -10, g: false },
-  pulpe: { cls: 'c-pulpe', b: 'Pulpe', s: 'Nerfs et vaisseaux : la dent vivante.', ang: 18, g: true },
+  pulpe: { cls: 'c-pulpe', b: 'Pulpe', s: 'Nerfs et vaisseaux : la dent vivante.', ang: 18, g: false },
 };
 function etiquettesPour(couche) {
   if (bouche.etat.coupe) return ['email', 'dentine', 'pulpe', 'apex'];
