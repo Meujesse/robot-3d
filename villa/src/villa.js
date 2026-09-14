@@ -7,6 +7,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
 
 const DRACO = 'https://www.gstatic.com/draco/versioned/decoders/1.5.7/';
@@ -24,7 +25,8 @@ export class Villa {
     const el = this.el;
     this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    this.renderer.toneMapping = THREE.NeutralToneMapping; this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping; this.renderer.toneMappingExposure = 1.0; this.renderer.outputColorSpace = THREE.SRGBColorSpace;
+    this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.localClippingEnabled = true;
     el.appendChild(this.renderer.domElement);
     this.renderer.domElement.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab';
@@ -37,8 +39,12 @@ export class Villa {
     this.controls.addEventListener('start', () => { this._drag = true; });
     this.controls.addEventListener('end', () => { setTimeout(() => { this._drag = false; }, 60); });
     // lumière douce, ambiance méditerranéenne
-    this.hemi = new THREE.HemisphereLight(0xffffff, 0xcfd8e3, 1.3); this.scene.add(this.hemi);
-    this.soleil = new THREE.DirectionalLight(0xfff4e0, 1.7); this.soleil.position.set(30, 60, 40); this.scene.add(this.soleil);
+    // éclairage : environnement neutre (reflets, lumière indirecte), soleil chaud avec ombres douces, ciel bleuté
+    const pm = new THREE.PMREMGenerator(this.renderer); this.scene.environment = pm.fromScene(new RoomEnvironment(), 0.04).texture; this.scene.environmentIntensity = 0.55; pm.dispose();
+    this.hemi = new THREE.HemisphereLight(0xffffff, 0xcfd8e3, 0.55); this.scene.add(this.hemi);
+    this.soleil = new THREE.DirectionalLight(0xfff1dc, 2.2); this.soleil.position.set(18, 40, 26); this.scene.add(this.soleil);
+    this.soleil.castShadow = true; this.soleil.shadow.mapSize.set(2048, 2048); this.soleil.shadow.bias = -0.0004; this.soleil.shadow.normalBias = 0.02; this.soleil.shadow.radius = 4;
+    const sc = this.soleil.shadow.camera; sc.left = -20; sc.right = 20; sc.top = 20; sc.bottom = -20; sc.near = 1; sc.far = 120;
     this.contre = new THREE.DirectionalLight(0xb0d8f4, 0.5); this.contre.position.set(-40, 20, -30); this.scene.add(this.contre);
     this.gVilla = new THREE.Group(); this.gPiece = new THREE.Group(); this.gAlice = new THREE.Group();
     this.scene.add(this.gVilla, this.gPiece, this.gAlice);
@@ -62,7 +68,7 @@ export class Villa {
   }
 
   async _charger(url) {
-    if (!this.charges[url]) this.charges[url] = this.loader.loadAsync(url).then(g => { g.scene.traverse(o => { if (o.isMesh) { o.material.side = THREE.DoubleSide; } }); return g; });
+    if (!this.charges[url]) this.charges[url] = this.loader.loadAsync(url).then(g => { g.scene.traverse(o => { if (o.isMesh) { o.material.side = THREE.DoubleSide; o.castShadow = true; o.receiveShadow = true; if (o.material.roughness !== undefined) o.material.roughness = Math.max(0.55, o.material.roughness); } }); return g; });
     return this.charges[url];
   }
 
@@ -82,7 +88,7 @@ export class Villa {
     this._matVilla = []; this.villa.traverse(o => { if (o.isMesh) this._matVilla.push([o, o.material]); });
     // socle : un disque clair sous la maquette
     const sol = new THREE.Mesh(new THREE.CircleGeometry(V.taille * 0.9, 64), new THREE.MeshStandardMaterial({ color: 0xeaf1f8, roughness: 1 }));
-    sol.rotation.x = -Math.PI / 2; sol.position.y = -0.02; sol.name = 'sol'; this.gVilla.add(sol); this.sol = sol;
+    sol.rotation.x = -Math.PI / 2; sol.position.y = -0.02; sol.name = 'sol'; sol.receiveShadow = true; this.gVilla.add(sol); this.sol = sol;
     this.mode('maquette', false);
     this.ui.pret && this.ui.pret();
     // Alice en arrière-plan
@@ -116,12 +122,12 @@ export class Villa {
 
   _holo(on) {
     if (!this.villa) return;
-    if (on && !this._matHolo) this._matHolo = new THREE.MeshBasicMaterial({ color: 0x7fe3ff, wireframe: true, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending, depthWrite: false });
+    if (on && !this._matHolo) this._matHolo = new THREE.MeshBasicMaterial({ color: 0x7fe3ff, wireframe: true, transparent: true, opacity: 0.07, blending: THREE.AdditiveBlending, depthWrite: false });
     for (const [o, m] of this._matVilla) o.material = on ? this._matHolo : m;
     this.sol.visible = !on;
     if (on && !this.grille) { this.grille = new THREE.GridHelper(this.D.villa.taille * 2, 40, 0x4c76ba, 0x2a3f6b); this.grille.position.y = -0.01; this.gVilla.add(this.grille); }
     if (this.grille) this.grille.visible = on;
-    this.hemi.intensity = on ? 0.6 : 1.3;
+    this.hemi.intensity = on ? 0.3 : 0.55;
     this.ui.holo && this.ui.holo(on);
   }
 
@@ -130,7 +136,10 @@ export class Villa {
     const P = this.D.pieces.find(p => p.cle === cle); if (!P) return;
     this.ui.chargement && this.ui.chargement(true);
     const g = await this._charger(P.url);
-    if (!this.pieces[cle]) { const grp = this._poser(g.scene, P.taille); grp.visible = false; this.gPiece.add(grp); this.pieces[cle] = grp; }
+    if (!this.pieces[cle]) {
+      const grp = this._poser(g.scene, P.taille); grp.visible = false; this.gPiece.add(grp); this.pieces[cle] = grp;
+      if (P.plafond) { const plan = new THREE.Plane(new THREE.Vector3(0, -1, 0), P.plafond * grp.userData.dim.y); grp.traverse(o => { if (o.isMesh) { o.material = o.material.clone(); o.material.clippingPlanes = [plan]; } }); }
+    }
     for (const k in this.pieces) this.pieces[k].visible = k === cle;
     this.etat.piece = cle; this.etat.mode = 'piece';
     this.gVilla.visible = false; this.gPiece.visible = true; this._holo(false);
@@ -168,6 +177,7 @@ export class Villa {
   photo(on) {
     const P = this.D.pieces.find(p => p.cle === this.etat.piece); if (!P) return;
     this.etat.photo = on; this._look = on; this.controls.enabled = !on;
+    if (this.alice) this.alice.visible = on ? false : this.etat.alice; // Alice sort du cadre pendant la prise de vue
     if (on) {
       const [cx, cz] = P.coin; const T = P.taille;
       // le photographe se place dans l'angle ouvert, à l'intérieur de la pièce
