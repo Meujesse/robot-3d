@@ -196,13 +196,13 @@ const anims = {
     // repositionner : TorusGeometry est dans le plan XY → on la couche sur XZ comme la courbe (qui était en XZ)
   },
   async sertir(){ // chaton + griffes + pierre
-    const chaton = new THREE.Group(); chaton.position.set(0, 0, -1.0); // sur l'anneau (plan XZ, rayon 1) côté caméra une fois tourné
+    const chaton = new THREE.Group(); chaton.position.set(0, 0.06, 1.0); // sur l'anneau (plan XZ, rayon 1) côté caméra une fois tourné
     const cyl = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.28, 0.32, 32), or); cyl.position.y = 0.16; chaton.add(cyl);
     for (let i=0;i<4;i++){ const g = new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.06,0.42,10), or); const a = i*Math.PI/2+Math.PI/4; g.position.set(Math.cos(a)*0.27, 0.42, Math.sin(a)*0.27); g.rotation.z = -Math.cos(a)*0.35; g.rotation.x = Math.sin(a)*0.35; chaton.add(g); }
     const pierreMat = new THREE.MeshPhysicalMaterial({ color:0x2457c5, metalness:0, roughness:0.02, transmission:0.55, thickness:0.6, ior:1.77, clearcoat:1, envMapIntensity:1.6 });
     const pierre = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), pierreMat); pierre.scale.set(1, 0.7, 1); pierre.position.y = 0.46; chaton.add(pierre);
     chaton.scale.setScalar(0.001); groupe.add(chaton); groupe.userData.chaton = chaton; groupe.userData.pierre = pierre;
-    await tween(700, k => { groupe.rotation.y = 0.4 + (Math.PI*0.15)*k; chaton.scale.setScalar(k); });
+    await tween(700, k => { groupe.rotation.y = 0.4*(1-k); chaton.scale.setScalar(k); });
     particules(30, 800, 420, '#9cc4ff', 110);
     await tween(500, k => { pierre.position.y = 0.46 + Math.sin(k*Math.PI)*0.25; });
   },
@@ -211,14 +211,14 @@ const anims = {
     for (let i=0;i<5;i++){ particules(18, 700+Math.random()*200, 400+Math.random()*120, '#ffffff', 60); await dodo(160); }
     await tween(1200, k => { or.roughness = 0.48 - 0.42*k; or.color.setHex(0xf2c46a).lerp(new THREE.Color(0xffd982), k*0.5); renderer.toneMappingExposure = 1.05 + 0.25*k; });
     flash(); particules(60, 800, 430, '#fff6d0', 220);
-    controls.enabled = true; controls.autoRotate = true;
-    await tween(1400, k => { camera.position.lerp(new THREE.Vector3(0, 2.4, 7.6), 0.04); });
+    await tween(1200, k => { groupe.rotation.x = -1.6*k; groupe.position.y = 0.1 + 1.0*k; camera.position.lerp(new THREE.Vector3(0, 1.6, 15), 0.08); camera.lookAt(0, 1.1, 0); }); controls.target.set(0, 1.1, 0); controls.enabled = true; controls.autoRotate = true;
+    
   }
 };
 
 /* ---------- boucle ---------- */
 let t0 = performance.now();
-function boucle(){ requestAnimationFrame(boucle); const t = (performance.now()-t0)/1000; if (!controls.enabled){ groupe.position.y = 0.1 + Math.sin(t*1.3)*0.03; } controls.update(); renderer.render(scene, camera); }
+function boucle(){ requestAnimationFrame(boucle); const t = (performance.now()-t0)/1000; if (!controls.enabled && !fini){ groupe.position.y = 0.1 + Math.sin(t*1.3)*0.03; } controls.update(); renderer.render(scene, camera); }
 boucle();
 
 /* ---------- final ---------- */
