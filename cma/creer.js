@@ -14,8 +14,14 @@ addEventListener('resize', fit); new ResizeObserver(fit).observe(document.docume
 $('#sources').textContent = SOURCES;
 
 /* ---------- état ---------- */
-const S = { metal: 'orjaune', pierre: 'diamant', nombre: 1, serti: 'griffes', etape: 'metal', faits: new Set(), fab: 0, enCours: false, prenom: '' };
-const ORDRE = ['metal', 'pierre', 'serti', 'fabrication', 'fin'];
+const S = { metal: 'orjaune', nombre: 1, pierres: { gauche: 'diamant', centre: 'diamant', droite: 'diamant' }, place: 'centre', serti: 'griffes', etape: 'metal', faits: new Set(), fab: 0, enCours: false, prenom: '' };
+const ORDRE = ['metal', 'pierre', 'serti', 'verif', 'fabrication', 'fin'];
+const NOM_PLACE = { gauche: 'Gauche', centre: 'Centre', droite: 'Droite' };
+const ANGLES = { 1: { centre: [0, 1] }, 2: { gauche: [-0.2, 0.85], droite: [0.2, 0.85] }, 3: { gauche: [-0.34, 0.72], centre: [0, 1], droite: [0.34, 0.72] } };
+const places = () => Object.keys(ANGLES[S.nombre]);
+const utilisees = () => [...new Set(places().map(k => S.pierres[k]))];
+const hex = n => '#' + n.toString(16).padStart(6, '0');
+const hexPierre = k => k === 'diamant' ? '#dcefff' : hex(PIERRES[k].couleur);
 
 /* ---------- Julie ---------- */
 const sons = {};
@@ -55,9 +61,10 @@ function fichePierre(k){
     `<div class="savais"><b>Le savais-tu ?</b> Le prix d'une pierre dépend de son poids en carats, de sa couleur, de sa pureté et de la qualité de sa taille.</div>`);
 }
 function ficheSerti(){
-  const s = SERTIS[S.serti], n = NOMBRES[S.nombre], p = PIERRES[S.pierre];
+  const s = SERTIS[S.serti], n = NOMBRES[S.nombre];
+  const conseils = utilisees().map(k => `<b>${PIERRES[k].nom} :</b> ${PIERRES[k].conseil}`).join('<br>');
   fiche('Fiche serti', s.nom, bloc('Comment ça tient ?', s.txt) + bloc(`${n.nom} · ${S.nombre} pierre${S.nombre > 1 ? 's' : ''}`, n.txt) +
-    `<div class="savais"><b>Conseil pour ${p.nom === 'Émeraude' ? "l'émeraude" : 'le ' + p.nom.toLowerCase()} :</b> ${p.conseil}</div>`);
+    `<div class="savais">${conseils}</div>`);
 }
 function ficheOutil(cle){
   const o = OUTILS[cle];
@@ -75,42 +82,61 @@ document.querySelectorAll('#etapes button').forEach(b => b.addEventListener('cli
   const e = b.dataset.e;
   if (S.enCours || !S.faits.has(e)) return;
   if (S.etape === 'fin' || S.etape === 'fabrication') return; // on ne revient pas en arrière pendant ou après la fabrication
-  if (ORDRE.indexOf(e) < 3) va(e);
+  if (ORDRE.indexOf(e) <= 3) va(e);
 }));
-function va(e){ S.etape = e; majNav(); rend[e](); }
+function va(e){ S.etape = e; majNav(); rend[e](); plan(); }
 
 /* ---------- panneaux ---------- */
 const pan = $('#panneau');
 function optMetal(k){ const m = METAUX[k]; return `<button class="opt ${S.metal===k?'on':''}" data-metal="${k}"><span class="pastille" style="background:#${m.couleur.toString(16).padStart(6,'0')}"></span><span>${m.nom}</span></button>`; }
 const rend = {
   metal(){
-    pan.innerHTML = `<h3>Choisis ton métal</h3><p class="aide">Clique sur un métal : sa fiche s'ouvre à droite et ta bague change de couleur.</p>
+    pan.innerHTML = `<h3>Choisis ton métal</h3><p class="aide">Clique sur un métal : sa fiche s'ouvre à droite et ton plan se colore. Ta vraie bague, tu la découvriras à la fin !</p>
       <div class="sous">Or 18 carats · 3 couleurs</div><div class="choix trois">${['orjaune','orrose','orblanc'].map(optMetal).join('')}</div>
       <div class="sous">Autres matériaux</div><div class="choix trois">${['argent','titane','plaque'].map(optMetal).join('')}</div>
       <button class="suivant" id="ok">Valider le métal</button>`;
-    pan.querySelectorAll('[data-metal]').forEach(b => b.addEventListener('click', () => { S.metal = b.dataset.metal; rend.metal(); ficheMetal(S.metal); majBague(); }));
-    $('#ok').addEventListener('click', () => { S.faits.add('metal'); va('pierre'); fichePierre(S.pierre); parle("Joli choix ! Maintenant, la pierre. <b>Regarde leur dureté</b> : elles ne résistent pas toutes pareil.", 'montre'); });
+    pan.querySelectorAll('[data-metal]').forEach(b => b.addEventListener('click', () => { S.metal = b.dataset.metal; rend.metal(); ficheMetal(S.metal); plan(); }));
+    $('#ok').addEventListener('click', () => { S.faits.add('metal'); va('pierre'); fichePierre(S.pierres[S.place]); parle("Maintenant, les pierres ! Tu peux mettre <b>une pierre différente à chaque place</b>.", 'montre'); });
     ficheMetal(S.metal);
   },
   pierre(){
-    const opt = k => { const p = PIERRES[k]; return `<button class="opt ${S.pierre===k?'on':''}" data-pierre="${k}"><span class="gemme" style="background:#${p.couleur.toString(16).padStart(6,'0')};${k==='diamant'?'background:linear-gradient(135deg,#fff,#cfe6ff)':''}"></span><span>${p.nom}</span></button>`; };
+    if (!places().includes(S.place)) S.place = places()[0];
     const nb = n => `<button class="opt nb ${S.nombre===n?'on':''}" data-nombre="${n}"><span class="pts">${'◆'.repeat(n)}</span><span>${NOMBRES[n].nom}</span></button>`;
-    pan.innerHTML = `<h3>Choisis ta pierre</h3><p class="aide">Trois pierres précieuses, trois caractères. Puis choisis combien tu en poses.</p>
-      <div class="choix trois">${['diamant','rubis','emeraude'].map(opt).join('')}</div>
-      <div class="sous">Nombre de pierres</div><div class="choix trois">${[1,2,3].map(nb).join('')}</div>
-      <button class="suivant" id="ok">Valider la pierre</button>`;
-    pan.querySelectorAll('[data-pierre]').forEach(b => b.addEventListener('click', () => { S.pierre = b.dataset.pierre; rend.pierre(); fichePierre(S.pierre); majBague(); }));
-    pan.querySelectorAll('[data-nombre]').forEach(b => b.addEventListener('click', () => { S.nombre = +b.dataset.nombre; rend.pierre(); fiche('Fiche modèle', NOMBRES[S.nombre].nom, bloc(`${S.nombre} pierre${S.nombre>1?'s':''}`, NOMBRES[S.nombre].txt)); majBague(); }));
-    $('#ok').addEventListener('click', () => { S.faits.add('pierre'); va('serti'); ficheSerti(); parle("Comment tenir ta pierre ? Avec des <b>griffes</b> ou dans un <b>serti clos</b>. Lis bien le conseil !", 'reflechit'); });
+    const pl = k => `<button class="opt place ${S.place===k?'on':''}" data-place="${k}"><span class="gemme" style="background:${hexPierre(S.pierres[k])}"></span><span>${NOM_PLACE[k]}<small>${PIERRES[S.pierres[k]].nom}</small></span></button>`;
+    const opt = k => { const p = PIERRES[k]; return `<button class="opt ${S.pierres[S.place]===k?'on':''}" data-pierre="${k}"><span class="gemme" style="background:${hexPierre(k)}"></span><span>${p.nom}</span></button>`; };
+    pan.innerHTML = `<h3>Choisis tes pierres</h3>
+      <div class="sous" style="margin-top:6px">1. Combien de pierres ?</div><div class="choix trois">${[1,2,3].map(nb).join('')}</div>
+      ${S.nombre > 1 ? `<div class="sous">2. Choisis une place</div><div class="choix ${S.nombre===3?'trois':''}">${places().map(pl).join('')}</div>` : ''}
+      <div class="sous">${S.nombre > 1 ? '3. Pose une pierre à la place « ' + NOM_PLACE[S.place].toLowerCase() + ' »' : '2. Choisis ta pierre'}</div><div class="choix trois">${['diamant','rubis','emeraude'].map(opt).join('')}</div>
+      ${S.nombre > 1 ? '<button class="btn2 partout" id="partout">Mettre la même pierre partout</button>' : ''}
+      <button class="suivant" id="ok">Valider mes pierres</button>`;
+    pan.querySelectorAll('[data-nombre]').forEach(b => b.addEventListener('click', () => { S.nombre = +b.dataset.nombre; S.place = places()[0]; rend.pierre(); plan(); fiche('Fiche modèle', NOMBRES[S.nombre].nom, bloc(`${S.nombre} pierre${S.nombre>1?'s':''}`, NOMBRES[S.nombre].txt)); }));
+    pan.querySelectorAll('[data-place]').forEach(b => b.addEventListener('click', () => { S.place = b.dataset.place; rend.pierre(); plan(); fichePierre(S.pierres[S.place]); }));
+    pan.querySelectorAll('[data-pierre]').forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.pierre; S.pierres[S.place] = k;
+      if (S.nombre === 1) ['gauche','droite'].forEach(c => S.pierres[c] = k);
+      fichePierre(k);
+      const ps = places(), i = ps.indexOf(S.place); if (S.nombre > 1 && i < ps.length - 1) S.place = ps[i + 1];
+      rend.pierre(); plan();
+    }));
+    $('#partout')?.addEventListener('click', () => { const k = S.pierres[S.place]; Object.keys(S.pierres).forEach(c => S.pierres[c] = k); rend.pierre(); plan(); });
+    $('#ok').addEventListener('click', () => { S.faits.add('pierre'); va('serti'); ficheSerti(); parle("Comment tenir tes pierres ? Avec des <b>griffes</b> ou dans un <b>serti clos</b>. Lis bien les conseils !", 'reflechit'); });
   },
   serti(){
     const opt = k => `<button class="opt ${S.serti===k?'on':''}" data-serti="${k}"><span>${SERTIS[k].nom}<small>${k==='griffes'?'la pierre brille au maximum':'la pierre est protégée'}</small></span></button>`;
     pan.innerHTML = `<h3>Choisis ton serti</h3><p class="aide">Le serti, c'est la façon dont le métal tient la pierre.</p>
       <div class="choix">${['griffes','clos'].map(opt).join('')}</div>
-      <div class="sous">Ta création</div>${recap()}
-      <button class="suivant" id="ok">Fabriquer ma bague</button>`;
-    pan.querySelectorAll('[data-serti]').forEach(b => b.addEventListener('click', () => { S.serti = b.dataset.serti; rend.serti(); ficheSerti(); majBague(); }));
-    $('#ok').addEventListener('click', () => { S.faits.add('serti'); lanceFabrication(); });
+      <button class="suivant" id="ok">Vérifier ma bague</button>`;
+    pan.querySelectorAll('[data-serti]').forEach(b => b.addEventListener('click', () => { S.serti = b.dataset.serti; rend.serti(); ficheSerti(); plan(); }));
+    $('#ok').addEventListener('click', () => { S.faits.add('serti'); va('verif'); ficheVerif(); parle("Regarde bien ton plan. <b>C'est bien la bague que tu veux ?</b> Après, on passe à l'atelier !", 'reflechit'); });
+  },
+  verif(){
+    pan.innerHTML = `<h3>C'est bien ta bague ?</h3><p class="aide">Vérifie chaque élément. Une fois la fabrication lancée, on ne peut plus rien changer.</p>
+      ${recap(true)}
+      <button class="suivant" id="ok">Oui, je la fabrique !</button>
+      <div class="boutons"><button class="btn2" data-retour="metal">Changer le métal</button><button class="btn2" data-retour="pierre">Changer les pierres</button><button class="btn2" data-retour="serti">Changer le serti</button></div>`;
+    pan.querySelectorAll('[data-retour]').forEach(b => b.addEventListener('click', () => { const e = b.dataset.retour; va(e); if (e === 'metal') ficheMetal(S.metal); if (e === 'pierre') fichePierre(S.pierres[S.place]); if (e === 'serti') ficheSerti(); }));
+    $('#ok').addEventListener('click', () => { S.faits.add('verif'); lanceFabrication(); });
   },
   fabrication(){
     const et = etapesPour(METAUX[S.metal].famille);
@@ -133,13 +159,57 @@ const rend = {
     $('#refaire').addEventListener('click', () => location.reload());
   }
 };
-function recap(){
-  return `<ul class="recap"><li><span>Métal</span><span>${METAUX[S.metal].nom}</span></li><li><span>Pierre</span><span>${PIERRES[S.pierre].nom} × ${S.nombre}</span></li><li><span>Modèle</span><span>${NOMBRES[S.nombre].nom}</span></li><li><span>Serti</span><span>${SERTIS[S.serti].nom}</span></li></ul>`;
+function textePierres(){
+  const u = utilisees();
+  if (u.length === 1) return `${PIERRES[u[0]].nom} × ${S.nombre}`;
+  return places().map(k => `${NOM_PLACE[k]} : ${PIERRES[S.pierres[k]].nom}`).join(' · ');
+}
+function recap(detail){
+  const lp = detail && S.nombre > 1 ? places().map(k => `<li><span>Pierre ${NOM_PLACE[k].toLowerCase()}</span><span>${PIERRES[S.pierres[k]].nom}</span></li>`).join('') : `<li><span>Pierre${S.nombre>1?'s':''}</span><span>${textePierres()}</span></li>`;
+  return `<ul class="recap"><li><span>Métal</span><span>${METAUX[S.metal].nom}</span></li>${lp}<li><span>Modèle</span><span>${NOMBRES[S.nombre].nom}</span></li><li><span>Serti</span><span>${SERTIS[S.serti].nom}</span></li></ul>`;
 }
 function nomBague(){
-  const art = { diamant: 'au diamant', rubis: 'au rubis', emeraude: "à l'émeraude" }[S.pierre];
-  const pl = { diamant: 'aux diamants', rubis: 'aux rubis', emeraude: 'aux émeraudes' }[S.pierre];
-  return `${NOMBRES[S.nombre].nom} ${S.nombre > 1 ? pl : art}, ${METAUX[S.metal].court}`;
+  const u = utilisees();
+  if (u.length === 1){
+    const art = { diamant: 'au diamant', rubis: 'au rubis', emeraude: "à l'émeraude" }[u[0]];
+    const pl = { diamant: 'aux diamants', rubis: 'aux rubis', emeraude: 'aux émeraudes' }[u[0]];
+    return `${NOMBRES[S.nombre].nom} ${S.nombre > 1 ? pl : art}, ${METAUX[S.metal].court}`;
+  }
+  const noms = u.map(k => PIERRES[k].nom.toLowerCase());
+  return `${NOMBRES[S.nombre].nom} ${noms.slice(0, -1).join(', ')} et ${noms.slice(-1)}, ${METAUX[S.metal].court}`;
+}
+function ficheVerif(){
+  fiche('Bon de fabrication', nomBague(), bloc('Métal', METAUX[S.metal].nom + '. ' + METAUX[S.metal].compo) +
+    utilisees().map(k => bloc(PIERRES[k].nom, `${PIERRES[k].compo} ${PIERRES[k].durTxt}`)).join('') + bloc('Serti', SERTIS[S.serti].nom));
+}
+
+/* ---------- plan dessiné (gouaché) ---------- */
+function plan(){
+  const el = $('#plan'); if (!el) return;
+  const visible = ['metal', 'pierre', 'serti', 'verif'].includes(S.etape);
+  el.classList.toggle('off', !visible); if (!visible) return;
+  const m = METAUX[S.metal], cx = 200, cy = 250, r = 118, c = hex(m.couleur);
+  let gem = '';
+  for (const [k, [ang0, ech]] of Object.entries(ANGLES[S.nombre])){
+    const ang = ang0 * 1.75, d = r + 34 * ech, x = cx + d * Math.sin(ang), y = cy - d * Math.cos(ang), t = 24 * ech, pk = S.pierres[k], col = hexPierre(pk);
+    const rot = ang * 180 / Math.PI;
+    const forme = PIERRES[pk].taille === 'emeraude'
+      ? `<polygon points="${-t*1.15},${-t*0.55} ${-t*0.8},${-t*0.9} ${t*0.8},${-t*0.9} ${t*1.15},${-t*0.55} ${t*1.15},${t*0.55} ${t*0.8},${t*0.9} ${-t*0.8},${t*0.9} ${-t*1.15},${t*0.55}" fill="${col}" stroke="#3d2708" stroke-width="1.6"/><rect x="${-t*0.6}" y="${-t*0.35}" width="${t*1.2}" height="${t*0.7}" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.2"/>`
+      : `<circle r="${t}" fill="${col}" stroke="#3d2708" stroke-width="1.6"/><polygon points="0,${-t*0.55} ${t*0.55},0 0,${t*0.55} ${-t*0.55},0" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.2"/><path d="M0 ${-t} L0 ${-t*0.55} M${t} 0 L${t*0.55} 0 M0 ${t} L0 ${t*0.55} M${-t} 0 L${-t*0.55} 0" stroke="rgba(255,255,255,.5)" stroke-width="1"/>`;
+    const serti = S.serti === 'clos'
+      ? `<rect x="${-t*1.35}" y="${-t*1.15}" width="${t*2.7}" height="${t*2.3}" rx="${t*0.9}" fill="none" stroke="${c}" stroke-width="${6*ech}"/>`
+      : [45, 135, 225, 315].map(a => `<circle cx="${Math.cos(a*Math.PI/180)*t*1.05}" cy="${Math.sin(a*Math.PI/180)*t*1.05}" r="${4.2*ech}" fill="${c}" stroke="#3d2708" stroke-width="1"/>`).join('');
+    const choisi = S.etape === 'pierre' && S.nombre > 1 && S.place === k;
+    gem += `<g transform="translate(${x} ${y}) rotate(${rot})" class="slot" data-place="${k}">${choisi ? `<circle r="${t*1.9}" fill="none" stroke="#c9762b" stroke-width="2.5" stroke-dasharray="6 5"/>` : ''}${forme}${serti}</g>`;
+    if (S.nombre > 1) gem += `<text x="${cx + (d + 58) * Math.sin(ang)}" y="${cy - (d + 58) * Math.cos(ang)}" text-anchor="middle" class="etiq">${NOM_PLACE[k]}</text>`;
+  }
+  el.innerHTML = `<div class="plan-sur">Ton plan de bague</div><div class="plan-titre">le gouaché du bijoutier</div>
+    <svg viewBox="0 0 400 420"><defs><linearGradient id="gm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="${c}"/><stop offset="1" stop-color="#000" stop-opacity=".25"/></linearGradient></defs>
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${c}" stroke-width="26"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#gm)" stroke-width="26" opacity=".8"/>
+    <circle cx="${cx}" cy="${cy}" r="${r+13}" fill="none" stroke="#3d2708" stroke-width="1.4"/><circle cx="${cx}" cy="${cy}" r="${r-13}" fill="none" stroke="#3d2708" stroke-width="1.4"/>
+    ${gem}</svg>
+    <div class="plan-legende">${m.nom} · ${textePierres()} · ${SERTIS[S.serti].nom}</div>`;
+  el.querySelectorAll('.slot').forEach(g => g.addEventListener('click', () => { if (S.etape !== 'pierre' || S.nombre === 1) return; S.place = g.dataset.place; rend.pierre(); plan(); fichePierre(S.pierres[S.place]); }));
 }
 
 /* ---------- scène 3D ---------- */
@@ -200,12 +270,11 @@ function monture(taille, echelle){
 }
 function construitPierres(){
   const grp = new THREE.Group();
-  const p = PIERRES[S.pierre];
-  const poses = S.nombre === 1 ? [[0, 1]] : S.nombre === 2 ? [[-0.2, 0.85], [0.2, 0.85]] : [[-0.34, 0.72], [0, 1], [0.34, 0.72]];
-  for (const [ang, ech] of poses){
+  for (const [place, [ang, ech]] of Object.entries(ANGLES[S.nombre])){
+    const cle = S.pierres[place], p = PIERRES[cle];
     const piv = new THREE.Group(); piv.rotation.z = -ang;
     const porte = new THREE.Group(); porte.position.y = R + TUBE + 0.26 * ech; piv.add(porte);
-    const gem = new THREE.Mesh(geomPierre(p.taille), matPierre(S.pierre)); gem.scale.setScalar(ech); gem.position.y = 0.02 * ech; porte.add(gem);
+    const gem = new THREE.Mesh(geomPierre(p.taille), matPierre(cle)); gem.scale.setScalar(ech); gem.position.y = 0.02 * ech; porte.add(gem);
     const mont = monture(p.taille, ech); porte.add(mont);
     const pied = new THREE.Mesh(new THREE.CylinderGeometry(0.16*ech, 0.2*ech, 0.24*ech, 16), matMetal); pied.position.y = -0.2*ech; porte.add(pied);
     grp.add(piv);
@@ -230,7 +299,7 @@ function boucle(){
   if (rot && !controls.enabled) racine.rotation.y += 0.006;
   controls.update(); renderer.render(scene, camera);
 }
-couleurMetal(); construitBague(); boucle();
+couleurMetal(); construitBague(); racine.visible = false; boucle();
 
 /* ---------- effets ---------- */
 const fx = $('#fx');
@@ -261,6 +330,7 @@ function metMorph(t, arc){
   if (!morph){ morph = new THREE.Mesh(g, matMetal); racine.add(morph); } else { morph.geometry.dispose(); morph.geometry = g; }
 }
 function etatBrut(){
+  couleurMetal(); construitBague(); racine.visible = true;
   const fam = METAUX[S.metal].famille;
   bague.visible = false; bague.userData.pierres.visible = false;
   racine.rotation.set(0, 0, 0); rot = false;
@@ -297,11 +367,11 @@ const anims = {
   async sertir(){
     const p = bague.userData.pierres; p.visible = true;
     await tween(800, k => p.scale.setScalar(Math.max(0.001, k)));
-    particules(30, 800, 290, S.pierre === 'rubis' ? '#ff6b7d' : S.pierre === 'emeraude' ? '#6bffb0' : '#dff1ff', 110);
+    utilisees().forEach(k => particules(20, 800, 290, k === 'rubis' ? '#ff6b7d' : k === 'emeraude' ? '#6bffb0' : '#dff1ff', 110));
   }
 };
 function lanceFabrication(){
-  S.etape = 'fabrication'; S.fab = 0; majNav();
+  S.etape = 'fabrication'; S.fab = 0; majNav(); plan();
   etatBrut(); rend.fabrication(); ficheOutil(etapesPour(METAUX[S.metal].famille)[0]);
   const et = etapesPour(METAUX[S.metal].famille);
   const tous = ['scier','cintrer','souder','usiner','polir','dorer','sertir'].filter(c => et.includes(c));
@@ -326,9 +396,11 @@ async function fin(){
   $('#plateau').hidden = true; $('#zone-depot').style.display = 'none';
   S.faits.add('fabrication'); S.faits.add('fin'); S.etape = 'fin'; majNav();
   couleurMetal(); flash(); for (let i = 0; i < 6; i++) setTimeout(() => particules(30, 800, 300, '#ffd27a', 260), i*200);
+  const rev = $('#revelation'); rev.hidden = false; rev.classList.remove('on'); void rev.offsetWidth; rev.classList.add('on'); setTimeout(() => rev.hidden = true, 2600);
+  const y0 = racine.rotation.y; await tween(1600, k => { racine.rotation.y = y0 + k * Math.PI * 2; racine.scale.setScalar(0.85 + 0.15 * Math.sin(k * Math.PI / 2)); racine.position.y = 0.25 * Math.sin(k * Math.PI); });
   controls.enabled = true; controls.autoRotate = true; controls.autoRotateSpeed = 2.4; renderer.domElement.style.pointerEvents = 'auto';
   rend.fin();
-  fiche('Ta création', 'Une bague unique', bloc('Métal', `${METAUX[S.metal].nom}. ${METAUX[S.metal].compo}`) + bloc('Pierre', `${PIERRES[S.pierre].nom} × ${S.nombre}. ${PIERRES[S.pierre].durTxt}`) + bloc('Serti', SERTIS[S.serti].txt));
+  fiche('Ta création', 'Une bague unique', bloc('Métal', `${METAUX[S.metal].nom}. ${METAUX[S.metal].compo}`) + bloc(S.nombre > 1 ? 'Pierres' : 'Pierre', textePierres()) + bloc('Serti', SERTIS[S.serti].txt));
   parle("Waouh, elle est <b>unique</b> ! Fais-la tourner, puis télécharge ta fiche pour garder ta création.", 'bravo', 'creer-fin');
 }
 
@@ -381,9 +453,11 @@ async function telechargeFiche(){
   const titre = (t) => { g.fillStyle = '#8a5a16'; g.font = '800 19px Nunito'; g.fillText(t.toUpperCase(), x, y); y += 32; };
   const texte = (t, taille = 23, coul = '#1a1410', poids = 600) => { g.fillStyle = coul; g.font = `${poids} ${taille}px Nunito`; y = lignes(g, t, x, y, larg, taille * 1.38); y += 8; };
   g.fillStyle = '#3d2708'; g.font = '700 36px Cinzel'; y = lignes(g, nomBague(), x, y, larg, 44); y += 16;
-  const m = METAUX[S.metal], p = PIERRES[S.pierre];
-  titre('Métal · ' + m.nom); texte(m.compo); texte(m.prix, 20, '#5a3a0c');
-  titre(`Pierre · ${p.nom} × ${S.nombre} (${NOMBRES[S.nombre].nom})`); texte(`${p.compo} ${p.couleurTxt} ${p.durTxt}`); texte(p.symbole, 20, '#5a3a0c');
+  const m = METAUX[S.metal], u = utilisees();
+  titre('Métal · ' + m.nom); texte(m.compo, 21); texte(m.prix, 19, '#5a3a0c');
+  titre(`${S.nombre > 1 ? 'Pierres' : 'Pierre'} · ${NOMBRES[S.nombre].nom} · ${textePierres()}`);
+  const petit = u.length > 1;
+  u.forEach(k => { const p = PIERRES[k]; texte(`${p.nom} : ${p.compo} ${p.couleurTxt} Dureté ${String(p.durete).replace('.', ',')} sur 10. ${p.symbole}`, petit ? 18 : 21); });
   titre('Serti · ' + SERTIS[S.serti].nom); texte(SERTIS[S.serti].txt);
   titre('Mes gestes de fabrication'); texte(etapesPour(m.famille).map((k, i) => `${i+1}. ${OUTILS[k].geste} (${OUTILS[k].outil.toLowerCase()})`).join('   '), 20);
   if (m.special){ titre('Le savais-tu ?'); texte(m.special, 20); }
@@ -401,7 +475,7 @@ function telechargeGLB(){
 }
 
 /* ---------- démarrage ---------- */
-majNav(); rend.metal();
+majNav(); rend.metal(); plan();
 $('#julie').classList.add('discret');
 $('#btn-start').addEventListener('click', () => {
   $('#intro').classList.add('off');

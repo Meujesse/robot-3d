@@ -111,3 +111,20 @@ label.prenom input{display:block;width:100%;margin-top:8px;font:700 17px/1 Nunit
 @keyframes part{to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
 .flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,240,200,.85),rgba(255,240,200,0) 40%);animation:flashA .6s ease-out forwards}
 @keyframes flashA{from{opacity:1}to{opacity:0}}
+
+#etapes{gap:5px}#etapes button{padding:7px 10px 7px 7px;font-size:12px}
+#plan{position:absolute;left:600px;top:150px;width:420px;z-index:3;background-color:#f4e8cc;background-image:repeating-linear-gradient(0deg,rgba(138,90,22,.07) 0 1px,transparent 1px 22px),repeating-linear-gradient(90deg,rgba(138,90,22,.07) 0 1px,transparent 1px 22px),linear-gradient(180deg,#fbf3e2,#ecddbc);color:#3d2708;border-radius:20px;padding:14px 16px 12px;box-shadow:0 30px 70px rgba(0,0,0,.6),inset 0 0 0 1px rgba(138,90,22,.35);transition:opacity .6s,transform .6s}
+#plan.off{opacity:0;transform:translateY(30px) scale(.95);pointer-events:none}
+#plan .plan-sur{font:800 11px/1 Nunito;letter-spacing:.24em;text-transform:uppercase;color:#8a5a16}
+#plan .plan-titre{font:700 20px/1.2 Cinzel;margin-top:4px}
+#plan svg{display:block;width:100%;height:auto;margin-top:-6px}
+#plan .slot{cursor:pointer}
+#plan .etiq{font:800 13px Nunito;fill:#8a5a16;letter-spacing:.05em}
+#plan .plan-legende{font:700 13px/1.35 Nunito;text-align:center;color:#5a3a0c;margin-top:-10px}
+.opt.place{padding:8px 10px}
+.btn2.partout{margin-top:10px;width:100%}
+#panneau .boutons{margin-top:10px}
+#revelation{position:absolute;left:0;right:0;top:120px;z-index:8;text-align:center;pointer-events:none}
+#revelation span{display:inline-block;font:700 44px/1 Cinzel;color:#fff;text-shadow:0 0 30px rgba(255,210,122,.9),0 4px 20px rgba(0,0,0,.8);opacity:0}
+#revelation.on span{animation:revel 2.6s ease-out forwards}
+@keyframes revel{0%{opacity:0;transform:scale(.7)}20%{opacity:1;transform:scale(1.05)}75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
