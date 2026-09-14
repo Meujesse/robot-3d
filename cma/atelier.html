@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L'atelier du bijoutier · Hub des Métiers d'Art</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="atelier.css">
+</head>
+<body>
+<div id="stage">
+  <img id="fond" src="img/atelier-etabli.jpg" alt="">
+  <div id="vignette"></div>
+
+  <div id="hud">
+    <div id="titre"><span class="petit">Bijouterie &amp; Métaux</span><span class="grand">Ta première bague</span></div>
+    <ol id="etapes"></ol>
+  </div>
+
+  <div id="scene3d"></div>
+  <div id="zone-depot"><div class="halo"></div><div class="cible"></div></div>
+  <div id="fx"></div>
+
+  <div id="plateau">
+    <div class="plateau-titre">Tes outils</div>
+    <div id="outils"></div>
+  </div>
+
+  <div id="julie">
+    <div id="bulle"><span id="bulle-texte"></span></div>
+    <div class="perso"><img id="julie-img" src="img/julie-accueil.png" alt="Julie"></div>
+  </div>
+
+  <div id="intro">
+    <div class="carte">
+      <div class="carte-sur">Ta mission</div>
+      <h1>Fabrique ta première bague</h1>
+      <p>Bienvenue dans l'atelier. Glisse les bons outils sur l'établi, dans le bon ordre, et regarde ta bague prendre forme.</p>
+      <button id="btn-start">Entrer dans l'atelier</button>
+    </div>
+  </div>
+
+  <div id="final">
+    <div class="rideau"></div>
+    <div class="badge">
+      <div class="badge-anneau"><img src="img/badge-bijouterie.png" alt=""></div>
+      <div class="badge-titre">Badge débloqué</div>
+      <div class="badge-nom">Bijouterie &amp; Métaux</div>
+    </div>
+    <div class="final-aide">Fais tourner ta bague avec la souris · Clique sur la flèche de la page pour continuer</div>
+  </div>
+
+  <div id="langue"><button data-lang="fr" class="on">FR</button><button data-lang="it">IT</button></div>
+</div>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module" src="atelier.js"></script>
+</body>
+</html>

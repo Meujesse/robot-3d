@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Passeport des Métiers d'Art</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--or:#e2b45a;--or2:#f6dc98;--creme:#fff4dc}
+html,body{margin:0;height:100%;background:#050912;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:var(--creme)}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,#1a2440,#060a14 70%)}
+.etoile{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;animation:scint var(--d) ease-in-out infinite;animation-delay:var(--r)}
+@keyframes scint{0%,100%{opacity:.1}50%{opacity:.9}}
+#livre{position:absolute;left:50%;top:50%;width:1180px;height:700px;transform:translate(-50%,-50%);display:grid;grid-template-columns:1fr 1fr;border-radius:26px;box-shadow:0 40px 100px rgba(0,0,0,.8);overflow:hidden;animation:ouvre 1s cubic-bezier(.2,1,.3,1) both}
+@keyframes ouvre{from{transform:translate(-50%,-46%) scale(.94);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.page{padding:44px 48px;position:relative}
+.gauche{background:linear-gradient(160deg,#1b2340,#0d1226);border-right:1px solid rgba(226,180,90,.35)}
+.droite{background:linear-gradient(160deg,#fbf3e2,#efe2c4);color:#2a1f12}
+.sur{font:700 12px/1 Nunito;letter-spacing:.32em;text-transform:uppercase;color:var(--or)}
+h1{font:700 44px/1.05 Cinzel;margin:10px 0 6px;color:#fff}
+.droite h2{font:700 13px/1 Nunito;letter-spacing:.3em;text-transform:uppercase;color:#8a5a16;margin:0 0 22px}
+.embleme{width:170px;height:170px;margin:26px auto 12px;border-radius:50%;border:2px solid rgba(226,180,90,.6);display:grid;place-items:center;background:radial-gradient(circle,rgba(226,180,90,.18),rgba(226,180,90,0) 70%)}
+.embleme img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 0 18px rgba(226,180,90,.7))}
+.nom{text-align:center;font:600 18px/1.4 Nunito;color:rgba(255,244,220,.85)}
+.nom b{display:block;font:700 26px/1.2 Cinzel;color:#fff}
+.niveau{margin-top:26px;background:rgba(0,0,0,.3);border:1px solid rgba(226,180,90,.3);border-radius:14px;padding:12px 16px;font:700 14px/1 Nunito;display:flex;justify-content:space-between;align-items:center}
+.barre{height:8px;border-radius:99px;background:rgba(255,255,255,.12);margin-top:10px;overflow:hidden}
+.barre i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--or),var(--or2));animation:remplit 1.6s .8s ease-out forwards}
+@keyframes remplit{to{width:16.6%}}
+.grille{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.slot{aspect-ratio:1;border-radius:18px;border:2px dashed rgba(138,90,22,.35);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font:700 12px/1.2 Nunito;text-align:center;color:#9a8466;padding:8px;position:relative}
+.slot .ico{width:64px;height:64px;border-radius:50%;background:rgba(138,90,22,.08);display:grid;place-items:center;font-size:26px;filter:grayscale(1);opacity:.5}
+.slot.on{border:2px solid var(--or);background:linear-gradient(180deg,#fff9ea,#f6e7c3);color:#2a1f12;box-shadow:0 10px 30px rgba(226,180,90,.35);animation:pop .8s 1.1s cubic-bezier(.2,1.6,.4,1) both}
+.slot.on .ico{filter:none;opacity:1;background:none;width:78px;height:78px}
+.slot.on .ico img{width:78px;height:78px;object-fit:contain;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
+.slot.on::after{content:"✓";position:absolute;right:10px;top:8px;width:22px;height:22px;border-radius:50%;background:#2e8b57;color:#fff;font-size:13px;display:grid;place-items:center}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.qr{position:absolute;right:48px;bottom:40px;display:flex;align-items:center;gap:14px;font:600 13px/1.35 Nunito;color:#5a4a34;max-width:330px}
+.qr img{width:92px;height:92px;border-radius:10px;background:#fff;padding:6px}
+#langue{position:absolute;right:24px;top:24px;display:flex;gap:4px;background:rgba(0,0,0,.45);border-radius:999px;padding:4px}
+#langue button{font:800 12px/1 Nunito;color:rgba(255,244,220,.7);background:transparent;border:0;border-radius:999px;padding:8px 12px;cursor:pointer}
+#langue button.on{background:var(--or);color:#2a1a05}
+.part{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffd27a;box-shadow:0 0 8px #ffb347;animation:part 1.4s ease-out forwards;pointer-events:none}
+@keyframes part{to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="ciel"></div>
+ <div id="livre">
+  <div class="page gauche">
+   <div class="sur" data-t="sur"></div>
+   <h1 data-t="h1"></h1>
+   <div class="embleme"><img src="img/badge-bijouterie.png" alt=""></div>
+   <div class="nom"><span data-t="nom"></span><b data-t="badge"></b></div>
+   <div class="niveau"><span data-t="niveau"></span><span data-t="score"></span><div class="barre" style="width:100%;flex-basis:100%"><i></i></div></div>
+  </div>
+  <div class="page droite">
+   <h2 data-t="h2"></h2>
+   <div class="grille" id="grille"></div>
+   <div class="qr"><img src="img/qr.png" alt=""><span data-t="qr"></span></div>
+  </div>
+ </div>
+ <div id="langue"><button data-lang="fr">FR</button><button data-lang="it">IT</button></div>
+</div>
+<script>
+const T={
+ fr:{sur:"Passeport des Métiers d'Art",h1:"Bravo !",nom:"Tu viens de débloquer",badge:"Bijouterie & Métaux",niveau:"Explorateur en herbe · niveau 1",score:"1 / 6 univers",h2:"Mes badges",qr:"Scanne ce code pour retrouver ton passeport à la maison et continuer l'aventure sur les cinq autres univers.",
+  univers:["Patrimoine & Histoire","Décoration & Meuble","Mode, Textile & Cuir","Bijouterie & Métaux","Graphisme & Papier","Musique & Jeux"]},
+ it:{sur:"Passaporto dei Mestieri d'Arte",h1:"Bravo!",nom:"Hai appena sbloccato",badge:"Gioielleria & Metalli",niveau:"Esploratore in erba · livello 1",score:"1 / 6 universi",h2:"I miei badge",qr:"Scansiona questo codice per ritrovare il tuo passaporto a casa e continuare l'avventura negli altri cinque universi.",
+  univers:["Patrimonio & Storia","Decorazione & Mobili","Moda, Tessile & Pelle","Gioielleria & Metalli","Grafica & Carta","Musica & Giochi"]}
+};
+const icones=["🏛️","🪑","🧵","💍","🖨️","🎻"];
+let lang=new URLSearchParams(location.search).get('lang')==='it'?'it':'fr';
+const stage=document.getElementById('stage');
+function fit(){stage.style.setProperty('--s',Math.min(innerWidth/1600,innerHeight/900))}addEventListener('resize',fit);fit();
+function rend(){const t=T[lang];document.querySelectorAll('[data-t]').forEach(e=>e.textContent=t[e.dataset.t]);
+ const g=document.getElementById('grille');g.innerHTML='';t.univers.forEach((u,i)=>{const d=document.createElement('div');d.className='slot'+(i===3?' on':'');d.innerHTML=`<div class="ico">${i===3?'<img src="img/badge-bijouterie.png" alt="">':icones[i]}</div><span>${u}</span>`;g.appendChild(d)});
+ document.querySelectorAll('#langue button').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang));}
+document.querySelectorAll('#langue button').forEach(b=>b.addEventListener('click',()=>{lang=b.dataset.lang;rend()}));
+rend();
+const r=(a,b)=>a+Math.random()*(b-a);const ciel=document.getElementById('ciel');
+for(let i=0;i<70;i++){const e=document.createElement('div');e.className='etoile';e.style.left=r(0,1600)+'px';e.style.top=r(0,900)+'px';e.style.setProperty('--d',r(2,6)+'s');e.style.setProperty('--r',-r(0,6)+'s');ciel.appendChild(e)}
+setTimeout(()=>{for(let k=0;k<4;k++)setTimeout(()=>{for(let i=0;i<30;i++){const p=document.createElement('div');p.className='part';const a=Math.random()*Math.PI*2,d=60+Math.random()*260;p.style.left='800px';p.style.top='430px';p.style.setProperty('--dx',Math.cos(a)*d+'px');p.style.setProperty('--dy',Math.sin(a)*d+'px');stage.appendChild(p);setTimeout(()=>p.remove(),1500)}},k*250)},900);
+</script>
+</body>
+</html>

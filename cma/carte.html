@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>La carte des univers · Hub des Métiers d'Art</title>
+<style>
+html,body{margin:0;height:100%;background:#050912;overflow:hidden}
+#stage{position:absolute;left:50%;top:50%;width:1672px;height:941px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;overflow:hidden}
+#carte{position:absolute;inset:0;width:100%;height:100%;display:block}
+/* étoiles qui scintillent */
+.etoile{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.0;animation:scint var(--d) ease-in-out infinite;animation-delay:var(--r)}
+@keyframes scint{0%,100%{opacity:0;transform:scale(.6)}50%{opacity:.9;transform:scale(1.2)}}
+/* reflets sur l'eau : une bande claire qui dérive lentement, masquée aux zones d'eau */
+#eau{position:absolute;inset:0;pointer-events:none;mix-blend-mode:screen;opacity:.5;
+ background:repeating-linear-gradient(100deg,rgba(255,255,255,0) 0 38px,rgba(180,210,255,.08) 38px 40px,rgba(255,255,255,0) 40px 90px);
+ -webkit-mask:radial-gradient(ellipse 60% 70% at 50% 62%,#000 40%,transparent 75%);mask:radial-gradient(ellipse 60% 70% at 50% 62%,#000 40%,transparent 75%);
+ animation:derive 14s linear infinite}
+@keyframes derive{from{background-position:0 0}to{background-position:180px 30px}}
+/* halos de lumière des îles : pulsations lentes, désynchronisées */
+.halo{position:absolute;width:420px;height:300px;border-radius:50%;pointer-events:none;mix-blend-mode:screen;filter:blur(30px);opacity:.35;animation:pulse var(--d) ease-in-out infinite;animation-delay:var(--r);transform:translate(-50%,-50%)}
+@keyframes pulse{0%,100%{opacity:.22}50%{opacity:.5}}
+/* la forge : île mise en avant, plus vivante */
+#forge{width:520px;height:380px;opacity:.55;animation-duration:3.2s}
+/* fumée de la cheminée */
+.fumee{position:absolute;left:1508px;top:262px;width:26px;height:26px;border-radius:50%;background:rgba(200,200,210,.28);filter:blur(6px);animation:fumee var(--d) linear infinite;animation-delay:var(--r);opacity:0}
+@keyframes fumee{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:.6}100%{transform:translate(-40px,-160px) scale(2.4);opacity:0}}
+/* étincelles de forge */
+.etinc{position:absolute;left:1455px;top:440px;width:4px;height:4px;border-radius:50%;background:#ffcf6a;box-shadow:0 0 6px #ff9a2a;animation:etinc var(--d) ease-out infinite;animation-delay:var(--r);opacity:0}
+@keyframes etinc{0%{transform:translate(0,0);opacity:0}10%{opacity:1}100%{transform:translate(var(--x),var(--y));opacity:0}}
+/* bateaux qui dérivent */
+.bateau{position:absolute;width:70px;height:40px;animation:tangue var(--d) ease-in-out infinite;animation-delay:var(--r)}
+@keyframes tangue{0%,100%{transform:translate(0,0) rotate(-1deg)}50%{transform:translate(var(--x),var(--y)) rotate(1.2deg)}}
+/* léger mouvement d'ensemble : la carte respire */
+#monde{position:absolute;inset:0;animation:respire 18s ease-in-out infinite}
+@keyframes respire{0%,100%{transform:scale(1) translate(0,0)}50%{transform:scale(1.015) translate(-4px,-3px)}}
+#voile{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(0,0,0,0) 55%,rgba(0,0,0,.45) 100%)}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="monde">
+  <img id="carte" src="img/carte.jpg" alt="La carte des six univers du Hub des Métiers d'Art">
+  <div id="eau"></div>
+  <div class="halo" style="left:470px;top:190px;background:#f3c56a;--d:5.3s;--r:-1s"></div>
+  <div class="halo" style="left:1130px;top:200px;background:#8fd9a0;--d:6.1s;--r:-3s"></div>
+  <div class="halo" style="left:300px;top:430px;background:#c86ad4;--d:4.9s;--r:-2s"></div>
+  <div class="halo" id="forge" style="left:1400px;top:430px;background:#ff8a2a;--d:3.2s;--r:0s"></div>
+  <div class="halo" style="left:530px;top:720px;background:#5aa0ff;--d:5.7s;--r:-4s"></div>
+  <div class="halo" style="left:1150px;top:720px;background:#4fd0c8;--d:6.4s;--r:-1.5s"></div>
+  <div class="halo" style="left:836px;top:400px;width:300px;height:220px;background:#cfe3ff;--d:7s;--r:-2.5s;opacity:.3"></div>
+  <div id="fx"></div>
+ </div>
+ <div id="voile"></div>
+</div>
+<script>
+const stage=document.getElementById('stage'),fx=document.getElementById('fx');
+function fit(){stage.style.setProperty('--s',Math.min(innerWidth/1672,innerHeight/941))}addEventListener('resize',fit);fit();
+const r=(a,b)=>a+Math.random()*(b-a);
+// étoiles dans le ciel (bande haute), jamais sur les îles
+for(let i=0;i<60;i++){const e=document.createElement('div');e.className='etoile';e.style.left=r(20,1650)+'px';e.style.top=r(6,120)+'px';e.style.setProperty('--d',r(2.5,6)+'s');e.style.setProperty('--r',-r(0,6)+'s');fx.appendChild(e)}
+// fumée de forge
+for(let i=0;i<7;i++){const f=document.createElement('div');f.className='fumee';f.style.setProperty('--d',r(5,8)+'s');f.style.setProperty('--r',-r(0,8)+'s');fx.appendChild(f)}
+// étincelles
+for(let i=0;i<14;i++){const s=document.createElement('div');s.className='etinc';s.style.setProperty('--d',r(1.2,2.4)+'s');s.style.setProperty('--r',-r(0,3)+'s');s.style.setProperty('--x',r(-50,50)+'px');s.style.setProperty('--y',r(-90,-30)+'px');fx.appendChild(s)}
+// respiration réduite si l'utilisateur préfère moins d'animations
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.querySelectorAll('#monde,.halo,#eau,.fumee,.etinc,.etoile').forEach(e=>e.style.animation='none')}
+</script>
+</body>
+</html>
