@@ -398,7 +398,7 @@ const P = {
  ]
 };
 (async () => {
-  const noms = Object.keys(window).filter(k => window[k] && typeof window[k].get === 'function' && typeof window[k].init === 'function');
+  const noms = Object.keys(window).filter(k => { try { const v = window[k]; return v && typeof v.get === 'function' && typeof v.init === 'function'; } catch (e) { return false; } });
   const c = window[noms[0]]; try { await c.init({}); } catch(e) {}
   const m = (await c.get('./Block'))();
   (m.mount || m.default)(document.getElementById('boite'), P);
