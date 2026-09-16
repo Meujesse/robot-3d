@@ -22,6 +22,15 @@
 #bulle::after{content:"";position:absolute;right:-13px;top:34px;border:13px solid transparent;border-left-color:var(--creme);border-right:0}
 .feuille{position:absolute;width:22px;height:12px;border-radius:0 100% 0 100%;background:linear-gradient(135deg,#9bc57a,#4f8a3c);pointer-events:none;animation:vole var(--d) linear infinite;animation-delay:var(--r);opacity:0}
 @keyframes vole{0%{transform:translate(0,0) rotate(0);opacity:0}10%{opacity:.7}100%{transform:translate(var(--x),var(--y)) rotate(540deg);opacity:0}}
+
+#relier{position:absolute;left:130px;top:112px;width:960px;height:760px;display:none}
+#relier h2{position:absolute;left:70px;top:44px;margin:0;font:700 30px/1.1 Fraunces;color:var(--sapin)}
+#relier .rang{position:absolute;left:60px;width:420px;height:84px;display:flex;align-items:center;gap:16px}
+#relier .rang .pic{width:64px;height:64px;border-radius:50%;background:#dfe9d6 center/cover;border:3px solid #fff;box-shadow:0 4px 10px rgba(0,0,0,.15);display:grid;place-items:center;font-size:28px;flex:none}
+#relier .rang b{font:800 24px/1.15 Nunito;color:var(--encre)}
+#relier .rang i{position:absolute;right:-6px;top:50%;width:36px;height:3px;background:repeating-linear-gradient(90deg,var(--sapin2) 0 6px,transparent 6px 11px)}
+#relier .reserve{position:absolute;left:60px;top:548px;width:860px;height:190px;border-radius:22px;background:rgba(31,77,58,.07);border:2px dashed rgba(31,77,58,.18)}
+#relier .reserve span{position:absolute;left:18px;top:-13px;background:#f4ecd8;padding:0 10px;font:800 13px/26px Nunito;letter-spacing:.14em;text-transform:uppercase;color:var(--sapin2)}
 </style>
 </head>
 <body>
@@ -31,6 +40,14 @@
  <div id="fx"></div>
  <div id="tete"><span class="sur" id="sur">Défi 1 / 3</span><h1 id="titre">Quel est ce végétal ?</h1></div>
  <div id="cadre"></div>
+ <div id="relier">
+  <h2>Relie chaque nom commun à son nom latin</h2>
+  <div class="rang" style="top:116px"><div class="pic" style="background-image:url(img/photos/ginkgo.jpg)"></div><b>Arbre aux quarante écus</b><i></i></div>
+  <div class="rang" style="top:222px"><div class="pic" style="background-image:url(img/photos/narcisse.jpg)"></div><b>Jonquille</b><i></i></div>
+  <div class="rang" style="top:328px"><div class="pic" style="background-image:url(img/photos/lavande.jpg)"></div><b>Lavande vraie</b><i></i></div>
+  <div class="rang" style="top:434px"><div class="pic">🌿</div><b>Laurier-cerise</b><i></i></div>
+  <div class="reserve"><span>Noms latins à placer</span></div>
+ </div>
  <div id="celian" class="perso"><img id="pose" src="img/celian-reflechit.png" alt="Célian"></div>
  <div id="bulle" class="bulle">Regarde bien les indices avant de choisir.</div>
 </div>
@@ -40,6 +57,7 @@ const q=new URLSearchParams(location.search);
 if(q.get('sur'))document.getElementById('sur').textContent=q.get('sur');
 if(q.get('titre'))document.getElementById('titre').textContent=q.get('titre');
 if(q.get('bulle'))document.getElementById('bulle').textContent=q.get('bulle');
+if(q.get('relier'))document.getElementById('relier').style.display='block';
 if(q.get('pose'))document.getElementById('pose').src='img/celian-'+q.get('pose')+'.png';
 const fx=document.getElementById('fx'),r=(a,b)=>a+Math.random()*(b-a);
 for(let i=0;i<8;i++){const f=document.createElement('div');f.className='feuille';f.style.left=r(1100,1580)+'px';f.style.top=r(-40,120)+'px';f.style.setProperty('--d',r(10,18)+'s');f.style.setProperty('--r',-r(0,16)+'s');f.style.setProperty('--x',r(-300,100)+'px');f.style.setProperty('--y',r(600,900)+'px');fx.appendChild(f)}
