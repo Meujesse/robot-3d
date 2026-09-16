@@ -17,6 +17,9 @@
   },
   stop(){if(courant)courant.pause();if(bouton)bouton.classList.remove('joue')}
  };
+ // lance les entrées animées quand la scène devient visible (Genially précharge les pages)
+ const io=new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting&&innerWidth>50){document.documentElement.classList.remove('anim');void document.documentElement.offsetWidth;document.documentElement.classList.add('anim')}}});
+ io.observe(stage);
  // coupe la voix quand la page Genially n'est plus visible
  document.addEventListener('visibilitychange',()=>{if(document.hidden)voix.stop()});
 })();

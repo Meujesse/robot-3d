@@ -10,7 +10,7 @@
 #fond{filter:brightness(.55) saturate(1.1) blur(2px);transform:scale(1.04)}
 #halo{position:absolute;left:260px;top:40px;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(242,193,78,.45),rgba(242,193,78,0) 62%);animation:halo 4s ease-in-out infinite}
 @keyframes halo{50%{transform:scale(1.06);opacity:.8}}
-#badge{position:absolute;left:470px;top:150px;width:400px;height:400px;animation:pose 1.1s cubic-bezier(.2,1.4,.4,1) both}
+#badge{position:absolute;left:470px;top:150px;width:400px;height:400px}.anim #badge{animation:pose 1.1s cubic-bezier(.2,1.4,.4,1) both}
 @keyframes pose{from{transform:scale(.3) rotate(-25deg);opacity:0}}
 #bTxt{position:absolute;left:0;right:0;top:282px;text-align:center;line-height:1.25}#bTxt b{display:block;font:800 14px/1.3 Nunito;letter-spacing:2px;color:#ffe29a}#bTxt i{font:italic 600 16px Fraunces;color:#fbf6ea}
 #badge svg{width:100%;height:100%;filter:drop-shadow(0 20px 40px rgba(0,0,0,.45))}
@@ -67,7 +67,7 @@
   <div id="acquis"><span>🌿 Ginkgo biloba</span><span>🌼 Narcissus pseudonarcissus</span><span>💜 Lavandula angustifolia</span></div>
  </div>
  <div id="celian" class="perso"><img src="img/celian-bravo.png" alt="Célian"></div>
- <div id="bulle" class="bulle">Joli travail ! Dans un vrai parcours, on enchaîne sur <b>toute la liste de ta formation</b>, saison après saison.</div>
+ <div id="bulle" class="bulle entree" style="--d:.9s">Joli travail ! Dans un vrai parcours, on enchaîne sur <b>toute la liste de ta formation</b>, saison après saison.</div>
  <button id="son" class="son" title="Écouter Célian">🔊</button>
  <div id="pied">Démo conçue par Meujesse Learning · contenus sourcés (Tela Botanica, Floriscope, SNHF, listes CNRV 2026)</div>
 </div>
@@ -75,7 +75,6 @@
 <script>
 const g=document.getElementById('dents');const NS='http://www.w3.org/2000/svg';
 for(let i=0;i<24;i++){const r=document.createElementNS(NS,'rect');r.setAttribute('x',-14);r.setAttribute('y',-178);r.setAttribute('width',28);r.setAttribute('height',40);r.setAttribute('rx',6);r.setAttribute('fill',i%2?'#c98e1c':'#f2c14e');r.setAttribute('transform',`rotate(${i*15})`);g.appendChild(r)}
-setTimeout(()=>document.getElementById('bulle').classList.add('on'),900);
 const son=document.getElementById('son');son.onclick=e=>{e.stopPropagation();voix.jouer('audio/bravo.mp3',son)};
 addEventListener('pointerdown',function once(e){if(e.target!==son)voix.jouer('audio/bravo.mp3',son)},{once:true});
 const fx=document.getElementById('fx'),r=(a,b)=>a+Math.random()*(b-a);const cols=['#f2c14e','#7fb069','#9bc57a','#fbf6ea','#8a78d8'];
