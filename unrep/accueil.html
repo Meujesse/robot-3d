@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reconnaître les végétaux · Démo Meujesse Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css">
+<style>
+#fond{animation:zoom 40s ease-in-out infinite alternate;transform-origin:30% 60%}
+@keyframes zoom{from{transform:scale(1.02)}to{transform:scale(1.08)}}
+#voile{position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,32,24,.82) 0%,rgba(14,32,24,.55) 42%,rgba(14,32,24,0) 72%)}
+#tete{position:absolute;left:80px;top:90px;width:720px;color:#fff;opacity:0;transform:translateY(14px);transition:1s .2s}
+#tete.on{opacity:1;transform:none}
+#tete h1{margin:14px 0 18px;font:700 66px/1.02 Fraunces;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+#tete h1 em{font-style:italic;color:var(--soleil)}
+#tete p{margin:0;font:600 21px/1.5 Nunito;color:rgba(255,255,255,.92);max-width:620px}
+#etapes{position:absolute;left:80px;top:470px;display:flex;gap:16px}
+.et{width:170px;padding:16px 16px 18px;border-radius:18px;background:rgba(251,246,234,.12);border:1px solid rgba(251,246,234,.3);backdrop-filter:blur(6px);color:#fff;opacity:0;transform:translateY(14px);transition:.7s}
+.et.on{opacity:1;transform:none}
+.et .n{font:800 12px/1 Nunito;letter-spacing:.2em;color:var(--soleil)}
+.et .ic{font-size:34px;margin:10px 0 6px}
+.et b{display:block;font:700 18px/1.2 Fraunces}
+.et span{font:600 13.5px/1.35 Nunito;color:rgba(255,255,255,.8)}
+#celian{left:1150px;height:760px}
+#bulle{left:760px;top:170px;width:380px}
+#bulle::after{content:"";position:absolute;right:-14px;top:60px;border:14px solid transparent;border-left-color:var(--creme);border-right:0}
+#son{left:1110px;top:150px}
+.feuille{position:absolute;width:26px;height:14px;border-radius:0 100% 0 100%;background:linear-gradient(135deg,#9bc57a,#4f8a3c);opacity:.0;pointer-events:none;animation:vole var(--d) linear infinite;animation-delay:var(--r)}
+@keyframes vole{0%{transform:translate(0,0) rotate(0);opacity:0}10%{opacity:.85}100%{transform:translate(var(--x),var(--y)) rotate(540deg);opacity:0}}
+#pied{position:absolute;left:80px;bottom:34px;font:700 13px/1.3 Nunito;color:rgba(255,255,255,.7);letter-spacing:.04em}
+</style>
+</head>
+<body>
+<div id="stage">
+ <img id="fond" class="fond" src="img/jardin.jpg" alt="">
+ <div id="voile"></div>
+ <div id="fx"></div>
+ <div id="tete">
+  <div class="sur">Démo · Reconnaissance des végétaux</div>
+  <h1>Reconnaître une plante <em>comme un pro</em></h1>
+  <p>Avant de tailler, planter ou entretenir un massif, un paysagiste doit savoir ce qu'il a devant lui. Suis Célian sur le terrain, observe, zoome, puis prouve que tu sais nommer chaque végétal.</p>
+ </div>
+ <div id="etapes">
+  <div class="et"><div class="n">ÉTAPE 1</div><div class="ic">🔎</div><b>Observer</b><span>Les indices sur le terrain</span></div>
+  <div class="et"><div class="n">ÉTAPE 2</div><div class="ic">🌱</div><b>Disséquer</b><span>La plante en 3D, en coupe</span></div>
+  <div class="et"><div class="n">ÉTAPE 3</div><div class="ic">🗓️</div><b>Suivre</b><span>Son année, saison par saison</span></div>
+  <div class="et"><div class="n">ÉTAPE 4</div><div class="ic">🏅</div><b>Nommer</b><span>Le défi final et ton badge</span></div>
+ </div>
+ <div id="celian" class="perso"><img src="img/celian-accueil.png" alt="Célian"></div>
+ <div id="bulle" class="bulle">Salut, moi c'est <b>Célian</b> ! Je suis apprenti paysagiste. On part sur le terrain ensemble : on observe, on apprend les noms, <b>même en latin</b>. Prêt ?</div>
+ <button id="son" class="son" title="Écouter Célian">🔊</button>
+ <div id="pied">Démo réalisée par Meujesse Learning · clique sur la flèche pour commencer</div>
+</div>
+<script src="js/commun.js"></script>
+<script>
+setTimeout(()=>document.getElementById('tete').classList.add('on'),150);
+document.querySelectorAll('.et').forEach((e,i)=>setTimeout(()=>e.classList.add('on'),700+i*180));
+setTimeout(()=>document.getElementById('bulle').classList.add('on'),1400);
+const son=document.getElementById('son');
+son.addEventListener('click',e=>{e.stopPropagation();voix.jouer('audio/accueil.mp3',son)});
+addEventListener('pointerdown',function once(e){if(e.target!==son)voix.jouer('audio/accueil.mp3',son)},{once:true});
+const fx=document.getElementById('fx'),r=(a,b)=>a+Math.random()*(b-a);
+for(let i=0;i<10;i++){const f=document.createElement('div');f.className='feuille';f.style.left=r(-40,500)+'px';f.style.top=r(-40,200)+'px';f.style.setProperty('--d',r(9,16)+'s');f.style.setProperty('--r',-r(0,14)+'s');f.style.setProperty('--x',r(500,1100)+'px');f.style.setProperty('--y',r(500,900)+'px');fx.appendChild(f)}
+</script>
+</body>
+</html>
