@@ -7,6 +7,8 @@ const V = (x,y,z)=>new THREE.Vector3(x,y,z);
 const lerp=(a,b,t)=>a+(b-a)*t;
 function mat(color,o={}){return new THREE.MeshStandardMaterial(Object.assign({color,roughness:.75,metalness:0},o))}
 function tube(points,r,col,seg=40,rs=10){const c=new THREE.CatmullRomCurve3(points);const m=new THREE.Mesh(new THREE.TubeGeometry(c,seg,r,rs,false),typeof col==='object'?col:mat(col));m.castShadow=true;m.userData.curve=c;return m}
+const lisse=(a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t)};
+const plage=(m,a,b,c,d)=>m<a||m>d?0:m<b?lisse(a,b,m):m<=c?1:1-lisse(c,d,m);
 function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646}}
 
 // ---------- scène ----------
@@ -56,7 +58,7 @@ function feuilleGinkgo(texture){
 }
 export function construireGinkgo(){
  const G=new THREE.Group();G.name='ginkgo';const tex=texNervures();const feuilles=[],graines=[],bourgeons=[];const cible={};
- const bois=mat(0x8a7b6c,{roughness:.95});
+ const bois=mat(0x8a7b6c,{roughness:.95});let graineOuverteTmp=null;
  const branche=tube([V(-1.25,.55,0),V(-.5,.72,.05),V(.3,.86,-.02),V(1.0,1.02,0)],.05,bois,60,12);G.add(branche);
  const pousse=tube([V(1.0,1.02,0),V(1.3,1.18,.05),V(1.62,1.42,.02)],.022,mat(0x98905e),30,8);G.add(pousse);
  cible.ecorce=branche;cible.long=pousse;
@@ -74,19 +76,43 @@ export function construireGinkgo(){
   for(let j=0;j<n;j++){const f=feuilleGinkgo(tex);const a=(j/n)*Math.PI*2+k;f.position.y=.12;f.rotation.set(0,a,0);f.rotateX(-.55-.1*(j%2));f.scale.setScalar(.85+.1*((j+k)%3)/2);court.add(f);feuilles.push(f)}
   if(k===1){cible.court=court;
    [[-.5,.35],[.6,-.3]].forEach(([ax,az],j)=>{const ped=tube([V(0,.12,0),V(ax*.12,.05,az*.12),V(ax*.22,-.12,az*.22)],.006,mat(0xb5a23c),16,6);court.add(ped);
-    const gr=new THREE.Mesh(new THREE.SphereGeometry(.07,24,16),mat(0xc9b04a,{roughness:.45}));gr.position.set(ax*.22,-.18,az*.22);gr.castShadow=true;court.add(gr);graines.push({gr,ped});if(j===0)cible.graine=gr})}
+    const gr=new THREE.Mesh(new THREE.SphereGeometry(.07,24,16),mat(0xc9b04a,{roughness:.45}));gr.position.set(ax*.22,-.18,az*.22);gr.castShadow=true;court.add(gr);graines.push({gr,ped});if(j===0){cible.graine=gr;
+    const ouv=new THREE.Group();ouv.position.copy(gr.position);ouv.visible=false;court.add(ouv);
+    const chairM=mat(0xe0a13a,{roughness:.45,side:THREE.DoubleSide}),pulpeM=mat(0xf7dd96,{roughness:.85}),coqueM=mat(0xf1e7cc,{roughness:.55}),amandeM=mat(0xcad87c,{roughness:.7});
+    const moitie=(arriere)=>{const h=new THREE.Group();
+     const peau=new THREE.Mesh(new THREE.SphereGeometry(.07,28,18,arriere?Math.PI:0,Math.PI),chairM);peau.castShadow=true;h.add(peau);
+     const dz=arriere?1:-1;const disque=(r,sy,m,o)=>{const d=new THREE.Mesh(new THREE.CircleGeometry(r,40),m);d.scale.set(1,sy,1);d.position.z=dz*o;if(!arriere)d.rotation.y=Math.PI;h.add(d);return d};
+     const pulpe=disque(.069,1,pulpeM,.0005),coque=disque(.044,1.28,coqueM,.001),amande=disque(.027,1.3,amandeM,.0015);
+     return {h,peau,pulpe,coque,amande}};
+    const arr=moitie(true),dev=moitie(false);ouv.add(arr.h,dev.h);
+    graineOuverteTmp={ouv,arr,dev,gr}}})}
   if(k===2)cible.bourgeon=b;
  });
  cible.feuille=feuilles[2];
  G.userData={feuilles,graines,bourgeons,cible,
   vue:{pos:V(.25,2.3,4.9),cible:V(.2,.95,0),min:1.2,max:7},
   points:{feuille:[cible.feuille,V(0,.5,0)],court:[cible.court,V(0,.1,0)],long:[pousse,null,.75],graine:[cible.graine,V(0,0,0)],bourgeon:[cible.bourgeon,V(0,.02,0)],ecorce:[branche,null,.25]}};
+ G.userData.graineOuverte=graineOuverteTmp;G.userData.anim={o:0,cible:0};
+ {const g=G.userData.graineOuverte;Object.assign(G.userData.points,{chair:[g.arr.peau,V(-.05,.045,-.02)],coque:[g.arr.coque,V(0,.045,0)],amande:[g.arr.amande,V(0,-.01,0)]})}
+ G.userData.setCoupe=(on)=>{G.userData.anim.cible=on?1:0};
+ G.userData.maj=(dt)=>{const a=G.userData.anim;a.o+=(a.cible-a.o)*Math.min(1,dt*4);const g=G.userData.graineOuverte;if(!g)return;
+  const o=a.o;g.ouv.visible=o>.01;g.gr.visible=o<=.01&&g.gr.userData.visibleSaison!==false;
+  g.dev.h.position.set(.17*o,0,.03*o);g.dev.h.rotation.y=-o*Math.PI*.9;g.arr.h.position.set(-.02*o,0,0);g.arr.h.rotation.y=o*.25;g.ouv.scale.setScalar(1+o*.35)};
  G.userData.saison=(s,t)=>{ // t : 0..1 progression de la transition
   const cols={printemps:0x9fd46a,ete:0x4f9a3c,automne:0xe8b92a,hiver:0x4f9a3c};const tailles={printemps:.6,ete:1,automne:1,hiver:0};
   feuilles.forEach(f=>{const cible=tailles[s];f.userData.k=lerp(f.userData.k??1,cible,t);f.scale.setScalar(Math.max(.001,f.userData.k*(f.userData.base??(f.userData.base=f.scale.x/(f.userData.k0??(f.userData.k0=1))))));f.visible=f.userData.k>.02;f.material.color.lerp(new THREE.Color(cols[s]),t)});
   const gc={printemps:[0x9fbf5a,.35],ete:[0xb9c25a,.8],automne:[0xe0a13a,1],hiver:[0xe0a13a,0]}[s];
   graines.forEach(({gr,ped})=>{gr.material.color.lerp(new THREE.Color(gc[0]),t);gr.userData.k=lerp(gr.userData.k??1,gc[1],t);gr.scale.setScalar(Math.max(.001,gr.userData.k));gr.visible=ped.visible=gr.userData.k>.02});
   bourgeons.forEach(b=>b.scale.setScalar(s==='hiver'?1.25:.8));
+ };
+ G.userData.annee=(m)=>{
+  const kF=plage(m,3.2,5,10.2,11.2);const vertTendre=new THREE.Color(0x9fd46a),vert=new THREE.Color(0x4f9a3c),or=new THREE.Color(0xe8b92a);
+  const c=m<5?vertTendre.clone().lerp(vert,lisse(3.2,5,m)):vert.clone().lerp(or,lisse(8.8,9.8,m));
+  feuilles.forEach(f=>{if(f.userData.base===undefined)f.userData.base=f.scale.x;f.scale.setScalar(Math.max(.001,f.userData.base*(m<5?.35+.65*kF:kF)));f.visible=kF>.02;f.material.color.copy(c)});
+  const kG=plage(m,3.2,8,11,11.8);const cg=new THREE.Color(0x9fbf5a).lerp(new THREE.Color(0xc9c25a),lisse(6,8.5,m)).lerp(new THREE.Color(0xe0a13a),lisse(8.5,10,m));
+  graines.forEach(({gr,ped})=>{gr.material.color.copy(cg);gr.scale.setScalar(Math.max(.001,.25+.75*kG));gr.userData.visibleSaison=kG>.02;gr.visible=kG>.02;ped.visible=kG>.02});
+  bourgeons.forEach(b=>b.scale.setScalar(kF<.1?1.25:.8));
+  G.userData.chute=(m>10&&m<11.3);
  };
  return G;
 }
@@ -104,7 +130,7 @@ function coupeCouche(ext,int){ // face de coupe (plan z=0) entre deux profils
  return new THREE.ShapeGeometry(s,2);
 }
 export function construireNarcisse(){
- const G=new THREE.Group();G.name='narcisse';const cible={};
+ const G=new THREE.Group();G.name='narcisse';const cible={};let devantBulbe=null;
  // bloc de sol en coupe (moitié arrière)
  const sol=new THREE.Group();G.add(sol);
  const c=document.createElement('canvas');c.width=512;c.height=256;const g=c.getContext('2d');const gr=g.createLinearGradient(0,0,0,256);gr.addColorStop(0,'#5a3c26');gr.addColorStop(.25,'#7a5436');gr.addColorStop(1,'#4f3522');g.fillStyle=gr;g.fillRect(0,0,512,256);
@@ -122,7 +148,7 @@ export function construireNarcisse(){
  const entier=new THREE.Group(),coupe=new THREE.Group();G.add(entier,coupe);
  ks.forEach((k,i)=>{const prof=profilBulbe(k);
   const m=mat(cols[i],{roughness:i?.55:.95,side:THREE.DoubleSide});
-  const plein=new THREE.Mesh(new THREE.LatheGeometry(prof,48),m);plein.castShadow=true;if(i===0)entier.add(plein);
+  const plein=new THREE.Mesh(new THREE.LatheGeometry(prof,48),m);plein.castShadow=true;if(i===0){entier.add(plein);const dm=m.clone();dm.transparent=true;const devant=new THREE.Mesh(new THREE.LatheGeometry(prof,32,-Math.PI/2,Math.PI),dm);devant.visible=false;G.add(devant);devantBulbe=devant}
   const demi=new THREE.Mesh(new THREE.LatheGeometry(prof,32,Math.PI/2,Math.PI),m);coupe.add(demi);couches.push(demi);
   const int=ks[i+1]?profilBulbe(ks[i+1]):null;const fm=new THREE.Mesh(coupeCouche(prof,int),mat([0x8f6641,0xeadcb4,0xf8f1dc,0xe6d6a8,0xf6eed3][i],{roughness:.6}));fm.position.z=.002+i*.0005;coupe.add(fm);faces.push(fm)});
  // bourgeon central
@@ -156,9 +182,11 @@ export function construireNarcisse(){
  G.userData={cible,entier,coupe,feuilles,hampe,fleur,racines,bourg,jeunes,faces,
   vue:{pos:V(1.9,1.05,5.4),cible:V(0,.3,0),min:1.3,max:7.5},
   points:{couronne:[couronne,V(0,.12,0)],tepales:[tep,V(.1,0,0)],spathe:[spathe,V(0,0,0)],ovaire:[ovaire,V(0,0,0)],hampe:[hampe,null,.5],feuilles:[feuilles[1],V(.2,.7,0)],tunique:[plateau,V(-.28,.3,.05)],ecailles:[couches[2],V(.15,-.62,.01)],bourgeon:[bourg,V(0,.03,.08)],plateau:[plateau,V(0,0,.05)],racines:[racines,V(-.22,-.2,0)]}};
- let coupeOn=false;
- G.userData.setCoupe=(on)=>{coupeOn=on;entier.visible=!on;coupe.visible=on;};
- G.userData.setCoupe(true);
+ G.userData.anim={o:1,cible:1};
+ const appliquerCoupe=()=>{const o=G.userData.anim.o;entier.visible=o<.02;coupe.visible=o>=.02;devantBulbe.visible=o>.02&&o<.98;devantBulbe.position.z=.55*o;devantBulbe.position.y=.12*o;devantBulbe.material.opacity=1-o};
+ G.userData.setCoupe=(on,direct)=>{G.userData.anim.cible=on?1:0;if(direct){G.userData.anim.o=on?1:0;appliquerCoupe()}};
+ G.userData.maj=(dt)=>{const a=G.userData.anim;if(Math.abs(a.cible-a.o)<.001)return;a.o+=(a.cible-a.o)*Math.min(1,dt*3.5);if(Math.abs(a.cible-a.o)<.01)a.o=a.cible;appliquerCoupe()};
+ G.userData.setCoupe(true,true);
  G.userData.saison=(s,t)=>{
   const aerien={printemps:1,ete:0,automne:0,hiver:0}[s];
   const cible2={printemps:1,ete:0,automne:.8,hiver:1}[s];
@@ -169,8 +197,19 @@ export function construireNarcisse(){
   racines.scale.set(1,Math.max(.001,G.userData.kR),1);racines.visible=G.userData.kR>.03;
   jeunes.forEach(j=>j.scale.set(.5,lerp(j.scale.y,{printemps:3.4,ete:2.4,automne:3.6,hiver:4.6}[s],t),.25));
   herbe.material.color.lerp(new THREE.Color(s==='hiver'?0xe8eef0:0x6f9d4a),t);
-  if(s==='ete'||s==='automne'||s==='hiver')G.userData.setCoupe(true);
+  if(s==='ete'||s==='automne'||s==='hiver')G.userData.setCoupe(true,true);
   G.userData.lueur=(s==='ete');
+ };
+ G.userData.annee=(m)=>{
+  const kF=plage(m,1.5,2.8,5,6.5),kH=plage(m,2,2.8,4.8,5.6),kFl=plage(m,2.6,3.1,4.3,4.8);
+  const jaune=lisse(4.5,6,m);
+  feuilles.forEach(f=>{f.scale.set(1,Math.max(.001,kF),1);f.visible=kF>.02;f.material.color.set(0x6f9c84).lerp(new THREE.Color(0xc9b35a),jaune)});
+  hampe.scale.set(1,Math.max(.001,kH),1);hampe.visible=kH>.03;fleur.visible=kFl>.02&&kH>.9;fleur.scale.setScalar(Math.max(.001,kFl));fleur.position.y=-.24+(1.52+.24)*kH;
+  const kR=m<5.5?1:m<7?1-lisse(5.5,7,m):m<9?0:lisse(9,10.5,m);racines.scale.set(1,Math.max(.001,kR),1);racines.visible=kR>.03;
+  const sy=m<2?4.6:m<5?4.6-2.2*lisse(2,5,m):m<9?2.4:2.4+2.2*lisse(9,12,m);jeunes.forEach(j=>j.scale.set(.5,sy,.25));
+  herbe.material.color.set(0x6f9d4a).lerp(new THREE.Color(0xe8eef0),(m<1.5||m>11.3)?1:0);
+  G.userData.lueur=(m>4.8&&m<8.2);
+  G.userData.setCoupe(true,true);
  };
  return G;
 }
@@ -221,7 +260,12 @@ export function construireLavande(){
  G.userData={cible,tiges,hampes,epis,fleurI,calI,feuI,loupe,
   vue:{pos:V(1.4,1.35,2.9),cible:V(0,.55,0),min:1,max:5.5},
   points:{epi:[null,epis[3].centre],hampe:[hampes[3],null,.5],tige:[tiges[5],null,.35],feuilles:[tiges[8],null,.25],base:[branches[0],null,.6],fleur:[fl,V(0,.08,.04)]}};
- G.userData.setCoupe=(on)=>{loupe.visible=on};
+ const depart=tiges[5].userData.curve.getPointAt(.35).clone(),arrivee=loupe.position.clone();
+ G.userData.anim={o:0,cible:0};
+ G.userData.setCoupe=(on)=>{G.userData.anim.cible=on?1:0};
+ G.userData.maj=(dt)=>{const a=G.userData.anim;a.o+=(a.cible-a.o)*Math.min(1,dt*3);const o=a.o;loupe.visible=o>.02;
+  const e=o*o*(3-2*o);loupe.position.lerpVectors(depart,arrivee,e);loupe.scale.setScalar(.04+.56*e);loupe.rotation.y=(1-e)*2.5;fl.visible=o>.85};
+ G.userData.points.coupe=[sect,V(0,0,.34)];
  const couleurs={printemps:0x7d6cc9,ete:0x7d6cc9,automne:0x8f8579,hiver:0x8f8579};
  G.userData.saison=(s,t)=>{
   const k={printemps:0,ete:1,automne:.85,hiver:.7}[s];G.userData.kE=lerp(G.userData.kE??1,k,t);
@@ -230,6 +274,14 @@ export function construireLavande(){
   fleurI.visible=calI.visible=ke>.05;fleurI.material.color.lerp(new THREE.Color(couleurs[s]),t);
   fleurI.scale.setScalar(1);
   feuI.material.color.lerp(new THREE.Color(s==='hiver'?0x9fb0a8:0xa3b59c),t);
+ };
+ G.userData.annee=(m)=>{
+  const pousse=lisse(4.8,5.6,m),fleurit=plage(m,5.4,5.8,7.2,8.5),present=(m>=4.8||m<3.5)?1:0,retrait=m<2.5?1:m<3.5?1-lisse(2.5,3.5,m):1;
+  const k=m>=4.8?pousse:(m<3.5?retrait:0);
+  hampes.forEach(h=>{h.visible=k>.05});fleurI.visible=calI.visible=k>.05;
+  const c=new THREE.Color(0xa99fd0).lerp(new THREE.Color(0x7d6cc9),lisse(5.4,5.8,m)).lerp(new THREE.Color(0x8f8579),m>7?lisse(7.2,8.5,m):0);
+  if(m<3.5||m>8.5)c.set(0x8f8579);fleurI.material.color.copy(c);
+  feuI.material.color.set(0xa3b59c).lerp(new THREE.Color(0x9fb0a8),(m<2||m>11)?1:0);
  };
  return G;
 }

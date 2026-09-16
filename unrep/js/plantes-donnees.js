@@ -11,7 +11,10 @@ export const PLANTES = {
    long: ["Pousse de l'année", "Sur la pousse longue de l'année, les feuilles sont alternes."],
    graine: ["Graine nue", "Pas de fleur, pas de vrai fruit : sur un pied femelle, les ovules nus deviennent des graines charnues jaune-orangé (2 à 3 cm) qui sentent le beurre rance une fois tombées."],
    bourgeon: ["Bourgeon en dôme", "En hiver, rameaux gris hérissés de rameaux courts, bourgeons largement coniques à en dôme."],
-   ecorce: ["Rameau âgé", "Rameaux brun-rouge clair qui deviennent gris. L'écorce du tronc, lisse jeune, se creuse ensuite de sillons verticaux."]
+   ecorce: ["Rameau âgé", "Rameaux brun-rouge clair qui deviennent gris. L'écorce du tronc, lisse jeune, se creuse ensuite de sillons verticaux."],
+   chair: ["Enveloppe charnue", "La couche externe de la graine, jaune-orangé et charnue. C'est elle qui sent le beurre rance une fois la graine tombée au sol."],
+   coque: ["Coque dure", "Sous la chair, une coque dure de couleur crème protège l'intérieur. Aucun ovaire autour : la graine est nue, c'est la marque d'une gymnosperme."],
+   amande: ["Amande", "Au cœur de la coque, l'amande contient les réserves de la graine."]
   },
   saisons: {
    printemps: ["Mars-avril : débourrement", "Les jeunes feuilles vert tendre sortent des rameaux courts. L'espèce est dioïque : pieds mâles à chatons polliniques, pieds femelles à ovules nus. Pollinisation en mars-avril."],
@@ -54,7 +57,8 @@ export const PLANTES = {
    tige: ["Tige carrée", "Tige quadrangulaire : avec les feuilles opposées, c'est le réflexe Lamiacées (comme le romarin ou la sauge)."],
    feuilles: ["Feuilles opposées étroites", "Linéaires à lancéolées, 2,5 à 4,5 cm, gris-vert, persistantes. Angustifolia veut dire « à feuilles étroites »."],
    base: ["Base ligneuse", "Sous-arbrisseau en touffe basse de 30 à 60 cm : les tiges deviennent ligneuses à la base."],
-   fleur: ["Fleur à deux lèvres", "Chaque petite fleur a une corolle bilabiée et 4 étamines. Le fruit est un tétrakène."]
+   fleur: ["Fleur à deux lèvres", "Chaque petite fleur a une corolle bilabiée et 4 étamines. Le fruit est un tétrakène."],
+   coupe: ["Tige coupée", "En coupe, la tige a quatre côtés et quatre angles : elle est carrée. Les deux feuilles partent face à face, au même niveau : elles sont opposées."]
   },
   saisons: {
    printemps: ["Printemps : nouvelles pousses", "De jeunes tiges gris-vert repartent de la base ligneuse. Pas encore d'épis."],

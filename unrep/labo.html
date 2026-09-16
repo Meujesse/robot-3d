@@ -38,7 +38,7 @@
 #guide img{width:84px;height:84px;border-radius:50%;box-shadow:0 6px 18px rgba(0,0,0,.2)}
 #guideBulle{position:absolute;right:120px;top:30px;width:330px;opacity:1;transform:none;font-size:15.5px;padding:12px 16px}
 #guideBulle::after{content:"";position:absolute;right:-12px;top:16px;border:12px solid transparent;border-left-color:var(--creme);border-right:0}
-#son{left:1540px;top:112px;width:40px;height:40px;font-size:16px}
+#son{left:1066px;top:40px;width:44px;height:44px;font-size:17px}
 /* pastilles */
 #pastilles{position:absolute;left:470px;top:0;width:1130px;height:900px;pointer-events:none}
 .pas{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer}
@@ -55,10 +55,20 @@
 .s{flex:1;border:0;border-radius:14px;padding:10px 4px;background:#fff;cursor:pointer;font:800 13px/1.1 Nunito;color:var(--sapin);box-shadow:0 6px 16px rgba(31,77,58,.12);display:flex;flex-direction:column;align-items:center;gap:4px}
 .s span{font-size:24px}
 .s.on{background:var(--sapin);color:#fff}
-#frise{position:absolute;left:520px;right:60px;bottom:30px;height:8px;border-radius:99px;background:rgba(31,77,58,.15);display:none}
-#frise i{position:absolute;left:0;top:0;bottom:0;border-radius:99px;background:linear-gradient(90deg,#9fd46a,#4f9a3c,#e8b92a,#a8c4d8);transition:width .8s}
-.mode-saisons #saisons,.mode-saisons #frise{display:flex}
+#frise{position:absolute;left:540px;right:70px;bottom:26px;height:92px;display:none;background:rgba(251,246,234,.92);border-radius:22px;box-shadow:0 10px 30px rgba(31,77,58,.18);padding:12px 22px 12px 86px}
+.mode-saisons #saisons{display:flex}
 .mode-saisons #frise{display:block}
+.mode-saisons #bCoupe{display:none}
+#lecture{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:0;background:var(--sapin);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 6px 16px rgba(31,77,58,.35)}
+#piste{position:relative;height:100%;cursor:pointer;touch-action:none}
+#bandes{position:absolute;left:0;right:0;top:30px;height:14px;border-radius:99px;overflow:hidden;display:flex}
+#bandes i{height:100%}
+#mois{position:absolute;left:0;right:0;top:52px;display:flex}
+#mois span{flex:1;text-align:center;font:800 11px/1 Nunito;color:#5b6b60;letter-spacing:.04em}
+#etiqSaisons{position:absolute;left:0;right:0;top:4px;height:18px}
+#etiqSaisons span{position:absolute;transform:translateX(-50%);font:800 12px/1 Nunito;color:var(--sapin);white-space:nowrap}
+#pouce{position:absolute;top:37px;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:#fff;border:3px solid var(--sapin);box-shadow:0 6px 16px rgba(0,0,0,.25);display:grid;place-items:center;font-size:22px;cursor:grab;pointer-events:none}
+#astuceFrise{position:absolute;right:22px;top:4px;font:700 11px/1 Nunito;color:#8a978e}
 #neige,#chute{position:absolute;left:470px;top:0;width:1130px;height:900px;pointer-events:none;overflow:hidden}
 .flocon{position:absolute;top:-10px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.9;animation:tombe var(--d) linear infinite;animation-delay:var(--r)}
 @keyframes tombe{to{transform:translate(var(--x),920px)}}
@@ -80,7 +90,7 @@
   <div id="actions"><button class="btn" id="bCoupe"></button><button class="btn sec" id="bVue">↺ Recentrer</button></div>
   <div id="piege"></div>
  </div>
- <div id="frise"><i id="friseI"></i></div>
+ <div id="frise"><button id="lecture" title="Faire défiler l'année">▶</button><div id="piste"><div id="etiqSaisons"></div><div id="bandes"></div><div id="mois"></div><div id="pouce">🌱</div></div></div>
  <div id="guide"><img src="img/celian-tete.png" alt="Célian"></div>
  <div id="guideBulle" class="bulle"></div>
  <button id="son" class="son" title="Écouter Célian">🔊</button>

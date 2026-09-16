@@ -34,11 +34,15 @@
 #page{position:absolute;left:120px;top:60px;width:1360px;height:780px;background:#fbf6ea;border-radius:26px;box-shadow:0 40px 100px rgba(0,0,0,.5);display:grid;grid-template-columns:600px 1fr;overflow:hidden;animation:ouvre .5s cubic-bezier(.2,1,.3,1)}
 @keyframes ouvre{from{transform:translateY(30px) scale(.97);opacity:0}}
 #photoZone{position:relative;overflow:hidden;background:#222;cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='16' cy='16' r='11' fill='rgba(255,255,255,0.18)' stroke='white' stroke-width='4'/><circle cx='16' cy='16' r='11' fill='none' stroke='%231f4d3a' stroke-width='2'/><line x1='24' y1='24' x2='36' y2='36' stroke='white' stroke-width='7' stroke-linecap='round'/><line x1='24' y1='24' x2='36' y2='36' stroke='%231f4d3a' stroke-width='4' stroke-linecap='round'/></svg>") 16 16, zoom-in}
-#calque{position:absolute;inset:0;transition:transform .15s ease-out;transform-origin:50% 50%}
+#calque{position:absolute;inset:0;transition:transform .12s ease-out;transform-origin:50% 50%}
 #calque img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #photoZone .credit{position:absolute;right:12px;bottom:10px;font:600 11px/1.3 Nunito;color:#fff;background:rgba(0,0,0,.45);padding:5px 8px;border-radius:6px;max-width:560px;z-index:3}
 #photoZone .astuce{position:absolute;left:12px;top:12px;font:800 13px/1 Nunito;color:#fff;background:rgba(31,77,58,.85);padding:8px 12px;border-radius:99px;z-index:3}
 #photoZone .compte{position:absolute;right:12px;top:12px;font:800 15px/1 Nunito;color:#3a2a05;background:var(--soleil);padding:9px 14px;border-radius:99px;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#zoomBox{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:4;display:flex;flex-direction:column;align-items:center;gap:8px;background:rgba(251,246,234,.92);border-radius:99px;padding:10px 8px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+#zoomBox button{width:36px;height:36px;border-radius:50%;border:0;background:var(--sapin);color:#fff;font:800 20px/1 Nunito;cursor:pointer}
+#zoomBox input{writing-mode:vertical-lr;direction:rtl;width:22px;height:170px;accent-color:#1f4d3a;cursor:pointer}
+#zoomBox span{font:800 12px/1 Nunito;color:var(--sapin)}
 .trouve{position:absolute;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(31,77,58,.9);border:3px solid #fff;color:#fff;font:800 26px/48px Nunito;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.45);animation:pop .5s cubic-bezier(.2,1.6,.4,1) both;pointer-events:none}
 .trouve::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:3px solid rgba(242,193,78,.9);animation:onde2 .9s ease-out both}
 @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
@@ -87,7 +91,7 @@
  <div id="bulle" class="bulle">Le jury ne te demande pas « c'est joli ? » mais <b>genre, espèce, nom commun, famille</b>. On commence par regarder, pas par deviner.</div>
  <button id="son" class="son" title="Écouter Célian">🔊</button>
  <div id="carnet"><div id="page">
-  <div id="photoZone"><div id="calque"><img id="cPhoto" src="" alt=""></div><span class="astuce">🔍 Clique sur la photo là où tu vois un indice</span><span class="compte" id="cCompte">0 / 3</span><span class="credit" id="cCredit"></span></div>
+  <div id="photoZone"><div id="calque"><img id="cPhoto" src="" alt=""></div><span class="astuce">🔍 Zoome à la molette ou avec le curseur, puis clique sur un indice</span><div id="zoomBox"><button id="zPlus" title="Zoomer">+</button><input id="zSlider" type="range" min="1" max="3" step="0.05" value="1" aria-label="Zoom"><button id="zMoins" title="Dézoomer">−</button><span id="zVal">×1</span></div><span class="compte" id="cCompte">0 / 3</span><span class="credit" id="cCredit"></span></div>
   <div id="droite">
    <button id="fermer" title="Fermer">✕</button>
    <div class="sur">Carnet de terrain</div>
@@ -129,7 +133,7 @@ function relancer(){clearTimeout(minuteur);calque.querySelectorAll('.guide').for
  minuteur=setTimeout(()=>{const s=SPEC[cur];const i=s.indices.findIndex((_,k)=>!trouves.has(k));$('aide').textContent='💡 '+s.indices[i].aide;$('aide').classList.add('on');
   minuteur=setTimeout(()=>{const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.style.left=p.x+'px';g.style.top=p.y+'px';calque.appendChild(g)},8000)},10000)}
 function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : qui es-tu ?';calque.querySelectorAll('.trouve,.rate,.guide,.etiq').forEach(e=>e.remove());
- $('identite').classList.remove('on');$('aide').classList.remove('on');$('bravoIndices').classList.remove('on');$('bRevele').disabled=true;$('carnet').classList.add('on');rafraichirCarnet();voix.stop();relancer()}
+ $('identite').classList.remove('on');$('aide').classList.remove('on');$('bravoIndices').classList.remove('on');$('bRevele').disabled=true;$('carnet').classList.add('on');zoom=1;calque.style.transformOrigin='50% 50%';appliquerZoom();rafraichirCarnet();voix.stop();relancer()}
 zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingClientRect();const k=r.width/zone.clientWidth;const x=(e.clientX-r.left)/k,y=(e.clientY-r.top)/k;
  const s=SPEC[cur];let hit=-1;s.indices.forEach((ind,i)=>{if(trouves.has(i))return;const p=pos(ind);if(Math.hypot(p.x-x,p.y-y)<=Math.max(p.r,34))hit=i});
  if(hit<0){const m=document.createElement('div');m.className='rate';m.style.left=x+'px';m.style.top=y+'px';calque.appendChild(m);setTimeout(()=>m.remove(),700);return}
@@ -137,8 +141,15 @@ zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingC
  const et=document.createElement('div');et.className='etiq'+(p.x>zone.clientWidth*.55?' gauche':'');et.textContent=s.indices[hit].c;et.style.left=p.x+'px';et.style.top=p.y+'px';calque.appendChild(et);
  $('aide').classList.remove('on');rafraichirCarnet();
  if(trouves.size>=3){$('bravoIndices').classList.add('on');$('bRevele').disabled=false;clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove())}else relancer()});
-zone.addEventListener('mousemove',e=>{const r=zone.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;calque.style.transformOrigin=x+'% '+y+'%';calque.style.transform='scale(1.8)'});
-zone.addEventListener('mouseleave',()=>{calque.style.transform='scale(1)'});
+let zoom=1;
+function appliquerZoom(){calque.style.transform='scale('+zoom+')';$('zSlider').value=zoom;$('zVal').textContent='×'+zoom.toFixed(1).replace('.0','').replace('.',',')}
+function regler(z){zoom=Math.max(1,Math.min(3,z));appliquerZoom()}
+zone.addEventListener('mousemove',e=>{if(e.target.closest('#zoomBox'))return;const r=zone.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;calque.style.transformOrigin=x+'% '+y+'%'});
+zone.addEventListener('wheel',e=>{e.preventDefault();regler(zoom*(1-e.deltaY*.0018))},{passive:false});
+$('zSlider').addEventListener('input',e=>{e.stopPropagation();regler(+e.target.value)});
+$('zPlus').addEventListener('click',e=>{e.stopPropagation();regler(zoom+.25)});
+$('zMoins').addEventListener('click',e=>{e.stopPropagation();regler(zoom-.25)});
+$('zoomBox').addEventListener('click',e=>e.stopPropagation());
 $('bRevele').onclick=()=>{const s=SPEC[cur];$('iLat').textContent=s.lat;$('iNom').textContent=s.nom;$('iFam').textContent=s.fam;$('iPiege').textContent='⚠️ '+s.piege;$('identite').classList.add('on');$('bRevele').disabled=true;$('bravoIndices').classList.remove('on');
  faits.add(cur);document.querySelectorAll('.pola')[cur].classList.add('fait');$('nb').textContent=faits.size;
  voix.jouer('audio/revele-'+s.k+'.mp3');
