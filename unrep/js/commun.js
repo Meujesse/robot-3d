@@ -1,7 +1,7 @@
 // Scène 1600x900 à l'échelle + voix de Célian (jamais automatique hors premier clic, jamais en ?muet=1)
 (function(){
  const stage=document.getElementById('stage');
- function fit(){const k=Math.min(innerWidth/1600,innerHeight/900);if(k>0)stage.style.setProperty('--s',k)}
+ function fit(){const k=Math.max(innerWidth/1600,innerHeight/900);if(k>0)stage.style.setProperty('--s',k)}
  addEventListener('resize',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
  const MUET=new URLSearchParams(location.search).has('muet');
  let courant=null,bouton=null;
