@@ -49,7 +49,10 @@
 @keyframes onde2{from{transform:scale(.6);opacity:1}to{transform:scale(1.6);opacity:0}}
 .etiq{position:absolute;transform:translate(34px,-50%);white-space:nowrap;background:var(--creme);color:var(--sapin);font:800 15px/1 Nunito;padding:9px 13px;border-radius:99px;box-shadow:0 6px 16px rgba(0,0,0,.4);border:2px solid var(--soleil);animation:etiq .5s .15s cubic-bezier(.2,1.5,.4,1) both;pointer-events:none}
 .etiq.gauche{transform:translate(calc(-100% - 34px),-50%)}
-@keyframes etiq{from{opacity:0;scale:.6}to{opacity:1;scale:1}}
+@keyframes etiq{from{opacity:0}to{opacity:1}}
+#calque .trouve,#calque .rate,#calque .guide{scale:calc(1 / var(--z,1))}
+#calque .etiq{scale:calc(1 / var(--z,1));transform-origin:0 50%}
+#calque .etiq.gauche{transform-origin:0 50%}
 .rate{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid rgba(255,255,255,.85);animation:onde2 .6s ease-out both;pointer-events:none}
 .guide{position:absolute;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:50%;border:3px dashed rgba(242,193,78,.95);box-shadow:0 0 0 6px rgba(242,193,78,.18);animation:guide 1.6s ease-in-out infinite;pointer-events:none}
 @keyframes guide{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1.1);opacity:1}}
@@ -142,10 +145,10 @@ zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingC
  $('aide').classList.remove('on');rafraichirCarnet();
  if(trouves.size>=3){$('bravoIndices').classList.add('on');$('bRevele').disabled=false;clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove())}else relancer()});
 let zoom=1;
-function appliquerZoom(){calque.style.transform='scale('+zoom+')';$('zSlider').value=zoom;$('zVal').textContent='×'+zoom.toFixed(1).replace('.0','').replace('.',',')}
+function appliquerZoom(){calque.style.transform='scale('+zoom+')';calque.style.setProperty('--z',zoom);$('zSlider').value=zoom;$('zVal').textContent='×'+zoom.toFixed(1).replace('.0','').replace('.',',')}
 function regler(z){zoom=Math.max(1,Math.min(3,z));appliquerZoom()}
 zone.addEventListener('mousemove',e=>{if(e.target.closest('#zoomBox'))return;const r=zone.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;calque.style.transformOrigin=x+'% '+y+'%'});
-zone.addEventListener('wheel',e=>{e.preventDefault();regler(zoom*(1-e.deltaY*.0018))},{passive:false});
+zone.addEventListener('wheel',e=>{e.preventDefault();regler(zoom*(1-e.deltaY*.0009))},{passive:false});
 $('zSlider').addEventListener('input',e=>{e.stopPropagation();regler(+e.target.value)});
 $('zPlus').addEventListener('click',e=>{e.stopPropagation();regler(zoom+.25)});
 $('zMoins').addEventListener('click',e=>{e.stopPropagation();regler(zoom-.25)});
