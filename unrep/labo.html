@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Le labo des végétaux · Démo Meujesse Learning</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="commun.css">
+<link rel="stylesheet" href="commun.css?v=20260917b">
 <style>
 #stage{background:radial-gradient(ellipse at 68% 40%,#f7f9f1 0%,#e3ecd8 45%,#c9d9bd 100%)}
 #flou{position:absolute;inset:-40px;width:calc(100% + 80px);height:calc(100% + 80px);object-fit:cover;filter:blur(22px) saturate(.9);opacity:.35}
@@ -38,7 +38,7 @@
 #guide img{width:84px;height:84px;border-radius:50%;box-shadow:0 6px 18px rgba(0,0,0,.2)}
 #guideBulle{position:absolute;right:120px;top:30px;width:330px;opacity:1;transform:none;font-size:15.5px;padding:12px 16px}
 #guideBulle::after{content:"";position:absolute;right:-12px;top:16px;border:12px solid transparent;border-left-color:var(--creme);border-right:0}
-#son{left:1066px;top:40px;width:44px;height:44px;font-size:17px}
+#son{left:1098px;top:44px;width:44px;height:44px;font-size:17px}
 /* pastilles */
 #pastilles{position:absolute;left:470px;top:0;width:1130px;height:900px;pointer-events:none}
 .pas{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer}
@@ -96,8 +96,8 @@
  <button id="son" class="son" title="Écouter Célian">🔊</button>
  <div id="credits">Modèles 3D illustratifs · contenus : Tela Botanica, Floriscope, SNHF, G. Hanks (AHDB), listes CNRV 2026</div>
 </div>
-<script src="js/commun.js"></script>
+<script src="js/commun.js?v=20260917b"></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
-<script type="module" src="js/labo.js"></script>
+<script type="module" src="js/labo.js?v=20260917b"></script>
 </body>
 </html>

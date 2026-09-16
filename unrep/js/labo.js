@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { creerScene, construireGinkgo, construireNarcisse, construireLavande } from './plantes3d.js';
-import { PLANTES, ORDRE_SAISONS, NOMS_SAISONS } from './plantes-donnees.js';
+import { creerScene, construireGinkgo, construireNarcisse, construireLavande } from './plantes3d.js?v=20260917b';
+import { PLANTES, ORDRE_SAISONS, NOMS_SAISONS } from './plantes-donnees.js?v=20260917b';
 
 const q=new URLSearchParams(location.search);
 const MODE=q.get('mode')==='saisons'?'saisons':'etude';
