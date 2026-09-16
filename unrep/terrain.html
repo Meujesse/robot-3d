@@ -33,7 +33,7 @@
 #carnet.on{display:block}
 #page{position:absolute;left:120px;top:60px;width:1360px;height:780px;background:#fbf6ea;border-radius:26px;box-shadow:0 40px 100px rgba(0,0,0,.5);display:grid;grid-template-columns:600px 1fr;overflow:hidden;animation:ouvre .5s cubic-bezier(.2,1,.3,1)}
 @keyframes ouvre{from{transform:translateY(30px) scale(.97);opacity:0}}
-#photoZone{position:relative;overflow:hidden;background:#222;cursor:crosshair}
+#photoZone{position:relative;overflow:hidden;background:#222;cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='16' cy='16' r='11' fill='rgba(255,255,255,0.18)' stroke='white' stroke-width='4'/><circle cx='16' cy='16' r='11' fill='none' stroke='%231f4d3a' stroke-width='2'/><line x1='24' y1='24' x2='36' y2='36' stroke='white' stroke-width='7' stroke-linecap='round'/><line x1='24' y1='24' x2='36' y2='36' stroke='%231f4d3a' stroke-width='4' stroke-linecap='round'/></svg>") 16 16, zoom-in}
 #calque{position:absolute;inset:0;transition:transform .15s ease-out;transform-origin:50% 50%}
 #calque img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #photoZone .credit{position:absolute;right:12px;bottom:10px;font:600 11px/1.3 Nunito;color:#fff;background:rgba(0,0,0,.45);padding:5px 8px;border-radius:6px;max-width:560px;z-index:3}
@@ -43,6 +43,9 @@
 .trouve::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:3px solid rgba(242,193,78,.9);animation:onde2 .9s ease-out both}
 @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
 @keyframes onde2{from{transform:scale(.6);opacity:1}to{transform:scale(1.6);opacity:0}}
+.etiq{position:absolute;transform:translate(34px,-50%);white-space:nowrap;background:var(--creme);color:var(--sapin);font:800 15px/1 Nunito;padding:9px 13px;border-radius:99px;box-shadow:0 6px 16px rgba(0,0,0,.4);border:2px solid var(--soleil);animation:etiq .5s .15s cubic-bezier(.2,1.5,.4,1) both;pointer-events:none}
+.etiq.gauche{transform:translate(calc(-100% - 34px),-50%)}
+@keyframes etiq{from{opacity:0;scale:.6}to{opacity:1;scale:1}}
 .rate{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid rgba(255,255,255,.85);animation:onde2 .6s ease-out both;pointer-events:none}
 .guide{position:absolute;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:50%;border:3px dashed rgba(242,193,78,.95);box-shadow:0 0 0 6px rgba(242,193,78,.18);animation:guide 1.6s ease-in-out infinite;pointer-events:none}
 @keyframes guide{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1.1);opacity:1}}
@@ -102,19 +105,19 @@
 const SPEC=[
  {k:'ginkgo',leg:'Spécimen A',photo:'img/photos/ginkgo.jpg',iw:960,ih:1280,credit:'Photo : H. Zell, CC BY-SA 3.0, via Wikimedia Commons',
   lat:'Ginkgo biloba',nom:'Arbre aux quarante écus',fam:'Ginkgoacées',piege:'Pas un conifère : une gymnosperme à part.',
-  indices:[{x:.35,y:.22,r:.11,t:"Feuille en éventail, souvent fendue en deux, sans nervure centrale.",aide:"Regarde bien la forme des feuilles."},
-   {x:.56,y:.24,r:.08,t:"Les feuilles partent en bouquet d'un petit moignon : le rameau court.",aide:"D'où partent les feuilles et les graines ?"},
-   {x:.47,y:.74,r:.14,t:"Ces « fruits » jaunes sont des graines nues : pas de fleur, pas de vrai fruit.",aide:"Et ces boules jaunes, qu'est-ce que c'est vraiment ?"}]},
+  indices:[{c:'Feuille en éventail',x:.35,y:.22,r:.11,t:"Feuille en éventail, souvent fendue en deux, sans nervure centrale.",aide:"Regarde bien la forme des feuilles."},
+   {c:'Rameau court',x:.56,y:.24,r:.08,t:"Les feuilles partent en bouquet d'un petit moignon : le rameau court.",aide:"D'où partent les feuilles et les graines ?"},
+   {c:'Graines nues',x:.47,y:.74,r:.14,t:"Ces « fruits » jaunes sont des graines nues : pas de fleur, pas de vrai fruit.",aide:"Et ces boules jaunes, qu'est-ce que c'est vraiment ?"}]},
  {k:'narcisse',leg:'Spécimen B',photo:'img/photos/narcisse.jpg',iw:960,ih:720,credit:'Photo : Meneerke bloem, CC BY-SA 3.0, via Wikimedia Commons',
   lat:'Narcissus pseudonarcissus',nom:'Jonquille (narcisse trompette)',fam:'Amaryllidacées',piege:'Anciennement Liliacées : ne te fais pas piéger.',
-  indices:[{x:.48,y:.58,r:.09,t:"Au centre, une trompette : la couronne, aussi longue que les tépales chez la jonquille.",aide:"Qu'y a-t-il au centre de la fleur ?"},
-   {x:.30,y:.34,r:.08,t:"Six tépales jaune pâle entourent la couronne.",aide:"Compte les pièces jaune pâle autour du centre."},
-   {x:.46,y:.23,r:.05,t:"Derrière la fleur, une petite spathe brune, sèche comme du papier.",aide:"Regarde juste derrière la fleur, tout en haut."}]},
+  indices:[{c:'Couronne (trompette)',x:.48,y:.58,r:.09,t:"Au centre, une trompette : la couronne, aussi longue que les tépales chez la jonquille.",aide:"Qu'y a-t-il au centre de la fleur ?"},
+   {c:'6 tépales',x:.30,y:.34,r:.08,t:"Six tépales jaune pâle entourent la couronne.",aide:"Compte les pièces jaune pâle autour du centre."},
+   {c:'Spathe sèche',x:.46,y:.23,r:.05,t:"Derrière la fleur, une petite spathe brune, sèche comme du papier.",aide:"Regarde juste derrière la fleur, tout en haut."}]},
  {k:'lavande',leg:'Spécimen C',photo:'img/photos/lavande.jpg',iw:800,ih:600,credit:'Photo : Emőke Dénes, CC BY-SA 4.0, via Wikimedia Commons',
   lat:'Lavandula angustifolia',nom:'Lavande vraie',fam:'Lamiacées',piege:'Épi ramifié et feuilles plus larges ? C\'est plutôt un lavandin.',
-  indices:[{x:.25,y:.57,r:.07,t:"Petites fleurs bleu-violet groupées en épi au bout de la tige.",aide:"Comment sont groupées les fleurs ?"},
-   {x:.57,y:.43,r:.06,t:"Une longue tige fine, sans feuille, porte l'épi.",aide:"Qu'est-ce qui porte les fleurs ?"},
-   {x:.72,y:.56,r:.07,t:"Feuilles très étroites et gris-vert : angustifolia veut dire « à feuilles étroites ».",aide:"Regarde les feuilles entre les tiges."}]}
+  indices:[{c:'Épi de fleurs',x:.25,y:.57,r:.07,t:"Petites fleurs bleu-violet groupées en épi au bout de la tige.",aide:"Comment sont groupées les fleurs ?"},
+   {c:'Longue tige nue',x:.57,y:.43,r:.06,t:"Une longue tige fine, sans feuille, porte l'épi.",aide:"Qu'est-ce qui porte les fleurs ?"},
+   {c:'Feuilles étroites',x:.72,y:.56,r:.07,t:"Feuilles très étroites et gris-vert : angustifolia veut dire « à feuilles étroites ».",aide:"Regarde les feuilles entre les tiges."}]}
 ];
 const $=id=>document.getElementById(id);const faits=new Set();let cur=null,trouves=new Set(),minuteur=null,etapeAide=0;
 SPEC.forEach((s,i)=>{const d=document.createElement('div');d.className='pola';d.innerHTML=`<div class="scotch"></div><div class="ph"><img src="${s.photo}" alt=""></div><div class="leg">${s.leg}</div><div class="ok">✓</div>`;d.onclick=()=>ouvrir(i);$('polas').appendChild(d)});
@@ -125,12 +128,13 @@ function rafraichirCarnet(){const s=SPEC[cur];$('indices').innerHTML='';s.indice
 function relancer(){clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove());if(trouves.size>=3)return;
  minuteur=setTimeout(()=>{const s=SPEC[cur];const i=s.indices.findIndex((_,k)=>!trouves.has(k));$('aide').textContent='💡 '+s.indices[i].aide;$('aide').classList.add('on');
   minuteur=setTimeout(()=>{const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.style.left=p.x+'px';g.style.top=p.y+'px';calque.appendChild(g)},8000)},10000)}
-function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : qui es-tu ?';calque.querySelectorAll('.trouve,.rate,.guide').forEach(e=>e.remove());
+function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : qui es-tu ?';calque.querySelectorAll('.trouve,.rate,.guide,.etiq').forEach(e=>e.remove());
  $('identite').classList.remove('on');$('aide').classList.remove('on');$('bravoIndices').classList.remove('on');$('bRevele').disabled=true;$('carnet').classList.add('on');rafraichirCarnet();voix.stop();relancer()}
 zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingClientRect();const k=r.width/zone.clientWidth;const x=(e.clientX-r.left)/k,y=(e.clientY-r.top)/k;
  const s=SPEC[cur];let hit=-1;s.indices.forEach((ind,i)=>{if(trouves.has(i))return;const p=pos(ind);if(Math.hypot(p.x-x,p.y-y)<=Math.max(p.r,34))hit=i});
  if(hit<0){const m=document.createElement('div');m.className='rate';m.style.left=x+'px';m.style.top=y+'px';calque.appendChild(m);setTimeout(()=>m.remove(),700);return}
  trouves.add(hit);const p=pos(s.indices[hit]);const m=document.createElement('div');m.className='trouve';m.textContent='✓';m.style.left=p.x+'px';m.style.top=p.y+'px';calque.appendChild(m);
+ const et=document.createElement('div');et.className='etiq'+(p.x>zone.clientWidth*.55?' gauche':'');et.textContent=s.indices[hit].c;et.style.left=p.x+'px';et.style.top=p.y+'px';calque.appendChild(et);
  $('aide').classList.remove('on');rafraichirCarnet();
  if(trouves.size>=3){$('bravoIndices').classList.add('on');$('bRevele').disabled=false;clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove())}else relancer()});
 zone.addEventListener('mousemove',e=>{const r=zone.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;calque.style.transformOrigin=x+'% '+y+'%';calque.style.transform='scale(1.8)'});
