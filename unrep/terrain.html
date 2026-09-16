@@ -134,7 +134,7 @@ function pos(ind){const b=boite();return{x:b.ox+ind.x*b.w,y:b.oy+ind.y*b.h,r:ind
 function rafraichirCarnet(){const s=SPEC[cur];$('indices').innerHTML='';s.indices.forEach((ind,i)=>{const li=document.createElement('li');li.dataset.n=i+1;if(trouves.has(i)){li.textContent=ind.t}else{li.className='vide';li.textContent='Indice à trouver sur la photo…'}$('indices').appendChild(li)});$('cCompte').textContent=trouves.size+' / 3'}
 function relancer(){clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove());if(trouves.size>=3)return;
  minuteur=setTimeout(()=>{const s=SPEC[cur];const i=s.indices.findIndex((_,k)=>!trouves.has(k));$('aide').textContent='💡 '+s.indices[i].aide;$('aide').classList.add('on');
-  minuteur=setTimeout(()=>{const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.style.left=p.x+'px';g.style.top=p.y+'px';calque.appendChild(g)},8000)},10000)}
+  const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.style.left=p.x+'px';g.style.top=p.y+'px';calque.appendChild(g)},10000)}
 function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : qui es-tu ?';calque.querySelectorAll('.trouve,.rate,.guide,.etiq').forEach(e=>e.remove());
  $('identite').classList.remove('on');$('aide').classList.remove('on');$('bravoIndices').classList.remove('on');$('bRevele').disabled=true;$('carnet').classList.add('on');zoom=1;calque.style.transformOrigin='50% 50%';appliquerZoom();rafraichirCarnet();voix.stop();relancer()}
 zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingClientRect();const k=r.width/zone.clientWidth;const x=(e.clientX-r.left)/k,y=(e.clientY-r.top)/k;
