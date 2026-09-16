@@ -31,7 +31,7 @@ ORDRE_SAISONS.forEach(s=>{const b=document.createElement('button');b.className='
 // ----- caméra animée -----
 let anim=null;
 function volerVers(pos,cible,ms=900){anim={t0:performance.now(),ms,p0:S.camera.position.clone(),c0:S.ctrl.target.clone(),p1:pos.clone(),c1:cible.clone()}}
-function vueDefaut(ms){const v=plantes[cle].userData.vue;S.ctrl.minDistance=v.min;S.ctrl.maxDistance=v.max;const d=MODE==='saisons'?new THREE.Vector3(0,-.38,0):new THREE.Vector3();volerVers(v.pos.clone().add(d).add(MODE==='saisons'?new THREE.Vector3(0,0,.5):d),v.cible.clone().add(d),ms)}
+function vueDefaut(ms){const v=plantes[cle].userData.vue;S.ctrl.minDistance=v.min;S.ctrl.maxDistance=v.max;const d=MODE==='saisons'?new THREE.Vector3(0,-.38,0):new THREE.Vector3();volerVers(v.pos.clone().add(d).add(MODE==='saisons'?new THREE.Vector3(0,.15,1.3):d),v.cible.clone().add(d),ms)}
 
 // ----- pastilles -----
 const etiquettes=[];
