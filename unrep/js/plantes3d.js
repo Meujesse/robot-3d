@@ -12,14 +12,14 @@ function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return(s-1)/2147
 // ---------- scène ----------
 export function creerScene(conteneur){
  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:false});
- renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+ renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.localClippingEnabled=true;
  conteneur.appendChild(renderer.domElement);
  const scene=new THREE.Scene();
  const pm=new THREE.PMREMGenerator(renderer);scene.environment=pm.fromScene(new RoomEnvironment(),0.04).texture;scene.environmentIntensity=.55;
  scene.add(new THREE.HemisphereLight(0xeef6ff,0x6b5a3a,.9));
- const soleil=new THREE.DirectionalLight(0xfff1dc,2.1);soleil.position.set(3,6,4);soleil.castShadow=true;soleil.shadow.mapSize.set(2048,2048);
+ const soleil=new THREE.DirectionalLight(0xfff1dc,2.1);soleil.position.set(3,6,4);soleil.castShadow=true;soleil.shadow.mapSize.set(1024,1024);
  Object.assign(soleil.shadow.camera,{left:-3,right:3,top:3,bottom:-3,near:1,far:20});soleil.shadow.bias=-.0005;scene.add(soleil);
  const contre=new THREE.DirectionalLight(0xdfeaff,.6);contre.position.set(-4,3,-3);scene.add(contre);
  const ombre=new THREE.Mesh(new THREE.CircleGeometry(2.4,64),new THREE.ShadowMaterial({opacity:.18}));ombre.rotation.x=-Math.PI/2;ombre.receiveShadow=true;scene.add(ombre);

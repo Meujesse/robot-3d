@@ -96,9 +96,10 @@ function majChute(dt){
 }
 
 // ----- boucle -----
-let tPrec=performance.now();
+let tPrec=performance.now();let visible=false;
+new IntersectionObserver(es=>{for(const e of es)visible=e.isIntersecting&&innerWidth>50}).observe($('vue3d'));
 function boucle(now){requestAnimationFrame(boucle);const dt=Math.min(.05,(now-tPrec)/1000);tPrec=now;
- if(document.hidden)return;
+ if(document.hidden||!visible){tPrec=now;return}
  if(anim){const k=Math.min(1,(now-anim.t0)/anim.ms);const e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;S.camera.position.lerpVectors(anim.p0,anim.p1,e);S.ctrl.target.lerpVectors(anim.c0,anim.c1,e);if(k>=1)anim=null}
  if(MODE==='saisons'&&transition<1){transition=Math.min(1,transition+dt*1.2);plantes[cle].userData.saison(saison,Math.min(1,dt*3.5))}
  if(MODE==="saisons")plantes[cle].userData.saison(saison,Math.min(1,dt*3.2));
