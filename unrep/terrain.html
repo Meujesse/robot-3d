@@ -54,8 +54,13 @@
 #calque .etiq{scale:calc(1 / var(--z,1));transform-origin:0 50%}
 #calque .etiq.gauche{transform-origin:0 50%}
 .rate{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid rgba(255,255,255,.85);animation:onde2 .6s ease-out both;pointer-events:none}
-.guide{position:absolute;width:80px;height:80px;margin:-40px 0 0 -40px;border-radius:50%;border:3px dashed rgba(242,193,78,.95);box-shadow:0 0 0 6px rgba(242,193,78,.18);animation:guide 1.6s ease-in-out infinite;pointer-events:none}
-@keyframes guide{0%,100%{transform:scale(.85);opacity:.55}50%{transform:scale(1.1);opacity:1}}
+.guide{position:absolute;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;border:5px solid #f2c14e;background:rgba(242,193,78,.22);box-shadow:0 0 0 3px rgba(31,77,58,.85),0 0 26px 8px rgba(242,193,78,.75);animation:guide 1.1s ease-in-out infinite;pointer-events:none;z-index:3}
+.guide::before,.guide::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:4px solid #f2c14e;animation:onde 1.6s ease-out infinite}
+.guide::after{animation-delay:.8s}
+.guide span{position:absolute;left:50%;top:100%;margin:16px 0 0 -20px;font-size:40px;line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5));animation:main .9s ease-in-out infinite}
+@keyframes guide{0%,100%{transform:scale(.92)}50%{transform:scale(1.06)}}
+@keyframes onde{0%{transform:scale(1);opacity:.95}100%{transform:scale(2.1);opacity:0}}
+@keyframes main{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
 #droite{padding:34px 40px;display:flex;flex-direction:column;position:relative;background:repeating-linear-gradient(180deg,transparent 0 37px,rgba(31,77,58,.09) 37px 38px)}
 #droite .sur{color:var(--sapin2)}
 #droite h2{margin:8px 0 4px;font:700 34px/1.1 Fraunces;color:var(--sapin)}
@@ -134,7 +139,7 @@ function pos(ind){const b=boite();return{x:b.ox+ind.x*b.w,y:b.oy+ind.y*b.h,r:ind
 function rafraichirCarnet(){const s=SPEC[cur];$('indices').innerHTML='';s.indices.forEach((ind,i)=>{const li=document.createElement('li');li.dataset.n=i+1;if(trouves.has(i)){li.textContent=ind.t}else{li.className='vide';li.textContent='Indice à trouver sur la photo…'}$('indices').appendChild(li)});$('cCompte').textContent=trouves.size+' / 3'}
 function relancer(){clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove());if(trouves.size>=3)return;
  minuteur=setTimeout(()=>{const s=SPEC[cur];const i=s.indices.findIndex((_,k)=>!trouves.has(k));$('aide').textContent='💡 '+s.indices[i].aide;$('aide').classList.add('on');
-  const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.style.left=p.x+'px';g.style.top=p.y+'px';calque.appendChild(g)},10000)}
+  const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.innerHTML='<span>👆</span>';g.style.left=Math.min(Math.max(p.x,62),zone.clientWidth-62)+'px';g.style.top=Math.min(Math.max(p.y,62),zone.clientHeight-120)+'px';calque.appendChild(g)},10000)}
 function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : qui es-tu ?';calque.querySelectorAll('.trouve,.rate,.guide,.etiq').forEach(e=>e.remove());
  $('identite').classList.remove('on');$('aide').classList.remove('on');$('bravoIndices').classList.remove('on');$('bRevele').disabled=true;$('carnet').classList.add('on');zoom=1;calque.style.transformOrigin='50% 50%';appliquerZoom();rafraichirCarnet();voix.stop();relancer()}
 zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingClientRect();const k=r.width/zone.clientWidth;const x=(e.clientX-r.left)/k,y=(e.clientY-r.top)/k;
