@@ -8,13 +8,14 @@
 <link rel="stylesheet" href="commun.css">
 <style>
 #fond{filter:brightness(.55) saturate(1.1) blur(2px);transform:scale(1.04)}
-#halo{position:absolute;left:260px;top:40px;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(242,193,78,.45),rgba(242,193,78,0) 62%);animation:halo 4s ease-in-out infinite}
+#halo{position:absolute;left:260px;top:-10px;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(242,193,78,.45),rgba(242,193,78,0) 62%);animation:halo 4s ease-in-out infinite}
 @keyframes halo{50%{transform:scale(1.06);opacity:.8}}
-#badge{position:absolute;left:470px;top:150px;width:400px;height:400px}.anim #badge{animation:pose 1.1s cubic-bezier(.2,1.4,.4,1) both}
+#badge{position:absolute;left:420px;top:40px;width:500px;height:520px}
+#med3d{position:absolute;inset:0;cursor:grab}#med3d:active{cursor:grabbing}
+#tourne{position:absolute;left:0;right:0;bottom:6px;text-align:center;font:800 13px/1 Nunito;color:rgba(255,255,255,.75);letter-spacing:.06em}
 @keyframes pose{from{transform:scale(.3) rotate(-25deg);opacity:0}}
-#bTxt{position:absolute;left:0;right:0;top:282px;text-align:center;line-height:1.25}#bTxt b{display:block;font:800 14px/1.3 Nunito;letter-spacing:2px;color:#ffe29a}#bTxt i{font:italic 600 16px Fraunces;color:#fbf6ea}
 #badge svg{width:100%;height:100%;filter:drop-shadow(0 20px 40px rgba(0,0,0,.45))}
-#textes{position:absolute;left:170px;top:580px;width:1000px;text-align:center;color:#fff}
+#textes{position:absolute;left:170px;top:575px;width:1000px;text-align:center;color:#fff}
 #textes h1{margin:0;font:700 58px/1.05 Fraunces;text-shadow:0 4px 24px rgba(0,0,0,.5)}
 #textes p{margin:12px auto 0;max-width:780px;font:700 20px/1.5 Nunito;color:rgba(255,255,255,.92)}
 #acquis{display:flex;justify-content:center;gap:12px;margin-top:22px}
@@ -33,48 +34,21 @@
  <img id="fond" class="fond" src="img/jardin.jpg" alt="">
  <div id="halo"></div>
  <div id="fx"></div>
- <div id="badge">
-  <svg viewBox="0 0 400 400" aria-label="Badge Œil de botaniste">
-   <defs>
-    <linearGradient id="or" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe29a"/><stop offset=".5" stop-color="#f2c14e"/><stop offset="1" stop-color="#c98e1c"/></linearGradient>
-    <linearGradient id="vert" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f6b50"/><stop offset="1" stop-color="#173a2b"/></linearGradient>
-    <path id="arc" d="M 70 200 A 130 130 0 0 1 330 200"/>
-   </defs>
-   <g transform="translate(200 200)">
-    <g id="dents">
-     <!-- rosace dentelée -->
-    </g>
-   </g>
-   <circle cx="200" cy="200" r="150" fill="url(#or)"/>
-   <circle cx="200" cy="200" r="132" fill="url(#vert)"/>
-   <circle cx="200" cy="200" r="120" fill="none" stroke="#f2c14e" stroke-width="2" stroke-dasharray="4 6"/>
-   
-   <!-- feuille de ginkgo stylisée -->
-   <g transform="translate(200 215) scale(.85)">
-    <path d="M0 40 L0 -8" stroke="#f2c14e" stroke-width="5" stroke-linecap="round"/>
-    <path d="M0 -8 L-66 -78 C -54 -110 -24 -122 -5 -114 L 0 -97 L 5 -114 C 24 -122 54 -110 66 -78 Z" fill="#f2c14e"/>
-    <g stroke="#173a2b" stroke-width="2" stroke-linecap="round" opacity=".55">
-     <path d="M0 -10 L-30 -100"/><path d="M0 -10 L-52 -80"/><path d="M0 -10 L-60 -50"/><path d="M0 -10 L30 -100"/><path d="M0 -10 L52 -80"/><path d="M0 -10 L60 -50"/><path d="M0 -10 L-10 -86"/><path d="M0 -10 L10 -86"/>
-    </g>
-   </g>
-   
-  </svg>
- <div id="bTxt"><b>ŒIL DE BOTANISTE</b><i>niveau 1</i></div>
- </div>
+ <div id="badge"><div id="med3d"></div><div id="tourne">↻ Fais-la tourner</div></div>
  <div id="textes">
-  <h1>Bravo, badge débloqué !</h1>
+  <h1>Bravo, médaille décrochée !</h1>
   <p>Tu sais maintenant observer, nommer et piéger les confusions sur trois végétaux des listes du concours.</p>
   <div id="acquis"><span>🌿 Ginkgo biloba</span><span>🌼 Narcissus pseudonarcissus</span><span>💜 Lavandula angustifolia</span></div>
  </div>
  <div id="celian" class="perso"><img src="img/celian-bravo.png" alt="Célian"></div>
- <div id="bulle" class="bulle entree" style="--d:.9s">Joli travail ! Dans un vrai parcours, on enchaîne sur <b>toute la liste de ta formation</b>, saison après saison.</div>
+ <div id="bulle" class="bulle entree" style="--d:.9s">Joli travail ! Tu sais maintenant reconnaître ces trois végétaux, <b>même sans leurs fleurs</b>.</div>
  <button id="son" class="son" title="Écouter Célian">🔊</button>
- <div id="pied">Démo conçue par Meujesse Learning · contenus sourcés (Tela Botanica, Floriscope, SNHF, listes CNRV 2026)</div>
+ <div id="pied">Conçu par Meujesse Learning · contenus sourcés (Tela Botanica, Floriscope, SNHF, listes CNRV 2026)</div>
 </div>
 <script src="js/commun.js"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module" src="js/medaille.js"></script>
 <script>
-const g=document.getElementById('dents');const NS='http://www.w3.org/2000/svg';
-for(let i=0;i<24;i++){const r=document.createElementNS(NS,'rect');r.setAttribute('x',-14);r.setAttribute('y',-178);r.setAttribute('width',28);r.setAttribute('height',40);r.setAttribute('rx',6);r.setAttribute('fill',i%2?'#c98e1c':'#f2c14e');r.setAttribute('transform',`rotate(${i*15})`);g.appendChild(r)}
 const son=document.getElementById('son');son.onclick=e=>{e.stopPropagation();voix.jouer('audio/bravo.mp3',son)};
 addEventListener('pointerdown',function once(e){if(e.target!==son)voix.jouer('audio/bravo.mp3',son)},{once:true});
 const fx=document.getElementById('fx'),r=(a,b)=>a+Math.random()*(b-a);const cols=['#f2c14e','#7fb069','#9bc57a','#fbf6ea','#8a78d8'];

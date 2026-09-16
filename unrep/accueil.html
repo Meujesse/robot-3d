@@ -16,6 +16,10 @@
 #tete p{margin:0;font:600 21px/1.5 Nunito;color:rgba(255,255,255,.92);max-width:620px}
 #etapes{position:absolute;left:80px;top:470px;display:flex;gap:16px}
 .et{width:170px;padding:16px 16px 18px;border-radius:18px;background:rgba(251,246,234,.12);border:1px solid rgba(251,246,234,.3);backdrop-filter:blur(6px);color:#fff}
+.et{cursor:pointer;transition:scale .25s cubic-bezier(.2,1.5,.4,1),background .25s,border-color .25s}
+.et:hover{scale:1.07;background:rgba(251,246,234,.22);border-color:rgba(242,193,78,.8)}
+.et.pouls{animation:pouls .5s cubic-bezier(.2,1.6,.4,1)!important}
+@keyframes pouls{0%{scale:1}40%{scale:1.16}100%{scale:1.07}}
 .et .n{font:800 12px/1 Nunito;letter-spacing:.2em;color:var(--soleil)}
 .et .ic{font-size:34px;margin:10px 0 6px}
 .et b{display:block;font:700 18px/1.2 Fraunces}
@@ -35,7 +39,7 @@
  <div id="voile"></div>
  <div id="fx"></div>
  <div id="tete" class="entree" style="--d:.1s">
-  <div class="sur">Démo · Reconnaissance des végétaux</div>
+  <div class="sur">Parcours · Reconnaissance des végétaux</div>
   <h1>Reconnaître une plante <em>comme un pro</em></h1>
   <p>Avant de tailler, planter ou entretenir un massif, un paysagiste doit savoir ce qu'il a devant lui. Suis Célian sur le terrain, observe, zoome, puis prouve que tu sais nommer chaque végétal.</p>
  </div>
@@ -43,15 +47,16 @@
   <div class="et entree" style="--d:0.50s"><div class="n">ÉTAPE 1</div><div class="ic">🔎</div><b>Observer</b><span>Les indices sur le terrain</span></div>
   <div class="et entree" style="--d:0.65s"><div class="n">ÉTAPE 2</div><div class="ic">🌱</div><b>Disséquer</b><span>La plante en 3D, en coupe</span></div>
   <div class="et entree" style="--d:0.80s"><div class="n">ÉTAPE 3</div><div class="ic">🗓️</div><b>Suivre</b><span>Son année, saison par saison</span></div>
-  <div class="et entree" style="--d:0.95s"><div class="n">ÉTAPE 4</div><div class="ic">🏅</div><b>Nommer</b><span>Le défi final et ton badge</span></div>
+  <div class="et entree" style="--d:0.95s"><div class="n">ÉTAPE 4</div><div class="ic">🏅</div><b>Nommer</b><span>Le défi final et ta médaille</span></div>
  </div>
  <div id="celian" class="perso"><img src="img/celian-accueil.png" alt="Célian"></div>
  <div id="bulle" class="bulle entree" style="--d:1.1s">Salut, moi c'est <b>Célian</b> ! Je suis apprenti paysagiste. On part sur le terrain ensemble : on observe, on apprend les noms, <b>même en latin</b>. Prêt ?</div>
  <button id="son" class="son" title="Écouter Célian">🔊</button>
- <div id="pied">Démo réalisée par Meujesse Learning · clique sur la flèche pour commencer</div>
+ <div id="pied">Clique sur la flèche pour commencer</div>
 </div>
 <script src="js/commun.js"></script>
 <script>
+document.querySelectorAll('.et').forEach(e=>e.addEventListener('click',()=>{e.classList.remove('pouls');void e.offsetWidth;e.classList.add('pouls')}));
 const son=document.getElementById('son');
 son.addEventListener('click',e=>{e.stopPropagation();voix.jouer('audio/accueil.mp3',son)});
 addEventListener('pointerdown',function once(e){if(e.target!==son)voix.jouer('audio/accueil.mp3',son)},{once:true});
