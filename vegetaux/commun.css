@@ -1,0 +1,20 @@
+:root{--sapin:#1f4d3a;--sapin2:#2f6b50;--feuille:#7fb069;--creme:#fbf6ea;--papier:#f4ecd8;--encre:#1d2a22;--soleil:#f2c14e;--terre:#8a5a36}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0e1a14;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:var(--encre)}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;overflow:hidden;background:#dfe9d6}
+.fond{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.sur{font:800 13px/1 Nunito;letter-spacing:.3em;text-transform:uppercase;color:var(--soleil)}
+h1,h2,h3{font-family:Fraunces,Georgia,serif}
+.perso{position:absolute;bottom:0;pointer-events:none}
+.perso img{display:block;height:100%;filter:drop-shadow(0 14px 18px rgba(0,0,0,.35));transform-origin:50% 100%;animation:respire 4.6s ease-in-out infinite}
+@keyframes respire{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.008)}}
+.bulle{position:absolute;background:var(--creme);color:var(--encre);border-radius:20px;padding:16px 20px;font:600 18px/1.4 Nunito;box-shadow:0 14px 40px rgba(0,0,0,.28)}
+.bulle b{color:var(--sapin)}
+.son{position:absolute;width:48px;height:48px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:rgba(31,77,58,.85);color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;z-index:20}
+.son.joue{animation:onde 1.2s ease-out infinite}
+@keyframes onde{0%{box-shadow:0 0 0 0 rgba(242,193,78,.7)}100%{box-shadow:0 0 0 16px rgba(242,193,78,0)}}
+i.lat{font-style:italic}
+
+/* entrées animées : visibles par défaut, animées seulement quand la page est réellement affichée */
+.anim .entree{animation:entree .8s cubic-bezier(.2,1,.3,1) both;animation-delay:var(--d,0s)}
+@keyframes entree{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}

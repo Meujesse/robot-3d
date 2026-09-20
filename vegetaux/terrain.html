@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sur le terrain · Démo Meujesse Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,600&family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=20260917b">
+<style>
+#fond{filter:brightness(.9) saturate(1.05)}
+#voile{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,32,24,.55) 0%,rgba(14,32,24,.1) 30%,rgba(14,32,24,.25) 100%)}
+#tete{position:absolute;left:60px;top:36px;color:#fff}
+#tete h1{margin:8px 0 6px;font:700 46px/1 Fraunces;text-shadow:0 3px 20px rgba(0,0,0,.4)}
+#tete p{margin:0;font:700 18px/1.4 Nunito;color:rgba(255,255,255,.92);text-shadow:0 1px 8px rgba(0,0,0,.4)}
+#compteur{position:absolute;right:60px;top:44px;background:rgba(251,246,234,.95);border-radius:999px;padding:10px 18px;font:800 16px/1 Nunito;color:var(--sapin);box-shadow:0 8px 20px rgba(0,0,0,.2)}
+#polas{position:absolute;left:70px;top:200px;display:flex;gap:40px}
+.pola{width:300px;background:#fffdf7;padding:14px 14px 16px;border-radius:6px;box-shadow:0 18px 40px rgba(0,0,0,.35);cursor:pointer;transition:transform .35s cubic-bezier(.2,.9,.3,1.3),box-shadow .3s;position:relative}
+.pola:nth-child(1){transform:rotate(-4deg)}.pola:nth-child(2){transform:rotate(2.5deg) translateY(30px)}.pola:nth-child(3){transform:rotate(-1.5deg)}
+.pola:hover{transform:rotate(0) translateY(-10px) scale(1.03);box-shadow:0 30px 60px rgba(0,0,0,.4)}
+.pola .ph{height:300px;border-radius:3px;overflow:hidden;position:relative}
+.pola .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.pola:hover .ph img{transform:scale(1.06)}
+.pola .leg{margin-top:12px;font:700 28px/1 Caveat;color:#3b3b3b;text-align:center}
+.pola .scotch{position:absolute;left:50%;top:-14px;width:110px;height:30px;transform:translateX(-50%) rotate(-3deg);background:rgba(242,193,78,.55);box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.pola .ok{position:absolute;right:-12px;top:-12px;width:46px;height:46px;border-radius:50%;background:var(--sapin);color:#fff;font:800 22px/46px Nunito;text-align:center;box-shadow:0 6px 14px rgba(0,0,0,.3);transform:scale(0);transition:transform .4s cubic-bezier(.2,.9,.3,1.5)}
+.pola.fait .ok{transform:scale(1)}
+#celian{left:1260px;height:640px}
+#bulle{left:1010px;top:280px;width:270px;opacity:1;transform:none;font-size:17px}
+#bulle::after{content:"";position:absolute;right:-14px;top:40px;border:14px solid transparent;border-left-color:var(--creme);border-right:0}
+#son{left:1240px;top:250px}
+/* carnet */
+#carnet{position:absolute;inset:0;background:rgba(10,24,17,.55);backdrop-filter:blur(3px);display:none;z-index:30}
+#carnet.on{display:block}
+#page{position:absolute;left:120px;top:60px;width:1360px;height:780px;background:#fbf6ea;border-radius:26px;box-shadow:0 40px 100px rgba(0,0,0,.5);display:grid;grid-template-columns:600px 1fr;overflow:hidden;animation:ouvre .5s cubic-bezier(.2,1,.3,1)}
+@keyframes ouvre{from{transform:translateY(30px) scale(.97);opacity:0}}
+#photoZone{position:relative;overflow:hidden;background:#222;cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='16' cy='16' r='11' fill='rgba(255,255,255,0.18)' stroke='white' stroke-width='4'/><circle cx='16' cy='16' r='11' fill='none' stroke='%231f4d3a' stroke-width='2'/><line x1='24' y1='24' x2='36' y2='36' stroke='white' stroke-width='7' stroke-linecap='round'/><line x1='24' y1='24' x2='36' y2='36' stroke='%231f4d3a' stroke-width='4' stroke-linecap='round'/></svg>") 16 16, zoom-in}
+#calque{position:absolute;inset:0;transition:transform .12s ease-out;transform-origin:50% 50%}
+#calque img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#photoZone .credit{position:absolute;right:12px;bottom:10px;font:600 11px/1.3 Nunito;color:#fff;background:rgba(0,0,0,.45);padding:5px 8px;border-radius:6px;max-width:560px;z-index:3}
+#photoZone .astuce{position:absolute;left:12px;top:12px;font:800 13px/1 Nunito;color:#fff;background:rgba(31,77,58,.85);padding:8px 12px;border-radius:99px;z-index:3}
+#photoZone .compte{position:absolute;right:12px;top:12px;font:800 15px/1 Nunito;color:#3a2a05;background:var(--soleil);padding:9px 14px;border-radius:99px;z-index:3;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#zoomBox{position:absolute;right:14px;top:50%;transform:translateY(-50%);z-index:4;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(251,246,234,.9);border-radius:99px;padding:7px 5px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+#zoomBox button{width:26px;height:26px;border-radius:50%;border:0;background:var(--sapin);color:#fff;font:800 16px/1 Nunito;cursor:pointer}
+#zoomBox input{writing-mode:vertical-lr;direction:rtl;width:16px;height:100px;accent-color:#1f4d3a;cursor:pointer}
+#zoomBox span{font:800 10px/1 Nunito;color:var(--sapin)}
+.trouve{position:absolute;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:rgba(31,77,58,.9);border:3px solid #fff;color:#fff;font:800 26px/48px Nunito;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.45);animation:pop .5s cubic-bezier(.2,1.6,.4,1) both;pointer-events:none}
+.trouve::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:3px solid rgba(242,193,78,.9);animation:onde2 .9s ease-out both}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes onde2{from{transform:scale(.6);opacity:1}to{transform:scale(1.6);opacity:0}}
+.etiq{position:absolute;transform:translate(34px,-50%);white-space:nowrap;background:var(--creme);color:var(--sapin);font:800 15px/1 Nunito;padding:9px 13px;border-radius:99px;box-shadow:0 6px 16px rgba(0,0,0,.4);border:2px solid var(--soleil);animation:etiq .5s .15s cubic-bezier(.2,1.5,.4,1) both;pointer-events:none}
+.etiq.gauche{transform:translate(calc(-100% - 34px),-50%)}
+@keyframes etiq{from{opacity:0}to{opacity:1}}
+#calque .trouve,#calque .rate,#calque .guide{scale:calc(1 / var(--z,1))}
+#calque .etiq{scale:calc(1 / var(--z,1));transform-origin:0 50%}
+#calque .etiq.gauche{transform-origin:0 50%}
+.rate{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:3px solid rgba(255,255,255,.85);animation:onde2 .6s ease-out both;pointer-events:none}
+.guide{position:absolute;width:92px;height:92px;margin:-46px 0 0 -46px;border-radius:50%;border:5px solid #f2c14e;background:rgba(242,193,78,.22);box-shadow:0 0 0 3px rgba(31,77,58,.85),0 0 26px 8px rgba(242,193,78,.75);animation:guide 1.1s ease-in-out infinite;pointer-events:none;z-index:3}
+.guide::before,.guide::after{content:'';position:absolute;inset:-5px;border-radius:50%;border:4px solid #f2c14e;animation:onde 1.6s ease-out infinite}
+.guide::after{animation-delay:.8s}
+.guide span{position:absolute;left:50%;top:100%;margin:16px 0 0 -20px;font-size:40px;line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.5));animation:main .9s ease-in-out infinite}
+@keyframes guide{0%,100%{transform:scale(.92)}50%{transform:scale(1.06)}}
+@keyframes onde{0%{transform:scale(1);opacity:.95}100%{transform:scale(2.1);opacity:0}}
+@keyframes main{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+#droite{padding:34px 40px;display:flex;flex-direction:column;position:relative;background:repeating-linear-gradient(180deg,transparent 0 37px,rgba(31,77,58,.09) 37px 38px)}
+#droite .sur{color:var(--sapin2)}
+#droite h2{margin:8px 0 4px;font:700 34px/1.1 Fraunces;color:var(--sapin)}
+#droite .consigne{font:700 16px/1.4 Nunito;color:#5b6b60}
+#indices{margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+#indices li.vide{background:rgba(255,255,255,.5);color:#8a978e;font-style:italic;box-shadow:none;border:2px dashed rgba(31,77,58,.18)}
+#indices li.vide::before{background:#dfe6da;color:#8a978e}
+#indices li{background:#fff;border-radius:14px;padding:12px 16px 12px 52px;position:relative;font:600 16.5px/1.45 Nunito;box-shadow:0 4px 12px rgba(31,77,58,.08);animation:entre .45s cubic-bezier(.2,1,.3,1)}
+#indices li::before{content:attr(data-n);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--soleil);font:800 13px/26px Nunito;text-align:center;color:#3a2a05}
+@keyframes entre{from{transform:translateX(20px);opacity:0}}
+#boutons{margin-top:auto;display:flex;gap:12px}
+.btn{border:0;border-radius:999px;padding:15px 22px;font:800 16px/1 Nunito;cursor:pointer;background:var(--soleil);color:#3a2a05;box-shadow:0 8px 20px rgba(242,193,78,.35)}
+.btn.sec{background:#fff;color:var(--sapin);box-shadow:0 6px 16px rgba(31,77,58,.12)}
+.btn[disabled]{opacity:.45;cursor:default}
+#aide{margin-top:12px;font:700 15px/1.4 Nunito;color:#7a4b12;background:#fff4d6;border-left:4px solid var(--soleil);border-radius:10px;padding:10px 12px;display:none}
+#aide.on{display:block;animation:entre .45s}
+#bravoIndices{margin-top:12px;font:800 17px/1.3 Nunito;color:var(--sapin);display:none}
+#bravoIndices.on{display:block;animation:entre .45s}
+#identite{display:none;margin-top:16px;background:var(--sapin);color:#fff;border-radius:18px;padding:18px 22px;animation:entre .5s}
+#identite.on{display:block}
+#identite .lat{font:italic 600 34px/1.05 Fraunces;color:var(--soleil)}
+#identite .nom{font:800 18px/1.2 Nunito;margin-top:4px}
+#identite .fam{display:inline-block;margin-top:8px;font:800 12px/1 Nunito;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.15);border-radius:99px;padding:6px 10px}
+#identite .piege{margin-top:10px;font:700 14px/1.4 Nunito;color:#ffe7a8}
+#fermer{position:absolute;right:18px;top:16px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);font:800 20px/1 Nunito;color:var(--sapin);cursor:pointer}
+</style>
+</head>
+<body>
+<div id="stage">
+ <img id="fond" class="fond" src="img/jardin-jeu.jpg" alt="">
+ <div id="voile"></div>
+ <div id="tete"><div class="sur">Étape 1 · Observer</div><h1>Trois spécimens à identifier</h1><p>Ouvre une photo, trouve les trois indices cachés dessus, puis révèle son identité.</p></div>
+ <div id="compteur">🔎 <span id="nb">0</span> / 3 identifiés</div>
+ <div id="polas"></div>
+ <div id="celian" class="perso"><img id="pose" src="img/celian-observe.png" alt="Célian"></div>
+ <div id="bulle" class="bulle">Le jury ne te demande pas « c'est joli ? » mais <b>genre, espèce, nom commun, famille</b>. On commence par regarder, pas par deviner.</div>
+ <button id="son" class="son" title="Écouter Célian">🔊</button>
+ <div id="carnet"><div id="page">
+  <div id="photoZone"><div id="calque"><img id="cPhoto" src="" alt=""></div><span class="astuce">🔍 Zoome à la molette ou avec le curseur, puis clique sur un indice</span><div id="zoomBox"><button id="zPlus" title="Zoomer">+</button><input id="zSlider" type="range" min="1" max="3" step="0.05" value="1" aria-label="Zoom"><button id="zMoins" title="Dézoomer">−</button><span id="zVal">×1</span></div><span class="compte" id="cCompte">0 / 3</span><span class="credit" id="cCredit"></span></div>
+  <div id="droite">
+   <button id="fermer" title="Fermer">✕</button>
+   <div class="sur">Carnet de terrain</div>
+   <h2 id="cTitre">Spécimen n°1</h2>
+   <div class="consigne">Trois indices se cachent sur la photo. Trouve-les pour remplir ton carnet.</div>
+   <ul id="indices"></ul>
+   <div id="identite"><div class="lat" id="iLat"></div><div class="nom" id="iNom"></div><span class="fam" id="iFam"></span><div class="piege" id="iPiege"></div></div>
+   <div id="aide"></div><div id="bravoIndices">🎉 Bravo, tu as trouvé tous les indices !</div>
+   <div id="boutons"><button class="btn" id="bRevele" disabled>Révéler l'identité</button></div>
+  </div>
+ </div></div>
+</div>
+<script src="js/commun.js?v=20260917b"></script>
+<script>
+const SPEC=[
+ {k:'ginkgo',leg:'Spécimen A',photo:'img/photos/ginkgo.jpg',iw:960,ih:1280,credit:'Photo : H. Zell, CC BY-SA 3.0, via Wikimedia Commons',
+  lat:'Ginkgo biloba',nom:'Arbre aux quarante écus',fam:'Ginkgoacées',piege:'Pas un conifère : une gymnosperme à part.',
+  indices:[{c:'Feuille en éventail',x:.35,y:.22,r:.11,t:"Feuille en éventail, souvent fendue en deux, sans nervure centrale.",aide:"Regarde bien la forme des feuilles."},
+   {c:'Rameau court',x:.56,y:.24,r:.08,t:"Les feuilles partent en bouquet d'un petit moignon : le rameau court.",aide:"D'où partent les feuilles et les graines ?"},
+   {c:'Graines nues',x:.47,y:.74,r:.14,t:"Ces « fruits » jaunes sont des graines nues : pas de fleur, pas de vrai fruit.",aide:"Et ces boules jaunes, qu'est-ce que c'est vraiment ?"}]},
+ {k:'narcisse',leg:'Spécimen B',photo:'img/photos/narcisse.jpg',iw:960,ih:720,credit:'Photo : Meneerke bloem, CC BY-SA 3.0, via Wikimedia Commons',
+  lat:'Narcissus pseudonarcissus',nom:'Jonquille (narcisse trompette)',fam:'Amaryllidacées',piege:'Anciennement Liliacées : ne te fais pas piéger.',
+  indices:[{c:'Couronne (trompette)',x:.48,y:.58,r:.09,t:"Au centre, une trompette : la couronne, aussi longue que les tépales chez la jonquille.",aide:"Qu'y a-t-il au centre de la fleur ?"},
+   {c:'6 tépales',x:.30,y:.34,r:.08,t:"Six tépales jaune pâle entourent la couronne.",aide:"Compte les pièces jaune pâle autour du centre."},
+   {c:'Spathe sèche',x:.46,y:.23,r:.05,t:"Derrière la fleur, une petite spathe brune, sèche comme du papier.",aide:"Regarde juste derrière la fleur, tout en haut."}]},
+ {k:'lavande',leg:'Spécimen C',photo:'img/photos/lavande.jpg',iw:800,ih:600,credit:'Photo : Emőke Dénes, CC BY-SA 4.0, via Wikimedia Commons',
+  lat:'Lavandula angustifolia',nom:'Lavande vraie',fam:'Lamiacées',piege:'Épi ramifié et feuilles plus larges ? C\'est plutôt un lavandin.',
+  indices:[{c:'Épi de fleurs',x:.25,y:.57,r:.07,t:"Petites fleurs bleu-violet groupées en épi au bout de la tige.",aide:"Comment sont groupées les fleurs ?"},
+   {c:'Longue tige nue',x:.57,y:.43,r:.06,t:"Une longue tige fine, sans feuille, porte l'épi.",aide:"Qu'est-ce qui porte les fleurs ?"},
+   {c:'Feuilles étroites',x:.72,y:.56,r:.07,t:"Feuilles très étroites et gris-vert : angustifolia veut dire « à feuilles étroites ».",aide:"Regarde les feuilles entre les tiges."}]}
+];
+const $=id=>document.getElementById(id);const faits=new Set();let cur=null,trouves=new Set(),minuteur=null,etapeAide=0;
+SPEC.forEach((s,i)=>{const d=document.createElement('div');d.className='pola';d.innerHTML=`<div class="scotch"></div><div class="ph"><img src="${s.photo}" alt=""></div><div class="leg">${s.leg}</div><div class="ok">✓</div>`;d.onclick=()=>ouvrir(i);$('polas').appendChild(d)});
+const zone=$('photoZone'),calque=$('calque');
+function boite(){const s=SPEC[cur];const zw=zone.clientWidth,zh=zone.clientHeight;const k=Math.max(zw/s.iw,zh/s.ih);const w=s.iw*k,h=s.ih*k;return{ox:(zw-w)/2,oy:(zh-h)/2,w,h}}
+function pos(ind){const b=boite();return{x:b.ox+ind.x*b.w,y:b.oy+ind.y*b.h,r:ind.r*b.w}}
+function rafraichirCarnet(){const s=SPEC[cur];$('indices').innerHTML='';s.indices.forEach((ind,i)=>{const li=document.createElement('li');li.dataset.n=i+1;if(trouves.has(i)){li.textContent=ind.t}else{li.className='vide';li.textContent='Indice à trouver sur la photo…'}$('indices').appendChild(li)});$('cCompte').textContent=trouves.size+' / 3'}
+function relancer(){clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove());if(trouves.size>=3)return;
+ minuteur=setTimeout(()=>{const s=SPEC[cur];const i=s.indices.findIndex((_,k)=>!trouves.has(k));$('aide').textContent='💡 '+s.indices[i].aide;$('aide').classList.add('on');
+  const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.innerHTML='<span>👆</span>';g.style.left=Math.min(Math.max(p.x,62),zone.clientWidth-62)+'px';g.style.top=Math.min(Math.max(p.y,62),zone.clientHeight-120)+'px';calque.appendChild(g)},10000)}
+function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : qui es-tu ?';calque.querySelectorAll('.trouve,.rate,.guide,.etiq').forEach(e=>e.remove());
+ $('identite').classList.remove('on');$('aide').classList.remove('on');$('bravoIndices').classList.remove('on');$('bRevele').disabled=true;$('carnet').classList.add('on');zoom=1;calque.style.transformOrigin='50% 50%';appliquerZoom();rafraichirCarnet();voix.stop();relancer()}
+zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingClientRect();const k=r.width/zone.clientWidth;const x=(e.clientX-r.left)/k,y=(e.clientY-r.top)/k;
+ const s=SPEC[cur];let hit=-1;s.indices.forEach((ind,i)=>{if(trouves.has(i))return;const p=pos(ind);if(Math.hypot(p.x-x,p.y-y)<=Math.max(p.r,34))hit=i});
+ if(hit<0){const m=document.createElement('div');m.className='rate';m.style.left=x+'px';m.style.top=y+'px';calque.appendChild(m);setTimeout(()=>m.remove(),700);return}
+ trouves.add(hit);const p=pos(s.indices[hit]);const m=document.createElement('div');m.className='trouve';m.textContent='✓';m.style.left=p.x+'px';m.style.top=p.y+'px';calque.appendChild(m);
+ const et=document.createElement('div');et.className='etiq'+(p.x>zone.clientWidth*.55?' gauche':'');et.textContent=s.indices[hit].c;et.style.left=p.x+'px';et.style.top=p.y+'px';calque.appendChild(et);
+ $('aide').classList.remove('on');rafraichirCarnet();
+ if(trouves.size>=3){$('bravoIndices').classList.add('on');$('bRevele').disabled=false;clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove())}else relancer()});
+let zoom=1;
+function appliquerZoom(){calque.style.transform='scale('+zoom+')';calque.style.setProperty('--z',zoom);$('zSlider').value=zoom;$('zVal').textContent='×'+zoom.toFixed(1).replace('.0','').replace('.',',')}
+function regler(z){zoom=Math.max(1,Math.min(3,z));appliquerZoom()}
+zone.addEventListener('mousemove',e=>{if(e.target.closest('#zoomBox'))return;const r=zone.getBoundingClientRect();const x=(e.clientX-r.left)/r.width*100,y=(e.clientY-r.top)/r.height*100;calque.style.transformOrigin=x+'% '+y+'%'});
+zone.addEventListener('wheel',e=>{e.preventDefault();regler(zoom*(1-e.deltaY*.0009))},{passive:false});
+$('zSlider').addEventListener('input',e=>{e.stopPropagation();regler(+e.target.value)});
+$('zPlus').addEventListener('click',e=>{e.stopPropagation();regler(zoom+.25)});
+$('zMoins').addEventListener('click',e=>{e.stopPropagation();regler(zoom-.25)});
+$('zoomBox').addEventListener('click',e=>e.stopPropagation());
+$('bRevele').onclick=()=>{const s=SPEC[cur];$('iLat').textContent=s.lat;$('iNom').textContent=s.nom;$('iFam').textContent=s.fam;$('iPiege').textContent='⚠️ '+s.piege;$('identite').classList.add('on');$('bRevele').disabled=true;$('bravoIndices').classList.remove('on');
+ faits.add(cur);document.querySelectorAll('.pola')[cur].classList.add('fait');$('nb').textContent=faits.size;
+ voix.jouer('audio/revele-'+s.k+'.mp3');
+ if(faits.size===3){$('pose').src='img/celian-bravo.png';$('bulle').innerHTML='Trois sur trois ! Maintenant on passe au <b>labo</b> : on va les regarder de beaucoup plus près.'}};
+$('fermer').onclick=()=>{$('carnet').classList.remove('on');voix.stop();clearTimeout(minuteur)};
+const son=$('son');son.onclick=e=>{e.stopPropagation();voix.jouer('audio/terrain.mp3',son)};
+</script>
+</body>
+</html>

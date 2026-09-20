@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reconnaître les végétaux · Démo Meujesse Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=20260917b">
+<style>
+#fond{animation:zoom 40s ease-in-out infinite alternate;transform-origin:30% 60%}
+@keyframes zoom{from{transform:scale(1.02)}to{transform:scale(1.08)}}
+#voile{position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,32,24,.82) 0%,rgba(14,32,24,.55) 42%,rgba(14,32,24,0) 72%)}
+#tete{position:absolute;left:80px;top:90px;width:720px;color:#fff}
+#tete h1{margin:14px 0 18px;font:700 66px/1.02 Fraunces;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+#tete h1 em{font-style:italic;color:var(--soleil)}
+#tete p{margin:0;font:600 21px/1.5 Nunito;color:rgba(255,255,255,.92);max-width:620px}
+#etapes{position:absolute;left:80px;top:470px;display:flex;gap:16px}
+.et{width:170px;padding:16px 16px 18px;border-radius:18px;background:rgba(251,246,234,.12);border:1px solid rgba(251,246,234,.3);backdrop-filter:blur(6px);color:#fff}
+.et{cursor:pointer;transition:scale .25s cubic-bezier(.2,1.5,.4,1),background .25s,border-color .25s}
+.et:hover{scale:1.07;background:rgba(251,246,234,.22);border-color:rgba(242,193,78,.8)}
+.et.pouls{animation:pouls .5s cubic-bezier(.2,1.6,.4,1)!important}
+@keyframes pouls{0%{scale:1}40%{scale:1.16}100%{scale:1.07}}
+.et .n{font:800 12px/1 Nunito;letter-spacing:.2em;color:var(--soleil)}
+.et .ic{font-size:34px;margin:10px 0 6px}
+.et b{display:block;font:700 18px/1.2 Fraunces}
+.et span{font:600 13.5px/1.35 Nunito;color:rgba(255,255,255,.8)}
+#celian{left:1150px;height:760px}
+#bulle{left:760px;top:170px;width:380px}
+#bulle::after{content:"";position:absolute;right:-14px;top:60px;border:14px solid transparent;border-left-color:var(--creme);border-right:0}
+#son{left:1110px;top:150px}
+.feuille{position:absolute;width:26px;height:14px;border-radius:0 100% 0 100%;background:linear-gradient(135deg,#9bc57a,#4f8a3c);opacity:.0;pointer-events:none;animation:vole var(--d) linear infinite;animation-delay:var(--r)}
+@keyframes vole{0%{transform:translate(0,0) rotate(0);opacity:0}10%{opacity:.85}100%{transform:translate(var(--x),var(--y)) rotate(540deg);opacity:0}}
+#pied{position:absolute;left:80px;bottom:34px;font:700 13px/1.3 Nunito;color:rgba(255,255,255,.7);letter-spacing:.04em}
+
+#fiche{position:absolute;inset:0;background:rgba(10,24,17,.45);backdrop-filter:blur(3px);display:none;z-index:40}
+#fiche.on{display:block}
+#fcarte{position:absolute;left:80px;top:250px;width:620px;background:var(--creme);border-radius:24px;padding:28px 30px 26px 120px;box-shadow:0 30px 80px rgba(0,0,0,.45);animation:fiche .45s cubic-bezier(.2,1.5,.4,1)}
+@keyframes fiche{from{transform:translateY(20px) scale(.94);opacity:0}}
+#fcarte .ic{position:absolute;left:28px;top:28px;width:70px;height:70px;border-radius:20px;background:var(--sapin);display:grid;place-items:center;font-size:36px;box-shadow:0 8px 20px rgba(31,77,58,.35)}
+#fcarte .n{font:800 12px/1 Nunito;letter-spacing:.25em;color:var(--sapin2)}
+#fcarte h2{margin:6px 0 10px;font:700 32px/1.1 Fraunces;color:var(--sapin)}
+#fcarte p{margin:0;font:600 17px/1.5 Nunito;color:var(--encre)}
+#fcarte ul{margin:12px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:8px}
+#fcarte li{font:800 13px/1 Nunito;color:var(--sapin);background:#e5efd9;border-radius:99px;padding:8px 12px}
+#fcarte button{position:absolute;right:16px;top:14px;width:40px;height:40px;border:0;border-radius:50%;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);font:800 18px/1 Nunito;color:var(--sapin);cursor:pointer}
+#astuceEt{position:absolute;left:80px;top:650px;font:800 14px/1.3 Nunito;color:rgba(255,255,255,.85);text-shadow:0 1px 8px rgba(0,0,0,.5)}
+</style>
+</head>
+<body>
+<div id="stage">
+ <img id="fond" class="fond" src="img/jardin-jeu.jpg" alt="">
+ <div id="voile"></div>
+ <div id="fx"></div>
+ <div id="tete" class="entree" style="--d:.1s">
+  <div class="sur">Parcours · Reconnaissance des végétaux</div>
+  <h1>Reconnaître une plante <em>comme un pro</em></h1>
+  <p>Avant de tailler, planter ou entretenir un massif, un paysagiste doit savoir ce qu'il a devant lui. Suis Célian sur le terrain, observe, zoome, puis prouve que tu sais nommer chaque végétal.</p>
+ </div>
+ <div id="etapes">
+  <div class="et entree" style="--d:0.50s"><div class="n">ÉTAPE 1</div><div class="ic">🔎</div><b>Observer</b><span>Les indices sur le terrain</span></div>
+  <div class="et entree" style="--d:0.65s"><div class="n">ÉTAPE 2</div><div class="ic">🌱</div><b>Disséquer</b><span>La plante en 3D, en coupe</span></div>
+  <div class="et entree" style="--d:0.80s"><div class="n">ÉTAPE 3</div><div class="ic">🗓️</div><b>Suivre</b><span>Son année, saison par saison</span></div>
+  <div class="et entree" style="--d:0.95s"><div class="n">ÉTAPE 4</div><div class="ic">🏅</div><b>Nommer</b><span>Le défi final et ta médaille</span></div>
+ </div>
+ <div id="celian" class="perso"><img src="img/celian-accueil.png" alt="Célian"></div>
+ <div id="bulle" class="bulle entree" style="--d:1.1s">Salut, moi c'est <b>Célian</b> ! Je suis apprenti paysagiste. On part sur le terrain ensemble : on observe, on apprend les noms, <b>même en latin</b>. Prêt ?</div>
+ <button id="son" class="son" title="Écouter Célian">🔊</button>
+ <div id="astuceEt" class="entree" style="--d:1.2s">👆 Clique sur une étape pour découvrir ce qui t'attend</div>
+ <div id="fiche"><div id="fcarte"><div class="ic" id="fIc"></div><button id="fFerme" title="Fermer">✕</button><div class="n" id="fN"></div><h2 id="fT"></h2><p id="fP"></p><ul id="fL"></ul></div></div>
+</div>
+<script src="js/commun.js?v=20260917b"></script>
+<script>
+document.querySelectorAll('.et').forEach(e=>e.addEventListener('click',()=>{e.classList.remove('pouls');void e.offsetWidth;e.classList.add('pouls')}));
+const ETAPES=[
+ {ic:'🔎',t:'Observer sur le terrain',p:"Trois spécimens t'attendent en photo. Clique sur la photo pour trouver les indices cachés, remplis ton carnet, puis révèle le nom latin et la famille.",l:['3 plantes','3 indices par photo','Carnet de terrain']},
+ {ic:'🌱',t:'Disséquer au labo',p:"Fais tourner chaque plante en 3D. Les pastilles montrent les critères que le jury attend. Coupe le bulbe de la jonquille pour voir ce qu'il cache.",l:['Plantes en 3D','Étiquettes','Vue en coupe']},
+ {ic:'🗓️',t:'Suivre une année',p:"Fais défiler les quatre saisons : feuilles qui jaunissent, bulbe qui travaille sous terre, feuillage qui reste l'hiver. De quoi reconnaître une plante même sans fleurs.",l:['4 saisons','Cycle du bulbe','Reconnaissance en hiver']},
+ {ic:'🏅',t:'Nommer, le défi final',p:"Trois défis t'attendent : choisir la bonne photo, compléter une fiche et relier chaque nom commun à son nom latin. Réussis-les pour décrocher ta médaille.",l:['3 défis','Noms latins','Médaille']}
+];
+const fiche=document.getElementById('fiche');
+document.querySelectorAll('.et').forEach((e,i)=>e.addEventListener('click',()=>{const d=ETAPES[i];document.getElementById('fIc').textContent=d.ic;document.getElementById('fN').textContent='ÉTAPE '+(i+1);document.getElementById('fT').textContent=d.t;document.getElementById('fP').textContent=d.p;document.getElementById('fL').innerHTML=d.l.map(x=>'<li>'+x+'</li>').join('');fiche.classList.remove('on');void fiche.offsetWidth;fiche.classList.add('on')}));
+fiche.addEventListener('click',e=>{if(e.target===fiche||e.target.id==='fFerme')fiche.classList.remove('on')});
+const son=document.getElementById('son');
+son.addEventListener('click',e=>{e.stopPropagation();voix.jouer('audio/accueil.mp3',son)});
+addEventListener('pointerdown',function once(e){if(e.target!==son)voix.jouer('audio/accueil.mp3',son)},{once:true});
+const fx=document.getElementById('fx'),r=(a,b)=>a+Math.random()*(b-a);
+for(let i=0;i<10;i++){const f=document.createElement('div');f.className='feuille';f.style.left=r(-40,500)+'px';f.style.top=r(-40,200)+'px';f.style.setProperty('--d',r(9,16)+'s');f.style.setProperty('--r',-r(0,14)+'s');f.style.setProperty('--x',r(500,1100)+'px');f.style.setProperty('--y',r(500,900)+'px');fx.appendChild(f)}
+</script>
+</body>
+</html>

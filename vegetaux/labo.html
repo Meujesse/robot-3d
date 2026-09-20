@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Le labo des végétaux · Démo Meujesse Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=20260917b">
+<style>
+#stage{background:radial-gradient(ellipse at 68% 40%,#f7f9f1 0%,#e3ecd8 45%,#c9d9bd 100%)}
+#flou{position:absolute;inset:-40px;width:calc(100% + 80px);height:calc(100% + 80px);object-fit:cover;filter:blur(22px) saturate(.9);opacity:.35}
+#vue3d{position:absolute;left:470px;top:0;width:1130px;height:900px;cursor:grab}
+#vue3d:active{cursor:grabbing}
+#panneau{position:absolute;left:36px;top:32px;width:430px;bottom:104px;display:flex;flex-direction:column;gap:14px}
+#panneau h1{margin:6px 0 0;font:700 38px/1.05 Fraunces;color:var(--sapin)}
+#panneau .sur{color:var(--sapin2)}
+#onglets{display:flex;gap:10px}
+.onglet{flex:1;border:0;border-radius:16px;padding:8px;background:rgba(255,255,255,.6);box-shadow:0 4px 14px rgba(31,77,58,.12);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;font:800 13px/1.1 Nunito;color:var(--sapin);transition:.2s}
+.onglet img{width:100%;height:64px;object-fit:cover;border-radius:10px;filter:saturate(.7)}
+.onglet.on{background:var(--sapin);color:#fff;transform:translateY(-2px)}
+.onglet.on img{filter:none}
+#fiche{background:var(--creme);border-radius:20px;padding:16px 18px;box-shadow:0 10px 30px rgba(31,77,58,.14)}
+#fiche .nom{font:800 14px/1.2 Nunito;color:var(--sapin2);letter-spacing:.02em}
+#fiche .lat{font:italic 600 30px/1.1 Fraunces;color:var(--encre);margin:4px 0}
+#fiche .fam{display:inline-block;font:800 12px/1 Nunito;letter-spacing:.08em;text-transform:uppercase;background:#e5efd9;color:var(--sapin);border-radius:99px;padding:6px 10px}
+#fiche .vue{font:600 13px/1.3 Nunito;color:#6c7a6e;margin-top:8px}
+#detail{flex:1;background:#fff;border-radius:20px;padding:18px 20px;box-shadow:0 10px 30px rgba(31,77,58,.14);position:relative;overflow:hidden}
+#detail h2{margin:0 0 8px;padding-right:96px;font:700 24px/1.15 Fraunces;color:var(--sapin)}
+#detail p{margin:0;font:600 16.5px/1.5 Nunito;color:var(--encre)}
+#detail .aide{color:#6c7a6e}
+#detail .num{position:absolute;right:16px;top:14px;font:800 12px/1 Nunito;color:var(--sapin2);letter-spacing:.1em}
+#actions{display:flex;gap:10px}
+.btn{flex:1;border:0;border-radius:999px;padding:13px 14px;font:800 15px/1 Nunito;cursor:pointer;background:var(--soleil);color:#3a2a05;box-shadow:0 8px 20px rgba(242,193,78,.35)}
+.btn.sec{background:#fff;color:var(--sapin);box-shadow:0 6px 16px rgba(31,77,58,.12)}
+.btn.on{background:var(--sapin);color:#fff}
+#piege{font:700 13.5px/1.4 Nunito;color:#7a4b12;background:#fff4d6;border-left:4px solid var(--soleil);border-radius:10px;padding:10px 12px}
+#guide{position:absolute;left:1490px;top:24px;display:flex;flex-direction:row-reverse;align-items:flex-start;gap:10px}
+#guide img{width:84px;height:84px;border-radius:50%;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+#guideBulle{position:absolute;right:120px;top:30px;width:330px;opacity:1;transform:none;font-size:15.5px;padding:12px 16px}
+#guideBulle::after{content:"";position:absolute;right:-12px;top:16px;border:12px solid transparent;border-left-color:var(--creme);border-right:0}
+#son{left:1098px;top:44px;width:44px;height:44px;font-size:17px}
+/* pastilles */
+#pastilles{position:absolute;left:470px;top:0;width:1130px;height:900px;pointer-events:none}
+.pas{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;cursor:pointer}
+.pas .pt{width:30px;height:30px;border-radius:50%;background:var(--soleil);border:3px solid #fff;box-shadow:0 4px 12px rgba(0,0,0,.3);display:grid;place-items:center;font:800 13px/1 Nunito;color:#3a2a05;transition:.2s}
+.pas .pt::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(242,193,78,.8);animation:pouls 2s ease-out infinite}
+@keyframes pouls{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.4);opacity:0}}
+.pas .lab{position:absolute;left:24px;top:-15px;white-space:nowrap;background:rgba(31,77,58,.92);color:#fff;font:800 13px/1 Nunito;padding:8px 11px;border-radius:10px;opacity:0;transform:translateX(-4px);transition:.2s;pointer-events:none}
+.pas:hover .lab,.pas.on .lab{opacity:1;transform:none}
+.pas.on .pt{background:var(--sapin);color:#fff;transform:scale(1.15)}
+.pas.vu .pt{background:#fff;color:var(--sapin)}
+.pas.cache{display:none}
+/* saisons */
+#saisons{display:none;gap:8px}
+.s{flex:1;border:0;border-radius:14px;padding:10px 4px;background:#fff;cursor:pointer;font:800 13px/1.1 Nunito;color:var(--sapin);box-shadow:0 6px 16px rgba(31,77,58,.12);display:flex;flex-direction:column;align-items:center;gap:4px}
+.s span{font-size:24px}
+.s.on{background:var(--sapin);color:#fff}
+#frise{position:absolute;left:540px;right:70px;bottom:26px;height:92px;display:none;background:rgba(251,246,234,.92);border-radius:22px;box-shadow:0 10px 30px rgba(31,77,58,.18);padding:12px 22px 12px 86px}
+.mode-saisons #saisons{display:flex}
+.mode-saisons #frise{display:block}
+.mode-saisons #bCoupe{display:none}
+#lecture{position:absolute;left:18px;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:0;background:var(--sapin);color:#fff;font-size:20px;cursor:pointer;box-shadow:0 6px 16px rgba(31,77,58,.35)}
+#piste{position:relative;height:100%;cursor:pointer;touch-action:none}
+#bandes{position:absolute;left:0;right:0;top:30px;height:14px;border-radius:99px;overflow:hidden;display:flex}
+#bandes i{height:100%}
+#mois{position:absolute;left:0;right:0;top:52px;display:flex}
+#mois span{flex:1;text-align:center;font:800 11px/1 Nunito;color:#5b6b60;letter-spacing:.04em}
+#etiqSaisons{position:absolute;left:0;right:0;top:4px;height:18px}
+#etiqSaisons span{position:absolute;transform:translateX(-50%);font:800 12px/1 Nunito;color:var(--sapin);white-space:nowrap}
+#pouce{position:absolute;top:37px;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:#fff;border:3px solid var(--sapin);box-shadow:0 6px 16px rgba(0,0,0,.25);display:grid;place-items:center;font-size:22px;cursor:grab;pointer-events:none}
+#astuceFrise{position:absolute;right:22px;top:4px;font:700 11px/1 Nunito;color:#8a978e}
+#neige,#chute{position:absolute;left:470px;top:0;width:1130px;height:900px;pointer-events:none;overflow:hidden}
+.flocon{position:absolute;top:-10px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.9;animation:tombe var(--d) linear infinite;animation-delay:var(--r)}
+@keyframes tombe{to{transform:translate(var(--x),920px)}}
+#credits{position:absolute;right:18px;bottom:8px;font:600 10.5px/1.2 Nunito;color:rgba(29,42,34,.55)}
+</style>
+</head>
+<body>
+<div id="stage">
+ <img id="flou" src="img/jardin.jpg" alt="">
+ <div id="vue3d"></div>
+ <div id="neige"></div>
+ <div id="pastilles"></div>
+ <div id="panneau">
+  <div><div class="sur" id="sur">Étape 2 · Disséquer</div><h1 id="titre">La plante à la loupe</h1></div>
+  <div id="onglets"></div>
+  <div id="fiche"><div class="nom" id="fNom"></div><div class="lat" id="fLat"></div><span class="fam" id="fFam"></span><div class="vue" id="fVue"></div></div>
+  <div id="saisons"></div>
+  <div id="detail"><span class="num" id="dNum"></span><h2 id="dTitre"></h2><p id="dTexte"></p></div>
+  <div id="actions"><button class="btn" id="bCoupe"></button><button class="btn sec" id="bVue">↺ Recentrer</button></div>
+  <div id="piege"></div>
+ </div>
+ <div id="frise"><button id="lecture" title="Faire défiler l'année">▶</button><div id="piste"><div id="etiqSaisons"></div><div id="bandes"></div><div id="mois"></div><div id="pouce">🌱</div></div></div>
+ <div id="guide"><img src="img/celian-tete.png" alt="Célian"></div>
+ <div id="guideBulle" class="bulle"></div>
+ <button id="son" class="son" title="Écouter Célian">🔊</button>
+ <div id="credits">Modèles 3D illustratifs · contenus : Tela Botanica, Floriscope, SNHF, G. Hanks (AHDB), listes CNRV 2026</div>
+</div>
+<script src="js/commun.js?v=20260917b"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module" src="js/labo.js?v=20260917b"></script>
+</body>
+</html>

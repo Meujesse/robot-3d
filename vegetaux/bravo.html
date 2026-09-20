@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bravo ! · Démo Meujesse Learning</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,600&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=20260917b">
+<style>
+#fond{filter:brightness(.55) saturate(1.1) blur(2px);transform:scale(1.04)}
+#halo{position:absolute;left:260px;top:-10px;width:820px;height:820px;border-radius:50%;background:radial-gradient(circle,rgba(242,193,78,.45),rgba(242,193,78,0) 62%);animation:halo 4s ease-in-out infinite}
+@keyframes halo{50%{transform:scale(1.06);opacity:.8}}
+#badge{position:absolute;left:420px;top:40px;width:500px;height:520px}
+#med3d{position:absolute;inset:0;cursor:grab}#med3d:active{cursor:grabbing}
+#tourne{position:absolute;left:0;right:0;bottom:6px;text-align:center;font:800 13px/1 Nunito;color:rgba(255,255,255,.75);letter-spacing:.06em}
+@keyframes pose{from{transform:scale(.3) rotate(-25deg);opacity:0}}
+#badge svg{width:100%;height:100%;filter:drop-shadow(0 20px 40px rgba(0,0,0,.45))}
+#textes{position:absolute;left:170px;top:575px;width:1000px;text-align:center;color:#fff}
+#textes h1{margin:0;font:700 58px/1.05 Fraunces;text-shadow:0 4px 24px rgba(0,0,0,.5)}
+#textes p{margin:12px auto 0;max-width:780px;font:700 20px/1.5 Nunito;color:rgba(255,255,255,.92)}
+#acquis{display:flex;justify-content:center;gap:12px;margin-top:22px}
+#acquis span{background:rgba(251,246,234,.14);border:1px solid rgba(251,246,234,.35);border-radius:99px;padding:10px 16px;font:800 15px/1 Nunito}
+#celian{left:1210px;height:760px}
+#bulle{left:1000px;top:120px;width:300px}
+#bulle::after{content:"";position:absolute;right:-14px;top:40px;border:14px solid transparent;border-left-color:var(--creme);border-right:0}
+#son{left:1280px;top:80px}
+.conf{position:absolute;top:-20px;width:12px;height:8px;border-radius:0 100% 0 100%;animation:chute var(--d) linear forwards;animation-delay:var(--r);opacity:0}
+@keyframes chute{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:1;transform:translate(var(--x),950px) rotate(720deg)}}
+#pied{position:absolute;left:0;right:0;bottom:22px;text-align:center;font:700 13px/1.3 Nunito;color:rgba(255,255,255,.7)}
+</style>
+</head>
+<body>
+<div id="stage">
+ <img id="fond" class="fond" src="img/jardin-jeu.jpg" alt="">
+ <div id="halo"></div>
+ <div id="fx"></div>
+ <div id="badge"><div id="med3d"></div><div id="tourne">↻ Fais-la tourner</div></div>
+ <div id="textes">
+  <h1>Bravo, médaille décrochée !</h1>
+  <p>Tu sais maintenant observer, nommer et piéger les confusions sur trois végétaux des listes du concours.</p>
+  <div id="acquis"><span>🌿 Ginkgo biloba</span><span>🌼 Narcissus pseudonarcissus</span><span>💜 Lavandula angustifolia</span></div>
+ </div>
+ <div id="celian" class="perso"><img src="img/celian-bravo.png" alt="Célian"></div>
+ <div id="bulle" class="bulle entree" style="--d:.9s">Joli travail ! Tu sais maintenant reconnaître ces trois végétaux, <b>même sans leurs fleurs</b>.</div>
+ <button id="son" class="son" title="Écouter Célian">🔊</button>
+ <div id="pied">Conçu par Meujesse Learning · contenus sourcés (Tela Botanica, Floriscope, SNHF, listes CNRV 2026)</div>
+</div>
+<script src="js/commun.js?v=20260917b"></script>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+<script type="module" src="js/medaille.js?v=20260917b"></script>
+<script>
+const son=document.getElementById('son');son.onclick=e=>{e.stopPropagation();voix.jouer('audio/bravo.mp3',son)};
+addEventListener('pointerdown',function once(e){if(e.target!==son)voix.jouer('audio/bravo.mp3',son)},{once:true});
+const fx=document.getElementById('fx'),r=(a,b)=>a+Math.random()*(b-a);const cols=['#f2c14e','#7fb069','#9bc57a','#fbf6ea','#8a78d8'];
+function pluie(){for(let i=0;i<60;i++){const c=document.createElement('div');c.className='conf';c.style.left=r(200,1150)+'px';c.style.background=cols[i%5];c.style.setProperty('--d',r(2.8,5)+'s');c.style.setProperty('--r',r(0,1.2)+'s');c.style.setProperty('--x',r(-120,120)+'px');fx.appendChild(c);setTimeout(()=>c.remove(),7000)}}
+let fait=false;function essai(){if(fait||document.hidden)return;fait=true;pluie()}
+document.addEventListener('visibilitychange',essai);essai();
+</script>
+</body>
+</html>
