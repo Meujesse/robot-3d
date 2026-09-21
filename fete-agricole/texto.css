@@ -25,12 +25,13 @@ section[hidden]{display:none!important}
 #accroche.part .txt{opacity:0;transition:opacity .3s}
 
 /* ---------- appli de messages ---------- */
-#appli{display:grid;grid-template-columns:400px 1fr;background:#e9efe6;animation:arrive .5s ease both}
+#appli{display:grid;grid-template-columns:400px 1fr;grid-template-rows:900px;background:#e9efe6;animation:arrive .5s ease both}
 @keyframes arrive{from{opacity:0;transform:scale(1.04)}}
 #liste{background:#fbfdf9;border-right:1px solid #d9e3d6;display:flex;flex-direction:column}
 #liste .moi{height:84px;display:flex;align-items:center;padding:0 26px;font:800 26px/1 "Bricolage Grotesque";color:var(--pre2);border-bottom:1px solid #e3ebdf}
-.conv{display:flex;gap:14px;align-items:center;padding:16px 22px;border-bottom:1px solid #eef3eb;opacity:.55}
-.conv.actif{background:#e6f3e6;opacity:1}
+.conv{display:flex;gap:14px;align-items:center;padding:16px 22px;border:0;border-bottom:1px solid #eef3eb;background:none;width:100%;text-align:left;cursor:pointer;transition:background .2s;font-family:inherit;color:inherit}
+.conv:hover{background:#f0f6ee}
+.conv.actif{background:#e6f3e6}
 .conv img,.conv .av{width:56px;height:56px;border-radius:50%;object-fit:cover;display:grid;place-items:center;font-size:26px;flex:none}
 .conv div{flex:1;min-width:0}
 .conv b{display:block;font:800 17px/1.2 Nunito}
@@ -43,13 +44,13 @@ section[hidden]{display:none!important}
 .progres .barre{height:12px;border-radius:99px;background:#dde7d9;overflow:hidden}
 .progres .barre i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--pre),#57b97c);transition:width .6s cubic-bezier(.2,1,.3,1)}
 
-#chat{position:relative;display:flex;flex-direction:column;min-width:0;background:#e7ede2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%232f7d4f' stroke-opacity='.07' stroke-width='2'%3E%3Cpath d='M20 30c8-10 18-10 26 0M74 84c8-10 18-10 26 0'/%3E%3Ccircle cx='90' cy='26' r='7'/%3E%3Cpath d='M22 96l8-14 8 14z'/%3E%3C/g%3E%3C/svg%3E")}
+#chat{position:relative;display:flex;flex-direction:column;min-width:0;min-height:0;height:900px;overflow:hidden;background:#e7ede2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='none' stroke='%232f7d4f' stroke-opacity='.07' stroke-width='2'%3E%3Cpath d='M20 30c8-10 18-10 26 0M74 84c8-10 18-10 26 0'/%3E%3Ccircle cx='90' cy='26' r='7'/%3E%3Cpath d='M22 96l8-14 8 14z'/%3E%3C/g%3E%3C/svg%3E")}
 #chat header{height:84px;flex:none;display:flex;align-items:center;gap:14px;padding:0 120px 0 28px;background:#fbfdf9;border-bottom:1px solid #d9e3d6}
 #chat header img{width:54px;height:54px;border-radius:50%;object-fit:cover}
 #chat header b{display:block;font:800 19px/1.2 Nunito}
 #chat header i{font:600 14px/1 Nunito;font-style:normal;color:var(--pre)}
-#fil{flex:1;overflow-y:auto;padding:22px 70px 10px;display:flex;flex-direction:column;gap:7px;scroll-behavior:smooth}
-#fil::-webkit-scrollbar{width:8px}#fil::-webkit-scrollbar-thumb{background:rgba(47,125,79,.25);border-radius:9px}
+#fil,#filAutre{flex:1;min-height:0;overflow-y:auto;padding:22px 70px 10px;display:flex;flex-direction:column;gap:7px;scroll-behavior:smooth}
+#fil::-webkit-scrollbar,#filAutre::-webkit-scrollbar{width:10px}#fil::-webkit-scrollbar-thumb,#filAutre::-webkit-scrollbar-thumb{background:rgba(47,125,79,.25);border-radius:9px}
 .jour{align-self:center;font:800 12px/1 Nunito;color:var(--gris);background:#fbfdf9;border-radius:99px;padding:7px 14px;margin-bottom:8px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
 .msg{position:relative;max-width:640px;padding:11px 15px 9px;border-radius:18px;font:600 18px/1.42 Nunito;box-shadow:0 1px 2px rgba(0,0,0,.12);animation:msg .32s cubic-bezier(.2,1.3,.4,1) both;transform-origin:0 100%}
 @keyframes msg{from{opacity:0;transform:translateY(10px) scale(.92)}}
@@ -117,3 +118,14 @@ section[hidden]{display:none!important}
 #bilan .l .t{font:600 14.5px/1.35 Nunito;color:#8a4a36;margin-top:3px}
 #bilan .bas{position:absolute;left:80px;right:80px;bottom:34px;display:flex;gap:16px;align-items:center}
 #bilan .bas span{font:700 15px/1.4 Nunito;opacity:.8;margin-left:auto;max-width:560px;text-align:right}
+
+/* autres discussions, en lecture seule */
+#filAutre{padding:22px 70px 10px;display:flex;flex-direction:column;gap:7px}
+#filAutre[hidden],#fil[hidden]{display:none}
+.msg .de{display:block;font:800 13px/1.2 Nunito;color:var(--corail);margin-bottom:2px}
+.msg.elle.cam .de{color:var(--pre)}
+#saisie .lecture{display:flex;align-items:center;justify-content:center;gap:14px;font:700 15px/1.3 Nunito;color:var(--gris)}
+#saisie .lecture button{border:0;border-radius:99px;padding:11px 18px;background:var(--pre);color:#fff;font:800 14px/1 Nunito;cursor:pointer}
+#chat header .av{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;font-size:26px}
+#nouveaux{position:absolute;left:50%;bottom:130px;translate:-50% 0;border:0;border-radius:99px;padding:10px 16px;background:var(--encre);color:#fff;font:800 13px/1 Nunito;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.3);z-index:6}
+#nouveaux[hidden]{display:none}

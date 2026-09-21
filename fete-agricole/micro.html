@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Micro-trottoir · Organiser un événement agricole</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="commun.css?v=2">
+<link rel="stylesheet" href="commun.css?v=4">
 <style>
 #place{position:absolute;inset:0}
 #place .fond{animation:derive 40s ease-in-out infinite alternate}
@@ -67,7 +67,7 @@
 #bilan .btn{margin-top:22px}
 </style>
 </head>
-<body>
+<body data-voix>
 <div id="stage">
  <div id="place"><img class="fond" src="img/marche.jpg" alt=""><div id="voile"></div>
   <div id="tete" class="entree"><div class="sur">Place du marché · L'entretien</div><h1>Micro-trottoir</h1><p>Trois personnes, trois questions possibles à chaque fois. Pose-les et regarde ce que chacune te rapporte.</p></div>
@@ -85,9 +85,9 @@
  </div>
  <div id="bilan"></div>
 </div>
-<script src="js/commun.js?v=1"></script>
-<script src="js/camille-rig.js?v=1"></script>
-<script src="js/micro-donnees.js?v=1"></script>
+<script src="js/commun.js?v=4"></script>
+<script src="js/camille-rig.js?v=3"></script>
+<script src="js/micro-donnees.js?v=3"></script>
 <script>
 (async function(){
  const M=window.MICRO,$=s=>document.querySelector(s),VITE=new URLSearchParams(location.search).has('vite');
@@ -101,11 +101,11 @@
  jetons();
  function jauge(){const p=Math.round(100*gain/MAX);$('#jTxt').textContent=p+' %';$('#jB').style.width=p+'%'}
  function place(){let y=$('#parole').offsetTop+$('#parole').offsetHeight+16;const c=$('#coach');if(!c.hidden){c.style.top=y+'px';y+=c.offsetHeight+16}$('#qs').style.top=y+'px'}
- async function parler(g,texte,voix){
+ async function repond(g,texte,voix,oral){
   occupe=true;const p=$('#parole');p.innerHTML='<span class="qui">'+g.nom+'</span>'+texte.split(' ').map(m=>'<span class="m">'+m+' </span>').join('');place();
-  son.jouer('audio/'+voix+'.mp3');const parle=rig.speakText(texte);const sp=[...p.querySelectorAll('.m')],total=Math.max(900,texte.length*60);
-  for(const s of sp){s.classList.add('v');await att(total/sp.length)}
-  await Promise.race([parle,att(total+600)]);rig.stopText();rig.setState('idle');occupe=false;
+  const P=parler(rig,'audio/'+voix+'.mp3',oral||texte);const sp=[...p.querySelectorAll('.m')],total=VITE?20:await P.duree;
+  for(const s of sp){s.classList.add('v');await att(total*0.92/sp.length)}
+  await P.fin;occupe=false;
  }
  function questions(g){
   const z=$('#qs');z.innerHTML='<div class="lab">Ta question</div>';
@@ -113,7 +113,7 @@
    const b=document.createElement('button');b.className='qb';b.innerHTML=q.t;
    if(etat[g.id].includes(k)){b.classList.add('posee');b.innerHTML+='<span class="tag '+q.type+'">'+M.types[q.type].nom+'</span>'}
    b.onclick=async()=>{if(occupe)return;etat[g.id].push(k);son.bip('envoi');$('#coach').hidden=true;z.innerHTML='';
-    await parler(g,q.re,q.voix);
+    await repond(g,q.re,q.voix,q.oral);
     const T=M.types[q.type];gain+=T.gain;jauge();if(q.note){carnet.noter('micro',q.note);son.bip('ok')}
     const c=$('#coach');c.hidden=false;c.innerHTML='<img src="img/camille-profil.jpg" alt=""><span>'+T.camille+'</span>';
     questions(g);place()};
@@ -124,7 +124,7 @@
   $('#itw').classList.add('on');$('#fNom').textContent=g.nom;$('#fRole').textContent=g.role;$('#coach').hidden=true;$('#qs').innerHTML='';$('#parole').innerHTML='';
   if(!rig){rig=CamilleRig.create({stage:$('#scene'),base:'gens/',depart:g.id});await rig.init();window.__rig=rig}else await rig.setPose(g.id,{force:true});
   await att(350);
-  if(!etat[g.id].length)await parler(g,g.bonjour,g.id[0]+'-b');else{$('#parole').innerHTML='<span class="qui">'+g.nom+'</span>Autre chose ?'}
+  if(!etat[g.id].length)await repond(g,g.bonjour,g.id[0]+'-b',g.oralB);else{$('#parole').innerHTML='<span class="qui">'+g.nom+'</span>Autre chose ?'}
   questions(g);
  }
  $('#retour').onclick=()=>{if(occupe)return;son.stop();$('#itw').classList.remove('on');jetons();
@@ -133,7 +133,7 @@
  function bilan(){
   carnet.lieu('marche');const B=M.bilan,b=$('#bilan');
   b.innerHTML='<div class="c"><h2>'+B.titre+'</h2><ul>'+B.lignes.map(l=>'<li>'+l+'</li>').join('')+'</ul><div class="cm"><img src="img/camille-profil.jpg" alt=""><span>'+B.camille+'</span></div><button class="btn vert" id="bF">Continuer sur la place</button></div>';
-  b.classList.add('on');son.bip('trouve');$('#bF').onclick=()=>{b.classList.remove('on');$('#bTxt').innerHTML='Tu peux encore poser les questions qui te restent, ou <b>passer à la suite</b> du module.';$('#cImg').src='img/camille-bravo.webp'};
+  b.classList.add('on');son.bip('trouve');$('#bF').onclick=()=>{b.classList.remove('on');$('#bTxt').innerHTML='Tu peux encore poser les questions qui te restent, ou '+(new URLSearchParams(location.search).has('dans')?'<b>retourner au village</b>':'<b>passer à la suite</b> du module')+'.';$('#cImg').src='img/camille-bravo.webp'};
  }
  window.__micro={ouvrir:id=>ouvrir(M.gens.find(g=>g.id===id)),bilan};
 })();

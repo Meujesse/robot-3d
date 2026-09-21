@@ -147,7 +147,7 @@
       const c = CFG[pose], im = IMG[pose]; if (!im || !im.naturalWidth) return;
       if (c.fixe) { if (corps.dataset.tete !== pose) { corps.width = c.w; corps.height = c.h; cctx.drawImage(im, 0, 0); corps.dataset.tete = pose; } return; }
       const h = c.h, w = c.w, cy = c.taille || h, menton = c.menton;
-      const y0 = Math.max(0, Math.floor(menton - h * 0.10));
+      const y0 = Math.max(0, Math.floor(menton + h * 0.012));   // la respiration ne touche jamais le visage : la bouche animée reste raccord
       const t = (performance.now() - t0) / 1000;
       const ph = (t % 4.8) / 4.8;                        // 38 % inspiration, 62 % expiration
       const k = ph < 0.38 ? 0.5 - 0.5 * Math.cos(Math.PI * ph / 0.38) : 0.5 + 0.5 * Math.cos(Math.PI * (ph - 0.38) / 0.62);
@@ -157,7 +157,7 @@
       const amp = 0.0058 * k, y1 = Math.min(h, cy);
       for (let y = y0; y < y1; y += 2) {
         let poids = Math.min(1, Math.max(0, (cy - y) / (h * 0.13)));
-        poids *= Math.min(1, Math.max(0, (y - menton) / (h * 0.10) + 1));
+        poids *= Math.min(1, Math.max(0, (y - menton - h * 0.012) / (h * 0.06)));
         const dy = (cy - y) * amp * poids;
         cctx.drawImage(im, 0, y + dy, w, 2, 0, y, w, 2);
       }

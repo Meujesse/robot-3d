@@ -17,13 +17,15 @@
  /* ---------- son : coupé tant que l'apprenant ne l'a pas activé ---------- */
  let actif=!MUET&&mem.lire('son',false)===true, courant=null, ctx=null;
  const b=document.createElement('button');b.id='bSon';b.title='Son';stage.appendChild(b);
- const maj=()=>{b.textContent=actif?'🔊':'🔇'};maj();
+ const maj=()=>{b.textContent=actif?'🔊':'🔇';b.classList.toggle('coupe',!actif)};maj();
+ // sur les pages parlées, une étiquette douce rappelle qu'on peut activer la voix
+ if(document.body.hasAttribute('data-voix')&&!actif&&!MUET){const e=document.createElement('div');e.id='bSonAide';e.textContent='Active le son pour entendre les voix';stage.appendChild(e);setTimeout(()=>e.classList.add('part'),9000);b.addEventListener('click',()=>e.remove(),{once:true})}
  b.onclick=()=>{if(MUET)return;actif=!actif;mem.ecrire('son',actif);maj();if(!actif)son.stop();else son.bip('ok')};
  const son=window.son={
   get actif(){return actif},
   jouer(fichier,fin){son.stop();if(!actif){fin&&fin(false);return null}
    courant=new Audio(fichier);courant.addEventListener('ended',()=>fin&&fin(true));courant.addEventListener('error',()=>fin&&fin(false));
-   courant.play().catch(()=>fin&&fin(false));return courant},
+   const c=courant;c.play().catch(()=>{fin&&fin(false);c.dispatchEvent(new Event('error'))});return courant},
   stop(){if(courant){courant.pause();courant=null}},
   // petits bruitages synthétiques (aucun fichier)
   bip(type){if(!actif)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
@@ -33,6 +35,26 @@
      o.connect(g).connect(ctx.destination);o.start(t+i*.09);o.stop(t+i*.09+.25)})}catch(e){}}
  };
  document.addEventListener('visibilitychange',()=>{if(document.hidden)son.stop()});
+
+ /* ---------- faire parler un personnage : la voix si le son est activé (la bouche suit le volume), sinon la bouche suit le texte ---------- */
+ // renvoie {fin: promesse résolue à la fin de la réplique, duree: promesse de la durée en ms}
+ window.parler=function(rig,fichier,oral){
+  const estime=Math.max(1200,oral.length*62);
+  const a=son.jouer(fichier);
+  if(!a){const fin=rig.speakText(oral).then(()=>{});return {fin:Promise.race([fin,new Promise(r=>setTimeout(r,estime+900))]).then(()=>{rig.stopText();rig.setState('idle')}),duree:Promise.resolve(estime)}}
+  let amp=()=>0;
+  try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();
+   const src=ctx.createMediaElementSource(a),an=ctx.createAnalyser();an.fftSize=512;src.connect(an);an.connect(ctx.destination);
+   const buf=new Uint8Array(an.fftSize);amp=()=>{an.getByteTimeDomainData(buf);let s=0;for(let i=0;i<buf.length;i++){const v=(buf[i]-128)/128;s+=v*v}return Math.min(1,Math.sqrt(s/buf.length)*4.2)}}catch(e){}
+  const duree=new Promise(r=>{a.addEventListener('loadedmetadata',()=>r(isFinite(a.duration)?a.duration*1000:estime));setTimeout(()=>r(estime),1500)});
+  const fin=new Promise(r=>{let secours=null;
+   const termine=()=>{clearTimeout(secours);rig.setAmpSource(null);rig.setState('idle');r()};
+   a.addEventListener('playing',()=>{rig.videFile();rig.nourrit(oral);rig.setAmpSource(amp);rig.setState('speaking')},{once:true});
+   a.addEventListener('ended',termine,{once:true});a.addEventListener('pause',termine,{once:true});
+   a.addEventListener('error',()=>{rig.speakText(oral).then(termine)},{once:true});
+   secours=setTimeout(termine,estime*2+6000)});
+  return {fin,duree};
+ };
 
  /* ---------- entrées animées quand la page Genially devient visible ---------- */
  const io=new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting&&innerWidth>50){document.documentElement.classList.remove('anim');void document.documentElement.offsetWidth;document.documentElement.classList.add('anim')}}});
@@ -51,7 +73,7 @@
   const pan=document.createElement('div');pan.id='carnet';stage.appendChild(pan);
   function total(){const c=carnet.tout();return RUB.reduce((n,[k])=>n+(c[k]||[]).length,0)}
   var majNb=function(neuf){bc.innerHTML='📒 Carnet de bord <span class="nb">'+total()+'</span>';if(neuf){bc.classList.remove('neuf');void bc.offsetWidth;bc.classList.add('neuf')}};
-  majNb();
+  majNb();document.addEventListener('majCarnet',()=>majNb());
   bc.onclick=()=>{const c=carnet.tout();
    pan.innerHTML='<div class="livre"><button class="x">✕</button><h2>Carnet de bord</h2><div class="ss">Tout ce que tu récoltes pendant le diagnostic se range ici.</div><div class="cols">'+
     RUB.map(([k,t])=>'<div><h3>'+t+'</h3>'+((c[k]||[]).length?'<ul>'+c[k].map(x=>'<li>'+x+'</li>').join('')+'</ul>':'<div class="vide">Rien pour l\'instant.</div>')+'</div>').join('')+'</div></div>';

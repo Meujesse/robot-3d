@@ -17,12 +17,17 @@
  $('#notif').onclick=()=>{son.bip('pop');$('#accroche').classList.add('part');setTimeout(()=>{$('#accroche').hidden=true;$('#appli').hidden=false;demarrer()},VITE?30:600)};
 
  /* ---------- briques ---------- */
- function bas(){fil.scrollTop=fil.scrollHeight}
+ let colle=true;
+ fil.addEventListener('scroll',()=>{colle=fil.scrollHeight-fil.scrollTop-fil.clientHeight<90;if(colle)$('#nouveaux').hidden=true});
+ function bas(force){if(force||colle){fil.scrollTo({top:fil.scrollHeight,behavior:'smooth'});colle=true;$('#nouveaux').hidden=true}else $('#nouveaux').hidden=false}
+ $('#nouveaux').onclick=()=>bas(true);
+ new ResizeObserver(()=>{if(colle)fil.scrollTop=fil.scrollHeight}).observe(saisie);
+ const statut=t=>{if(!ailleurs&&$('#statut'))$('#statut').textContent=t};
  function tampon(moi){return '<span class="h">'+heure()+(moi?'<span class="vu">✓✓</span>':'')+'</span>'}
  async function ecrit(ms){
-  $('#statut').textContent='écrit…';
+  statut('écrit…');
   const e=document.createElement('div');e.className='ecrit';e.innerHTML='<i></i><i></i><i></i>';fil.appendChild(e);bas();
-  await attendre(ms);e.remove();$('#statut').textContent='en ligne';
+  await attendre(ms);e.remove();statut('en ligne');
  }
  async function camille(m){
   if(m.photo){
@@ -30,15 +35,15 @@
    const d=document.createElement('div');d.className='msg elle photo';
    d.innerHTML='<img src="'+m.photo+'" alt=""><div class="leg">'+(m.legende||'')+tampon()+'</div>';
    d.onclick=()=>{const z=$('#zoomPhoto');z.querySelector('img').src=m.photo;z.hidden=false};
-   fil.appendChild(d);son.bip('recu');bas();d.querySelector('img').onload=bas;await attendre(1500);return;
+   fil.appendChild(d);son.bip('recu');bas(true);d.querySelector('img').onload=()=>bas(true);await attendre(1500);return;
   }
   if(m.v&&vocaux){
-   $('#statut').textContent='enregistre un vocal…';await attendre(1600);$('#statut').textContent='en ligne';
-   fil.appendChild(vocal(m));son.bip('recu');bas();await attendre(900);return;
+   statut('enregistre un vocal…');await attendre(1600);statut('en ligne');
+   fil.appendChild(vocal(m));son.bip('recu');bas();nonLu();await attendre(900);return;
   }
   await ecrit(Math.min(2600,500+m.t.length*22));
   const d=document.createElement('div');d.className='msg elle';d.innerHTML=m.t+tampon();
-  fil.appendChild(d);son.bip('recu');bas();minute+=Math.random()<.4?1:0;await attendre(650);
+  fil.appendChild(d);son.bip('recu');bas();nonLu();minute+=Math.random()<.4?1:0;await attendre(650);
  }
  function vocal(m){
   const d=document.createElement('div');d.className='msg elle vocal';
@@ -61,18 +66,45 @@
  }
  async function moi(t){
   const d=document.createElement('div');d.className='msg moi';d.innerHTML=t+tampon(true);
-  fil.appendChild(d);son.bip('envoi');bas();minute++;
+  fil.appendChild(d);son.bip('envoi');bas(true);minute++;
   await attendre(700);d.querySelector('.vu').classList.add('lu');await attendre(350);
  }
  function choisir(choix){
   return new Promise(r=>{
    const ordre=choix.map((c,i)=>i).sort(()=>Math.random()-.5);
-   saisie.innerHTML='<div class="lab">Ta réponse</div>';
+   const zone=ailleurs?document.createElement('div'):saisie;if(ailleurs){zone.style.display='contents';saisieCamille=[zone]}
+   zone.innerHTML='<div class="lab">Ta réponse</div>';
    ordre.forEach(i=>{const b=document.createElement('button');b.className='rep';b.textContent=choix[i].t;
-    b.onclick=()=>{saisie.innerHTML='<div class="attente">Camille écrit…</div>';r(choix[i])};saisie.appendChild(b)});
+    b.onclick=()=>{saisie.innerHTML='<div class="attente">Camille écrit…</div>';r(choix[i])};zone.appendChild(b)});
+   requestAnimationFrame(()=>bas(true));
   });
  }
  function progres(n){$('#pTxt').textContent=n+' / '+D.questions.length;$('#pBarre').style.width=(100*n/D.questions.length)+'%'}
+
+ /* ---------- liste des discussions : Camille + des fils en lecture seule ---------- */
+ let ailleurs=null,nl=0,saisieCamille=null;
+ function nonLu(){if(ailleurs){nl++;$('#pastille').textContent=nl}}
+ $('#convs').innerHTML='<button class="conv actif" data-id="camille"><img src="'+D.contact.photo+'" alt=""><div><b>Camille</b><i id="apercu">en train d\'écrire…</i></div><em id="pastille">1</em></button>'+
+  D.autres.map(a=>'<button class="conv" data-id="'+a.id+'"><span class="av" style="background:'+a.coul+'">'+a.av+'</span><div><b>'+a.nom+'</b><i>'+a.apercu+'</i></div></button>').join('');
+ document.querySelectorAll('.conv').forEach(c=>c.onclick=()=>ouvrirConv(c.dataset.id));
+ function ouvrirConv(id){
+  document.querySelectorAll('.conv').forEach(c=>c.classList.toggle('actif',c.dataset.id===id));son.bip('pop');
+  const fa=$('#filAutre'),en=$('#entete');
+  if(id==='camille'){
+   if(!ailleurs)return;ailleurs=null;nl=0;$('#pastille').textContent='';fa.hidden=true;fil.hidden=false;
+   en.innerHTML='<img src="'+D.contact.photo+'" alt=""><div><b>Camille</b><i id="statut">en ligne</i></div>';
+   if(saisieCamille){saisie.replaceChildren(...saisieCamille);saisieCamille=null}
+   bas(true);return;
+  }
+  const a=D.autres.find(x=>x.id===id);
+  if(!ailleurs)saisieCamille=[...saisie.childNodes];
+  ailleurs=id;fil.hidden=true;fa.hidden=false;
+  en.innerHTML='<span class="av" style="background:'+a.coul+'">'+a.av+'</span><div><b>'+a.nom+'</b><i id="statut" style="color:var(--gris)">'+a.sous+'</i></div>';
+  fa.innerHTML='<div class="jour">'+(a.messages[0].h==='Hier'?'Hier':'Aujourd\'hui')+'</div>'+a.messages.map(m=>'<div class="msg elle'+(m.de==='Camille'?' cam':'')+'"><span class="de">'+m.de+'</span>'+m.t+'<span class="h">'+(m.h==='Hier'?'17:0'+(a.messages.indexOf(m)+2):m.h)+'</span></div>').join('');
+  fa.scrollTop=0;
+  saisie.innerHTML='<div class="lecture"><span>🔒 Tu peux lire cette discussion, pas y répondre.</span><button>← Revenir à Camille</button></div>';
+  saisie.querySelector('button').onclick=()=>ouvrirConv('camille');
+ }
 
  /* ---------- déroulé ---------- */
  async function demarrer(){
@@ -92,6 +124,7 @@
   }
   const fin=score>=D.fins.haut.seuil?D.fins.haut:score>=D.fins.moyen.seuil?D.fins.moyen:D.fins.bas;
   for(const m of fin.messages)await camille(m);
+  if(ailleurs)ouvrirConv('camille');
   saisie.innerHTML='';const b=document.createElement('button');b.className='btn vert';b.style.alignSelf='center';b.textContent='Voir le récap';
   b.onclick=()=>bilan(fin);saisie.appendChild(b);
  }

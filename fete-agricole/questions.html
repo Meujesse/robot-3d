@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Le projet en 7 questions · Organiser un événement agricole</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="commun.css?v=2">
+<link rel="stylesheet" href="commun.css?v=4">
 <style>
 #stage{background:#3b2a1d}
 #bureau{position:absolute;inset:0;background:radial-gradient(1100px 700px at 50% 35%,#a9784d,#6b4528 70%,#44290f);}
@@ -73,7 +73,7 @@
   <div id="finR"></div>
  </div>
 </div>
-<script src="js/commun.js?v=1"></script>
+<script src="js/commun.js?v=4"></script>
 <script>
 (function(){
  const Q=[
@@ -122,7 +122,7 @@
   const r=$('#regards');r.classList.add('on');let vus=0;
   $('#cartes').innerHTML=REG.map(g=>'<div class="rg" style="--c:'+g.c+'"><div class="in"><div class="f av"><span>'+g.ic+'</span><b>'+g.t+'</b><i>Touche pour retourner</i></div><div class="f ar"><b>'+g.t+'</b><p>'+g.p+'</p><em>'+g.e+'</em></div></div></div>').join('');
   document.querySelectorAll('.rg').forEach(c=>c.onclick=()=>{if(!c.classList.contains('vu')){c.classList.add('vu');son.bip('pop');if(++vus===3){carnet.lieu('mairie');
-   $('#finR').innerHTML='<div class="bulle pop" style="position:static;display:inline-block;background:var(--ble)"><b style="color:var(--encre)">Première étape bouclée.</b> Passe à la suite : on va observer sur place.</div>';son.bip('trouve')}}});
+   $('#finR').innerHTML='<div class="bulle pop" style="position:static;display:inline-block;background:var(--ble)"><b style="color:var(--encre)">Première étape bouclée.</b> '+(new URLSearchParams(location.search).has('dans')?'Retourne au village':'Passe à la suite')+' : on va observer sur place.</div>';son.bip('trouve')}}});
  }
  if(new URLSearchParams(location.search).has('regards'))regards();
 })();

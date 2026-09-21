@@ -44,3 +44,8 @@ h1,h2,h3,.titre{font-family:"Bricolage Grotesque",Nunito,sans-serif;letter-spaci
 #carnet ul{margin:0;padding-left:18px}
 #carnet .vide{font:italic 600 14px/1.4 Nunito;color:var(--gris)}
 #carnet .x{position:absolute;right:18px;top:16px;width:42px;height:42px;border:0;border-radius:50%;background:#fff;font:800 18px/1 Nunito;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+#bSonAide{position:absolute;right:130px;top:27px;z-index:60;background:var(--ble);color:var(--encre);font:800 13px/1 Nunito;border-radius:99px;padding:10px 14px;box-shadow:0 8px 18px rgba(0,0,0,.3);animation:entree .6s both 1s;transition:opacity .8s}
+#bSonAide::after{content:"";position:absolute;right:-7px;top:50%;margin-top:-7px;border:7px solid transparent;border-left-color:var(--ble);border-right:0}
+#bSonAide.part{opacity:0;pointer-events:none}
+body:not([data-sans-carnet]) #bSonAide{right:auto;left:50%;translate:-50% 0;top:78px}
+body:not([data-sans-carnet]) #bSonAide::after{display:none}
