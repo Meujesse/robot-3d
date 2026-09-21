@@ -1,0 +1,46 @@
+:root{--pre:#2f7d4f;--pre2:#1f5a38;--ble:#f6c445;--corail:#ef6f4a;--ciel:#8fd0e8;--creme:#fff8ea;--papier:#f6ecd6;--encre:#1c2b24;--gris:#6d7b73}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#10201a;overflow:hidden;font-family:Nunito,system-ui,sans-serif;color:var(--encre);-webkit-font-smoothing:antialiased}
+button{font-family:inherit}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center;overflow:hidden;background:#cfe6d2}
+.fond{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+h1,h2,h3,.titre{font-family:"Bricolage Grotesque",Nunito,sans-serif;letter-spacing:-.01em}
+.sur{font:800 13px/1 Nunito;letter-spacing:.28em;text-transform:uppercase;color:var(--ble)}
+
+/* Camille en guide */
+.perso{position:absolute;bottom:0;pointer-events:none;transition:opacity .35s}
+.perso img{display:block;height:100%;filter:drop-shadow(0 16px 20px rgba(0,0,0,.35));transform-origin:50% 100%;animation:respire 4.4s ease-in-out infinite}
+@keyframes respire{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.009)}}
+.bulle{position:absolute;background:var(--creme);color:var(--encre);border-radius:22px;padding:16px 20px;font:700 18px/1.42 Nunito;box-shadow:0 14px 40px rgba(0,0,0,.28)}
+.bulle b{color:var(--pre)}
+.bulle .qui{display:block;font:800 11px/1 Nunito;letter-spacing:.2em;text-transform:uppercase;color:var(--corail);margin-bottom:7px}
+
+/* boutons */
+.btn{border:0;border-radius:99px;padding:15px 26px;font:800 17px/1 Nunito;color:var(--encre);background:var(--ble);cursor:pointer;box-shadow:0 8px 0 #c9982a,0 16px 30px rgba(0,0,0,.25);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(5px);box-shadow:0 3px 0 #c9982a,0 8px 16px rgba(0,0,0,.25)}
+.btn.vert{background:var(--pre);color:#fff;box-shadow:0 8px 0 var(--pre2),0 16px 30px rgba(0,0,0,.25)}
+
+/* entrées animées : visibles par défaut, animées quand la page est réellement affichée */
+.anim .entree{animation:entree .7s cubic-bezier(.2,1,.3,1) both;animation-delay:var(--d,0s)}
+@keyframes entree{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.pop{animation:pop .45s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
+
+/* bouton son et carnet de bord */
+#bSon{position:absolute;right:22px;top:20px;width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.7);color:#fff;font-size:19px;cursor:pointer;z-index:60;display:grid;place-items:center;backdrop-filter:blur(4px)}
+#bCarnet{position:absolute;right:80px;top:20px;height:46px;padding:0 18px 0 14px;border-radius:99px;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.7);color:#fff;font:800 14px/1 Nunito;cursor:pointer;z-index:60;display:flex;align-items:center;gap:8px;backdrop-filter:blur(4px)}
+#bCarnet .nb{background:var(--ble);color:var(--encre);border-radius:99px;padding:4px 8px;font-size:12px}
+#bCarnet.neuf{animation:neuf .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes neuf{40%{transform:scale(1.14)}}
+#carnet{position:absolute;inset:0;z-index:80;background:rgba(14,28,22,.55);backdrop-filter:blur(4px);display:none}
+#carnet.on{display:block}
+#carnet .livre{position:absolute;left:50%;top:50%;width:980px;height:700px;margin:-350px 0 0 -490px;background:var(--papier);border-radius:18px 26px 26px 18px;box-shadow:0 40px 90px rgba(0,0,0,.5),inset 14px 0 0 #b5473a,inset 18px 0 0 #8f3328;padding:38px 46px 30px 66px;animation:pop .4s cubic-bezier(.2,1.4,.4,1);background-image:repeating-linear-gradient(transparent 0 35px,rgba(47,125,79,.13) 35px 36px)}
+#carnet h2{margin:0 0 4px;font-size:34px;color:var(--pre2)}
+#carnet .ss{font:700 15px/1.3 Nunito;color:var(--gris);margin-bottom:14px}
+#carnet .cols{display:grid;grid-template-columns:1fr 1fr;gap:10px 34px;height:540px;overflow:auto;padding-right:8px}
+#carnet h3{margin:12px 0 6px;font-size:19px;color:var(--corail)}
+#carnet li{font:700 14.5px/1.4 Nunito;margin:0 0 5px}
+#carnet ul{margin:0;padding-left:18px}
+#carnet .vide{font:italic 600 14px/1.4 Nunito;color:var(--gris)}
+#carnet .x{position:absolute;right:18px;top:16px;width:42px;height:42px;border:0;border-radius:50%;background:#fff;font:800 18px/1 Nunito;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.18)}

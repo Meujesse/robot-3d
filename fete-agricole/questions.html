@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Le projet en 7 questions · Organiser un événement agricole</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=1">
+<style>
+#stage{background:#3b2a1d}
+#bureau{position:absolute;inset:0;background:radial-gradient(1100px 700px at 50% 35%,#a9784d,#6b4528 70%,#44290f);}
+#bureau::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(92deg,rgba(0,0,0,.05) 0 3px,transparent 3px 46px),repeating-linear-gradient(88deg,rgba(255,255,255,.035) 0 2px,transparent 2px 90px)}
+#tete{position:absolute;left:60px;top:30px;color:#fff}
+#tete h1{margin:8px 0 0;font-size:40px;line-height:1}
+#tete p{margin:8px 0 0;font:700 17px/1.4 Nunito;color:rgba(255,255,255,.85);max-width:720px}
+/* le tableau des 7 questions */
+#roue{position:absolute;left:400px;top:150px;width:1140px;height:410px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:16px}
+.q{position:relative;border-radius:20px;background:rgba(255,248,234,.12);border:3px dashed rgba(255,248,234,.45);padding:14px 16px;transition:all .25s;display:flex;flex-direction:column}
+.q h3{margin:0;font-size:30px;color:#fff;line-height:1}
+.q small{font:700 13px/1.3 Nunito;color:rgba(255,255,255,.7);margin-top:4px}
+.q.vise{background:rgba(246,196,69,.28);border-color:var(--ble);scale:1.03}
+.q.plein{background:var(--creme);border:3px solid var(--pre)}
+.q.plein h3{color:var(--pre2)}.q.plein small{display:none}
+.q .mis{margin-top:6px;font:700 21px/1.08 Caveat;color:var(--encre);animation:pop .4s both}
+.q .ok{position:absolute;right:-10px;top:-10px;width:34px;height:34px;border-radius:50%;background:var(--pre);color:#fff;font:800 17px/34px Nunito;text-align:center;box-shadow:0 4px 10px rgba(0,0,0,.3);animation:pop .4s both}
+.q:nth-child(8){grid-column:4;background:none;border:0}
+/* les notes de Camille */
+#pile{position:absolute;left:400px;top:592px;width:1140px;height:290px}
+.note{position:absolute;width:268px;height:126px;padding:16px 14px 10px;background:#ffe98a;font:700 21px/1.08 Caveat;color:#3a3320;box-shadow:0 10px 18px rgba(0,0,0,.35);cursor:grab;user-select:none;touch-action:none;transition:box-shadow .2s,rotate .2s;rotate:var(--a)}
+.note:nth-child(3n){background:#ffd0b8}.note:nth-child(3n+1){background:#cdeec2}
+.note::before{content:"";position:absolute;left:50%;top:-9px;width:70px;height:20px;margin-left:-35px;background:rgba(255,255,255,.55);rotate:-2deg}
+.note.prise{cursor:grabbing;z-index:30;rotate:0deg;box-shadow:0 26px 40px rgba(0,0,0,.45);transition:none}
+.note.retour{transition:left .45s cubic-bezier(.2,1.4,.4,1),top .45s cubic-bezier(.2,1.4,.4,1)}
+#camille{left:30px;height:600px}
+#bulle{left:40px;top:150px;width:330px;font-size:17px}
+#bulle::after{content:"";position:absolute;left:70px;bottom:-13px;border:13px solid transparent;border-top-color:var(--creme);border-bottom:0}
+#compte{position:absolute;right:62px;top:122px;font:800 13px/1 Nunito;letter-spacing:.18em;text-transform:uppercase;color:var(--ble)}
+/* les trois regards du diagnostic */
+#regards{position:absolute;inset:0;background:rgba(20,12,6,.72);backdrop-filter:blur(5px);display:none;z-index:40}
+#regards.on{display:block}
+#regards h2{position:absolute;left:0;right:0;top:90px;text-align:center;color:#fff;font-size:42px;margin:0}
+#regards p.s{position:absolute;left:0;right:0;top:150px;text-align:center;color:rgba(255,255,255,.85);font:700 19px/1.4 Nunito;margin:0}
+#cartes{position:absolute;left:200px;top:230px;width:1200px;display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.rg{height:420px;border-radius:26px;cursor:pointer;perspective:1200px;animation:entree .6s both}
+.rg:nth-child(2){animation-delay:.1s}.rg:nth-child(3){animation-delay:.2s}
+.rg .in{position:relative;width:100%;height:100%;transition:transform .7s cubic-bezier(.3,1.2,.4,1);transform-style:preserve-3d}
+.rg.vu .in{transform:rotateY(180deg)}
+.rg .f{position:absolute;inset:0;border-radius:26px;backface-visibility:hidden;padding:30px;display:flex;flex-direction:column;box-shadow:0 24px 50px rgba(0,0,0,.45)}
+.rg .av{background:var(--c);color:#fff;align-items:center;justify-content:center;text-align:center}
+.rg .av span{font-size:84px}.rg .av b{font:800 30px/1.1 "Bricolage Grotesque";margin-top:14px}.rg .av i{font:700 15px/1 Nunito;font-style:normal;opacity:.85;margin-top:16px}
+.rg .ar{background:var(--creme);transform:rotateY(180deg)}
+.rg .ar b{font:800 26px/1.1 "Bricolage Grotesque";color:var(--c)}
+.rg .ar p{font:700 18px/1.45 Nunito;margin:12px 0 0}
+.rg .ar em{margin-top:auto;font:700 23px/1.15 Caveat;font-style:normal;color:#5a4a2a;background:#ffe98a;padding:10px 12px;rotate:-1deg}
+#finR{position:absolute;left:0;right:0;bottom:60px;text-align:center}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="bureau"></div>
+ <div id="tete" class="entree"><div class="sur">À la mairie · Le diagnostic</div><h1>Le projet en 7 questions</h1><p>Avant d'agir, on comprend la situation. Camille a tout noté en vrac.</p></div>
+ <div id="compte">0 / 7 notes rangées</div>
+ <div id="roue"></div>
+ <div id="pile"></div>
+ <div id="camille" class="perso entree" style="--d:.2s"><img id="cImg" src="img/camille-reflechit.webp" alt=""></div>
+ <div id="bulle" class="bulle entree" style="--d:.4s"><span class="qui">Camille</span><span id="bTxt">Pour ne rien oublier, j'utilise <b>sept questions</b>. Le souci… c'est que mes notes sont dans le désordre. Tu m'aides ? Glisse chaque note sur sa question.</span></div>
+
+ <div id="regards">
+  <h2>Un diagnostic, trois regards</h2>
+  <p class="s">Tes sept réponses ne regardent pas toutes la même chose. Retourne les cartes.</p>
+  <div id="cartes"></div>
+  <div id="finR"></div>
+ </div>
+</div>
+<script src="js/commun.js?v=1"></script>
+<script>
+(function(){
+ const Q=[
+  {k:'quoi',t:'Quoi ?',s:'De quoi s\'agit-il ?',n:'Une fête agricole d\'une journée : marché de producteurs, animaux, animations.'},
+  {k:'qui',t:'Qui ?',s:'Qui est concerné ?',n:'Les producteurs du coin, les familles, l\'école, les bénévoles de l\'asso.'},
+  {k:'ou',t:'Où ?',s:'À quel endroit ?',n:'Sur le champ de foire, juste derrière la mairie.'},
+  {k:'quand',t:'Quand ?',s:'À quel moment ?',n:'Un dimanche de septembre, après les récoltes.'},
+  {k:'comment',t:'Comment ?',s:'Avec quels moyens ?',n:'Une équipe de bénévoles, du matériel prêté par la commune.'},
+  {k:'combien',t:'Combien ?',s:'Quelles quantités ?',n:'40 exposants espérés, 800 visiteurs, un budget serré.'},
+  {k:'pourquoi',t:'Pourquoi ?',s:'Dans quel but ?',n:'Faire connaître les produits locaux et créer du lien dans le village.'}];
+ const REG=[
+  {c:'#2f7d4f',ic:'🛠️',t:'Le regard technique',p:'Le lieu, le matériel, les accès, la sécurité : est-ce que c\'est faisable ?',e:'Où ? Comment ? Combien ?'},
+  {c:'#ef6f4a',ic:'🧑‍🤝‍🧑',t:'Le regard social',p:'Les habitants, les exposants, les bénévoles : qu\'est-ce qu\'ils attendent ?',e:'Qui ? Pourquoi ?'},
+  {c:'#3c7fb8',ic:'🗺️',t:'Le regard de territoire',p:'Les ressources du coin, les acteurs locaux, le calendrier du village.',e:'Quoi ? Quand ?'}];
+ const $=s=>document.querySelector(s),stage=$('#stage'),roue=$('#roue'),pile=$('#pile');
+ roue.innerHTML=Q.map(q=>'<div class="q" data-k="'+q.k+'"><h3>'+q.t+'</h3><small>'+q.s+'</small></div>').join('');
+ const ordre=Q.map((q,i)=>i).sort(()=>Math.random()-.5);
+ let fait=0;
+ const dire=(t,pose)=>{$('#bTxt').innerHTML=t;if(pose)$('#cImg').src='img/camille-'+pose+'.webp'};
+ ordre.forEach((qi,i)=>{
+  const q=Q[qi],n=document.createElement('div');n.className='note';n.textContent=q.n;n.dataset.k=q.k;
+  const x0=i<4?i*290:145+(i-4)*290,y0=i<4?0:146;n.style.left=x0+'px';n.style.top=y0+'px';n.style.setProperty('--a',((i%3)-1)*3+'deg');n.style.zIndex=10+i;
+  pile.appendChild(n);
+  let dx,dy,k;
+  n.addEventListener('pointerdown',e=>{if(n.classList.contains('rangee'))return;n.setPointerCapture(e.pointerId);n.classList.remove('retour');n.classList.add('prise');
+   k=stage.getBoundingClientRect().width/1600;const r=n.getBoundingClientRect();dx=(e.clientX-r.left)/k;dy=(e.clientY-r.top)/k;son.bip('pop')});
+  n.addEventListener('pointermove',e=>{if(!n.classList.contains('prise'))return;const p=pile.getBoundingClientRect();
+   n.style.left=((e.clientX-p.left)/k-dx)+'px';n.style.top=((e.clientY-p.top)/k-dy)+'px';
+   const c=sous(e);document.querySelectorAll('.q').forEach(z=>z.classList.toggle('vise',z===c))});
+  n.addEventListener('pointerup',e=>{if(!n.classList.contains('prise'))return;n.classList.remove('prise');
+   const c=sous(e);document.querySelectorAll('.q').forEach(z=>z.classList.remove('vise'));
+   if(c&&!c.classList.contains('plein')&&c.dataset.k===q.k){ranger(n,c,q)}
+   else{n.classList.add('retour');n.style.left=x0+'px';n.style.top=y0+'px';
+    if(c&&!c.classList.contains('plein')){son.bip('non');const bon=Q.find(z=>z.k===q.k);dire('Hmm, pas tout à fait. Relis la note : elle répond plutôt à la question <b>« '+bon.t+' »</b>.','doute')}}});
+ });
+ function sous(e){const els=document.elementsFromPoint(e.clientX,e.clientY);return els.find(x=>x.classList&&x.classList.contains('q'))}
+ function ranger(n,c,q){
+  n.classList.add('rangee');n.remove();c.classList.add('plein');c.insertAdjacentHTML('beforeend','<div class="mis">'+q.n+'</div><div class="ok">✓</div>');
+  son.bip('ok');fait++;$('#compte').textContent=fait+' / 7 notes rangées';
+  carnet.noter('cq','<b>'+q.t+'</b> '+q.n);
+  const mots=['Oui ! C\'est noté dans ton carnet.','Parfait, une de plus.','Exactement.','Bien vu !','Tu gères.','Plus qu\'une !'];
+  if(fait<7)dire(mots[fait-1]||'Oui !','bravo');
+  else{dire('Et voilà, <b>sept questions, sept réponses</b>. On appelle ça le <b>CQQCOQP</b> : Comment, Qui, Quoi, Combien, Où, Quand, Pourquoi.','bravo');setTimeout(regards,2600)}
+ }
+ function regards(){
+  const r=$('#regards');r.classList.add('on');let vus=0;
+  $('#cartes').innerHTML=REG.map(g=>'<div class="rg" style="--c:'+g.c+'"><div class="in"><div class="f av"><span>'+g.ic+'</span><b>'+g.t+'</b><i>Touche pour retourner</i></div><div class="f ar"><b>'+g.t+'</b><p>'+g.p+'</p><em>'+g.e+'</em></div></div></div>').join('');
+  document.querySelectorAll('.rg').forEach(c=>c.onclick=()=>{if(!c.classList.contains('vu')){c.classList.add('vu');son.bip('pop');if(++vus===3){carnet.lieu('mairie');
+   $('#finR').innerHTML='<div class="bulle pop" style="position:static;display:inline-block;background:var(--ble)"><b style="color:var(--encre)">Première étape bouclée.</b> Retourne au village : on va observer sur place.</div>';son.bip('trouve')}}});
+ }
+ if(new URLSearchParams(location.search).has('regards'))regards();
+})();
+</script>
+</body>
+</html>

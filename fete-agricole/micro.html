@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Micro-trottoir · Organiser un événement agricole</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=1">
+<style>
+#place{position:absolute;inset:0}
+#place .fond{animation:derive 40s ease-in-out infinite alternate}
+@keyframes derive{from{transform:scale(1.03)}to{transform:scale(1.09) translateX(-12px)}}
+#voile{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,28,22,.6),transparent 26%,transparent 60%,rgba(14,28,22,.65));pointer-events:none}
+#tete{position:absolute;left:60px;top:32px;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+#tete h1{margin:8px 0 0;font-size:42px;line-height:1}
+#tete p{margin:8px 0 0;font:700 17px/1.4 Nunito;max-width:700px;color:rgba(255,255,255,.9)}
+.jeton{position:absolute;transform:translate(-50%,-50%);border:0;background:none;cursor:pointer;text-align:center;animation:flotte 5s ease-in-out infinite;animation-delay:var(--r)}
+@keyframes flotte{50%{translate:0 -8px}}
+.jeton img{display:block;margin:0 auto;width:170px;height:170px;border-radius:50%;object-fit:cover;border:7px solid #fff;box-shadow:0 18px 36px rgba(0,0,0,.45);transition:scale .25s cubic-bezier(.2,1.6,.4,1)}
+.jeton:hover img{scale:1.08;border-color:var(--ble)}
+.jeton .et{margin-top:12px;background:var(--encre);color:#fff;border-radius:14px;padding:9px 14px;display:inline-block}
+.jeton .et b{display:block;font:800 18px/1.1 "Bricolage Grotesque"}.jeton .et i{font:700 12.5px/1.2 Nunito;font-style:normal;color:var(--ble)}
+.jeton .pts{position:absolute;left:50%;top:-6px;margin-left:44px;display:flex;gap:4px;background:#fff;border-radius:99px;padding:6px 8px;box-shadow:0 4px 10px rgba(0,0,0,.3)}
+.jeton .pts u{width:10px;height:10px;border-radius:50%;background:#d5ddd6}.jeton .pts u.on{background:var(--pre)}
+.jeton .micro{position:absolute;left:50%;top:124px;margin-left:36px;width:46px;height:46px;border-radius:50%;background:var(--corail);display:grid;place-items:center;font-size:22px;box-shadow:0 6px 14px rgba(0,0,0,.35)}
+#camille{left:20px;height:470px}
+#bulle{left:250px;bottom:60px;width:420px;font-size:17px}
+#bulle::after{content:"";position:absolute;left:-13px;bottom:40px;border:13px solid transparent;border-right-color:var(--creme);border-left:0}
+#jauge{position:absolute;right:150px;top:88px;width:330px;color:#fff;z-index:30}
+#jauge .lib{display:flex;justify-content:space-between;font:800 12px/1 Nunito;letter-spacing:.16em;text-transform:uppercase;margin-bottom:8px;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+#jauge .b{height:14px;border-radius:99px;background:rgba(255,255,255,.28);overflow:hidden;backdrop-filter:blur(4px)}
+#jauge .b i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--ble),#ffe28a);transition:width .8s cubic-bezier(.2,1,.3,1)}
+
+/* l'entretien */
+#itw{position:absolute;inset:0;display:none;z-index:20;background:#10201a}
+#itw.on{display:block;animation:ouvre .5s ease both}
+@keyframes ouvre{from{opacity:0;transform:scale(1.05)}}
+#scene{position:absolute;inset:0}
+#itw .ombre{position:absolute;inset:0;background:linear-gradient(90deg,transparent 40%,rgba(10,22,16,.8) 72%);pointer-events:none}
+#fiche{position:absolute;left:60px;top:32px;display:flex;align-items:center;gap:10px;background:rgba(28,43,36,.75);backdrop-filter:blur(6px);color:#fff;border-radius:99px;padding:8px 18px 8px 8px}
+#fiche span{width:40px;height:40px;border-radius:50%;background:var(--corail);display:grid;place-items:center;font-size:19px}
+#fiche b{font:800 18px/1.1 "Bricolage Grotesque";display:block}#fiche i{font:700 12.5px/1 Nunito;font-style:normal;color:var(--ble)}
+#retour{position:absolute;left:60px;bottom:36px;border:2px solid rgba(255,255,255,.6);background:rgba(28,43,36,.7);color:#fff;border-radius:99px;padding:12px 20px;font:800 15px/1 Nunito;cursor:pointer;backdrop-filter:blur(6px)}
+#parole{position:absolute;left:940px;top:150px;width:600px;min-height:96px;background:var(--creme);border-radius:8px 26px 26px 26px;padding:22px 26px;font:700 23px/1.42 Nunito;box-shadow:0 22px 60px rgba(0,0,0,.4)}
+#parole .m{opacity:0;transition:opacity .18s}#parole .m.v{opacity:1}
+#parole .qui{display:block;font:800 11px/1 Nunito;letter-spacing:.2em;text-transform:uppercase;color:var(--corail);margin-bottom:8px}
+#coach{position:absolute;left:940px;width:600px;display:flex;gap:12px;align-items:center;background:rgba(28,43,36,.82);backdrop-filter:blur(6px);color:#fff;border-radius:18px;padding:12px 16px;font:700 16px/1.4 Nunito;animation:entree .45s both}
+#coach img{width:52px;height:52px;border-radius:50%;flex:none;border:2px solid var(--ble)}
+#coach b{color:var(--ble)}
+#qs{position:absolute;left:940px;width:600px;display:flex;flex-direction:column;gap:10px}
+#qs .lab{font:800 12px/1 Nunito;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.qb{position:relative;border:2px solid rgba(255,255,255,.4);text-align:left;border-radius:18px;padding:15px 20px 15px 54px;font:800 18px/1.3 Nunito;color:#fff;background:rgba(28,43,36,.72);backdrop-filter:blur(8px);cursor:pointer;transition:all .2s;animation:entree .4s both}
+.qb::before{content:"🎤";position:absolute;left:18px;top:13px;font-size:20px}
+.qb:hover{background:var(--pre);border-color:var(--ble);transform:translateX(6px)}
+.qb.posee{opacity:.62;cursor:default;pointer-events:none;padding-right:170px}
+.qb .tag{position:absolute;right:12px;top:50%;translate:0 -50%;font:800 11px/1 Nunito;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:6px 10px;background:#fff;color:var(--encre)}
+.qb .tag.ouverte{background:var(--pre);color:#fff}.qb .tag.orientee{background:var(--corail);color:#fff}
+
+#bilan{position:absolute;inset:0;z-index:50;background:rgba(12,24,18,.78);backdrop-filter:blur(6px);display:none}
+#bilan.on{display:block}
+#bilan .c{position:absolute;left:50%;top:50%;width:980px;margin:-300px 0 0 -490px;background:var(--creme);border-radius:30px;padding:40px 46px;box-shadow:0 40px 90px rgba(0,0,0,.5);animation:pop .45s both}
+#bilan h2{margin:0 0 16px;font-size:36px;color:var(--pre2)}
+#bilan li{font:700 19px/1.45 Nunito;margin-bottom:10px}
+#bilan .cm{display:flex;gap:14px;align-items:center;margin-top:20px;background:#fff;border-radius:20px;padding:16px 18px;font:700 17px/1.45 Nunito}
+#bilan .cm img{width:64px;height:64px;border-radius:50%;flex:none}
+#bilan .btn{margin-top:22px}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="place"><img class="fond" src="img/marche.jpg" alt=""><div id="voile"></div>
+  <div id="tete" class="entree"><div class="sur">Place du marché · L'entretien</div><h1>Micro-trottoir</h1><p>Trois personnes, trois questions possibles à chaque fois. Pose-les et regarde ce que chacune te rapporte.</p></div>
+  <div id="jetons"></div>
+  <div id="camille" class="perso entree" style="--d:.2s"><img id="cImg" src="img/camille-ecoute.webp" alt=""></div>
+  <div id="bulle" class="bulle entree" style="--d:.4s"><span class="qui">Camille</span><span id="bTxt">Observer, ça suffit pas : il faut aussi <b>écouter les gens</b>. Choisis quelqu'un et lance-toi, j'te souffle un conseil après chaque question.</span></div>
+ </div>
+ <div id="jauge"><div class="lib"><span>Infos récoltées</span><span id="jTxt">0 %</span></div><div class="b"><i id="jB"></i></div></div>
+
+ <div id="itw">
+  <div id="scene"></div><div class="ombre"></div>
+  <div id="fiche"><span>🎤</span><div><b id="fNom"></b><i id="fRole"></i></div></div>
+  <div id="parole"></div><div id="coach" hidden></div><div id="qs"></div>
+  <button id="retour">← Retour sur la place</button>
+ </div>
+ <div id="bilan"></div>
+</div>
+<script src="js/commun.js?v=1"></script>
+<script src="js/camille-rig.js?v=1"></script>
+<script src="js/micro-donnees.js?v=1"></script>
+<script>
+(async function(){
+ const M=window.MICRO,$=s=>document.querySelector(s),VITE=new URLSearchParams(location.search).has('vite');
+ const att=ms=>new Promise(r=>setTimeout(r,VITE?20:ms));
+ const etat={};M.gens.forEach(g=>etat[g.id]=[]);
+ const MAX=M.gens.length*4;let gain=0,rig=null,occupe=false;
+ function jetons(){
+  $('#jetons').innerHTML=M.gens.map((g,i)=>'<button class="jeton entree" data-id="'+g.id+'" style="left:'+g.x+'px;top:'+g.y+'px;--d:'+(.3+i*.12)+'s;--r:-'+i*1.4+'s"><div class="pts">'+g.questions.map((q,k)=>'<u class="'+(etat[g.id].includes(k)?'on':'')+'"></u>').join('')+'</div><img src="gens/'+g.id+'-tete.jpg" alt=""><div class="micro">🎤</div><div class="et"><b>'+g.nom+'</b><i>'+g.role+'</i></div></button>').join('');
+  document.querySelectorAll('.jeton').forEach(b=>b.onclick=()=>ouvrir(M.gens.find(g=>g.id===b.dataset.id)));
+ }
+ jetons();
+ function jauge(){const p=Math.round(100*gain/MAX);$('#jTxt').textContent=p+' %';$('#jB').style.width=p+'%'}
+ function place(){let y=$('#parole').offsetTop+$('#parole').offsetHeight+16;const c=$('#coach');if(!c.hidden){c.style.top=y+'px';y+=c.offsetHeight+16}$('#qs').style.top=y+'px'}
+ async function parler(g,texte,voix){
+  occupe=true;const p=$('#parole');p.innerHTML='<span class="qui">'+g.nom+'</span>'+texte.split(' ').map(m=>'<span class="m">'+m+' </span>').join('');place();
+  son.jouer('audio/'+voix+'.mp3');const parle=rig.speakText(texte);const sp=[...p.querySelectorAll('.m')],total=Math.max(900,texte.length*60);
+  for(const s of sp){s.classList.add('v');await att(total/sp.length)}
+  await Promise.race([parle,att(total+600)]);rig.stopText();rig.setState('idle');occupe=false;
+ }
+ function questions(g){
+  const z=$('#qs');z.innerHTML='<div class="lab">Ta question</div>';
+  g.questions.map((q,k)=>({q,k})).sort(()=>Math.random()-.5).forEach(({q,k})=>{
+   const b=document.createElement('button');b.className='qb';b.innerHTML=q.t;
+   if(etat[g.id].includes(k)){b.classList.add('posee');b.innerHTML+='<span class="tag '+q.type+'">'+M.types[q.type].nom+'</span>'}
+   b.onclick=async()=>{if(occupe)return;etat[g.id].push(k);son.bip('envoi');$('#coach').hidden=true;z.innerHTML='';
+    await parler(g,q.re,q.voix);
+    const T=M.types[q.type];gain+=T.gain;jauge();if(q.note){carnet.noter('micro',q.note);son.bip('ok')}
+    const c=$('#coach');c.hidden=false;c.innerHTML='<img src="img/camille-profil.jpg" alt=""><span>'+T.camille+'</span>';
+    questions(g);place()};
+   z.appendChild(b)});
+  place();
+ }
+ async function ouvrir(g){
+  $('#itw').classList.add('on');$('#fNom').textContent=g.nom;$('#fRole').textContent=g.role;$('#coach').hidden=true;$('#qs').innerHTML='';$('#parole').innerHTML='';
+  if(!rig){rig=CamilleRig.create({stage:$('#scene'),base:'gens/',depart:g.id});await rig.init();window.__rig=rig}else await rig.setPose(g.id,{force:true});
+  await att(350);
+  if(!etat[g.id].length)await parler(g,g.bonjour,g.id[0]+'-b');else{$('#parole').innerHTML='<span class="qui">'+g.nom+'</span>Autre chose ?'}
+  questions(g);
+ }
+ $('#retour').onclick=()=>{if(occupe)return;son.stop();$('#itw').classList.remove('on');jetons();
+  const vus=M.gens.filter(g=>etat[g.id].length).length;
+  if(vus===M.gens.length)bilan();else $('#bTxt').innerHTML='Bien ! Il te reste <b>'+(M.gens.length-vus)+' personne'+(M.gens.length-vus>1?'s':'')+'</b> à rencontrer. Pense à tester plusieurs façons de poser la question.'};
+ function bilan(){
+  carnet.lieu('marche');const B=M.bilan,b=$('#bilan');
+  b.innerHTML='<div class="c"><h2>'+B.titre+'</h2><ul>'+B.lignes.map(l=>'<li>'+l+'</li>').join('')+'</ul><div class="cm"><img src="img/camille-profil.jpg" alt=""><span>'+B.camille+'</span></div><button class="btn vert" id="bF">Continuer sur la place</button></div>';
+  b.classList.add('on');son.bip('trouve');$('#bF').onclick=()=>{b.classList.remove('on');$('#bTxt').innerHTML='Tu peux encore poser les questions qui te restent, ou <b>retourner au village</b> pour la suite.';$('#cImg').src='img/camille-bravo.webp'};
+ }
+ window.__micro={ouvrir:id=>ouvrir(M.gens.find(g=>g.id===id)),bilan};
+})();
+</script>
+</body>
+</html>

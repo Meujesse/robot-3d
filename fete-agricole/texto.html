@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Débrief avec Camille · Organiser un événement agricole</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=1">
+<link rel="stylesheet" href="texto.css?v=1">
+</head>
+<body data-sans-carnet>
+<div id="stage">
+ <!-- 1. accroche : le téléphone qui vibre -->
+ <section id="accroche">
+  <img class="fond" src="img/village-flou.jpg" alt="">
+  <div class="voile"></div>
+  <div class="txt entree" style="--d:.1s">
+   <div class="sur">Fin du chapitre</div>
+   <h1>Camille t'écrit</h1>
+   <p>Elle a repris vos notes de la journée et elle a besoin de ton avis. Réponds-lui comme tu le ferais par message. Tes réponses changent ses réactions.</p>
+  </div>
+  <div id="tel" class="entree" style="--d:.3s">
+   <div class="encoche"></div>
+   <div class="heure" id="heure">18:42</div>
+   <div class="date">dimanche</div>
+   <button id="notif"><img src="img/camille-profil.jpg" alt=""><span><b>Camille</b><i id="notifTxt"></i></span><em>maintenant</em></button>
+   <div class="glisse">Touche le message pour répondre</div>
+  </div>
+ </section>
+
+ <!-- 2. la conversation, plein écran -->
+ <section id="appli" hidden>
+  <aside id="liste">
+   <div class="moi"><span>Discussions</span></div>
+   <div class="conv actif"><img src="img/camille-profil.jpg" alt=""><div><b>Camille</b><i id="apercu">en train d'écrire…</i></div><em id="pastille">1</em></div>
+   <div class="conv"><span class="av" style="background:#f6c445">🎪</span><div><b>Asso Fête des Récoltes</b><i>Réunion jeudi 19 h à la mairie</i></div></div>
+   <div class="conv"><span class="av" style="background:#8fd0e8">🏛️</span><div><b>Mairie de Combelune</b><i>Le champ de foire est libre le 21.</i></div></div>
+   <div class="conv"><span class="av" style="background:#ef6f4a">🧀</span><div><b>Nadia (fromagerie)</b><i>Je prends un stand, c'est sûr !</i></div></div>
+   <div class="progres"><div class="lib"><span>Questions de Camille</span><b id="pTxt">0 / 5</b></div><div class="barre"><i id="pBarre"></i></div></div>
+  </aside>
+  <main id="chat">
+   <header><img src="img/camille-profil.jpg" alt=""><div><b>Camille</b><i id="statut">en ligne</i></div></header>
+   <div id="fil"><div class="jour">Aujourd'hui</div></div>
+   <footer id="saisie"><div class="attente">Camille écrit…</div></footer>
+  </main>
+ </section>
+
+ <!-- 3. le tableau de bord -->
+ <section id="bilan" hidden></section>
+
+ <div id="zoomPhoto" hidden><img alt=""><button>✕</button></div>
+</div>
+<script src="js/commun.js?v=1"></script>
+<script src="js/texto-donnees.js?v=1"></script>
+<script src="js/texto.js?v=1"></script>
+</body>
+</html>

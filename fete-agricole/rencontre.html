@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Rencontre avec Camille · Organiser un événement agricole</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=1">
+<style>
+#fond{animation:derive 36s ease-in-out infinite alternate;transform-origin:50% 60%;filter:blur(2px) saturate(1.05)}
+@keyframes derive{from{transform:scale(1.06) translateX(-10px)}to{transform:scale(1.12) translateX(14px)}}
+#ombre{position:absolute;inset:0;background:radial-gradient(900px 700px at 38% 45%,rgba(0,0,0,0) 40%,rgba(10,22,16,.5))}
+#camille{position:absolute;left:0;top:0;width:1600px;height:900px;transform:translateX(-240px)}
+#sous{position:absolute;left:0;right:0;bottom:0;height:320px;background:linear-gradient(transparent,rgba(10,22,16,.78));pointer-events:none}
+#nom{position:absolute;left:870px;top:150px;display:flex;align-items:center;gap:10px;font:800 13px/1 Nunito;letter-spacing:.2em;text-transform:uppercase;color:#fff;background:var(--corail);border-radius:99px;padding:9px 16px}
+#nom i{width:9px;height:9px;border-radius:50%;background:#fff;animation:pt 1.4s infinite}
+@keyframes pt{50%{opacity:.3}}
+#replique{position:absolute;left:870px;top:196px;width:620px;min-height:120px;background:var(--creme);border-radius:8px 26px 26px 26px;padding:24px 28px;font:700 25px/1.42 Nunito;box-shadow:0 22px 60px rgba(0,0,0,.35)}
+#replique .c{opacity:.0}
+#replique span.m{opacity:0;transition:opacity .18s}
+#replique span.m.v{opacity:1}
+#choix{position:absolute;left:870px;top:0;width:620px;display:flex;flex-direction:column;gap:12px}
+.ch{border:0;text-align:left;border-radius:20px;padding:18px 22px 18px 58px;font:800 20px/1.3 Nunito;color:#fff;background:rgba(28,43,36,.72);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,.35);cursor:pointer;position:relative;transition:all .2s;animation:entree .45s both}
+.ch:nth-child(2){animation-delay:.08s}
+.ch::before{content:"💬";position:absolute;left:20px;top:16px;font-size:22px}
+.ch:hover{background:var(--pre);border-color:var(--ble);transform:translateX(6px)}
+#consigne{position:absolute;left:870px;font:700 14px/1.3 Nunito;color:rgba(255,255,255,.8)}
+#suite{position:absolute;left:870px}
+#pts{position:absolute;left:70px;bottom:40px;display:flex;gap:8px}
+#pts i{width:34px;height:6px;border-radius:9px;background:rgba(255,255,255,.3);transition:background .3s}
+#pts i.on{background:var(--ble)}
+</style>
+</head>
+<body data-sans-carnet>
+<div id="stage">
+ <img id="fond" class="fond" src="img/place.jpg" alt="">
+ <div id="ombre"></div>
+ <div id="camille"></div>
+ <div id="sous"></div>
+ <div id="nom"><i></i>Camille</div>
+ <div id="replique"></div>
+ <div id="consigne" hidden>Il n'y a pas de bonne ou de mauvaise réponse : Camille réagit à ton choix.</div>
+ <div id="choix"></div>
+ <div id="suite"></div>
+ <div id="pts"></div>
+</div>
+<script src="js/commun.js?v=1"></script>
+<script src="js/camille-rig.js?v=1"></script>
+<script src="js/rencontre-donnees.js?v=1"></script>
+<script>
+(async function(){
+ const R=window.RENCONTRE,$=s=>document.querySelector(s),VITE=new URLSearchParams(location.search).has('vite');
+ const rig=CamilleRig.create({stage:$('#camille')});await rig.init();window.__rig=rig;
+ const rep=$('#replique'),choix=$('#choix'),suite=$('#suite'),cons=$('#consigne');
+ $('#pts').innerHTML=R.etapes.map(()=>'<i></i>').join('');
+ const att=ms=>new Promise(r=>setTimeout(r,VITE?20:ms));
+ function place(){const b=rep.offsetTop+rep.offsetHeight+22;cons.style.top=b+'px';choix.style.top=(b+(cons.hidden?0:34))+'px';suite.style.top=b+'px'}
+ async function dire(o){
+  choix.innerHTML='';suite.innerHTML='';cons.hidden=true;
+  await rig.setPose(o.pose,{plan:o.plan,force:true});
+  const mots=o.dit.split(' ');rep.innerHTML=mots.map(m=>'<span class="m">'+m+' </span>').join('');place();
+  const sp=[...rep.querySelectorAll('.m')];
+  const audio=son.jouer('audio/'+o.voix+'.mp3');
+  const parle=rig.speakText(o.dit);
+  // les mots apparaissent au rythme de la parole
+  const total=Math.max(1200,o.dit.length*62);
+  for(let i=0;i<sp.length;i++){sp[i].classList.add('v');await att(total/sp.length)}
+  await Promise.race([parle,att(total+800)]);rig.stopText();rig.setState('idle');
+ }
+ for(let k=0;k<R.etapes.length;k++){
+  const e=R.etapes[k];[...$('#pts').children].forEach((p,i)=>p.classList.toggle('on',i<=k));
+  await dire(e);
+  if(e.choix){
+   cons.hidden=false;place();
+   const c=await new Promise(r=>{e.choix.forEach(c=>{const b=document.createElement('button');b.className='ch';b.textContent=c.t;b.onclick=()=>{son.bip('pop');r(c)};choix.appendChild(b)})});
+   await dire(c.re);await att(700);
+  }else{
+   const b=document.createElement('div');b.className='bulle pop';b.style.position='static';b.style.background='var(--ble)';b.innerHTML='<b style="color:var(--encre)">'+e.fin+' →</b><br><span style="font-size:15px">Passe à la page suivante.</span>';suite.appendChild(b);place();
+   carnet.lieu('rencontre');
+  }
+ }
+})();
+</script>
+</body>
+</html>

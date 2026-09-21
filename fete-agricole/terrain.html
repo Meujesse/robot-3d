@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Observer la fête · Organiser un événement agricole</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Caveat:wght@600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=1">
+<style>
+#vue{position:absolute;inset:0;overflow:hidden;cursor:grab;touch-action:none;background:#1a2a20}
+#vue.prise{cursor:grabbing}
+#monde{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+#monde>img{display:block;user-select:none;-webkit-user-drag:none}
+#soleil{position:absolute;inset:0;background:radial-gradient(600px 420px at 78% 8%,rgba(255,226,150,.35),transparent 70%);mix-blend-mode:screen;pointer-events:none;animation:soleil 9s ease-in-out infinite alternate}
+@keyframes soleil{to{opacity:.55}}
+.fumee{position:absolute;width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.55);filter:blur(7px);animation:fumee 5s ease-out infinite;animation-delay:var(--r);pointer-events:none}
+@keyframes fumee{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:.8}100%{transform:translate(34px,-120px) scale(2.4);opacity:0}}
+.fanion{position:absolute;pointer-events:none}
+.parole{position:absolute;transform:translate(-50%,-100%) scale(.6);background:#fff;border-radius:14px;padding:7px 11px;font:800 13px/1.2 Nunito;white-space:nowrap;box-shadow:0 6px 14px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:all .4s cubic-bezier(.2,1.5,.4,1)}
+.parole::after{content:"";position:absolute;left:50%;bottom:-7px;margin-left:-7px;border:7px solid transparent;border-top-color:#fff;border-bottom:0}
+.parole.on{opacity:1;transform:translate(-50%,-100%) scale(1)}
+/* objets flottants */
+.obj{position:absolute;width:0;height:0;cursor:pointer}
+.obj .h{position:absolute;left:-52px;top:-52px;width:104px;height:104px;animation:leve 4.2s ease-in-out infinite;animation-delay:var(--r)}
+@keyframes leve{50%{transform:translateY(-10px)}}
+.obj img{position:absolute;inset:8px;width:88px;height:88px;object-fit:contain;filter:drop-shadow(0 8px 8px rgba(0,0,0,.45));animation:tourne 7s ease-in-out infinite;animation-delay:var(--r)}
+@keyframes tourne{0%,100%{transform:perspective(300px) rotateY(-24deg)}50%{transform:perspective(300px) rotateY(24deg)}}
+.obj .halo{position:absolute;inset:-4px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,250,225,.85),rgba(255,240,190,.55));border:3px solid rgba(255,255,255,.95);box-shadow:0 0 0 6px rgba(246,196,69,.35),0 10px 24px rgba(0,0,0,.4)}
+.obj .sol{position:absolute;left:-30px;top:58px;width:60px;height:12px;border-radius:50%;background:rgba(0,0,0,.35);filter:blur(4px)}
+.obj:hover .h{scale:1.18;transition:scale .25s}
+.obj.vu img{filter:grayscale(.2) drop-shadow(0 8px 8px rgba(0,0,0,.45))}
+.obj.vu .halo{background:rgba(190,235,200,.85);box-shadow:0 0 0 6px rgba(47,125,79,.4),0 10px 24px rgba(0,0,0,.4)}
+.obj.vu::after{content:"✓";position:absolute;left:18px;top:-52px;width:30px;height:30px;border-radius:50%;background:var(--pre);color:#fff;font:800 16px/30px Nunito;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.obj.aide .halo{box-shadow:0 0 0 22px rgba(246,196,69,.45),0 0 0 44px rgba(246,196,69,.2),0 10px 24px rgba(0,0,0,.4);transition:box-shadow .9s}
+
+#tete{position:absolute;left:40px;top:26px;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.7);pointer-events:none}
+#tete h1{margin:6px 0 0;font-size:36px;line-height:1}
+#hautVoile{position:absolute;left:0;right:0;top:0;height:170px;background:linear-gradient(rgba(14,28,22,.7),transparent);pointer-events:none}
+/* la grille */
+#grille{position:absolute;right:22px;top:88px;width:370px;background:var(--papier);border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.45);padding:16px 18px 14px;background-image:repeating-linear-gradient(transparent 0 31px,rgba(47,125,79,.12) 31px 32px);transition:transform .45s cubic-bezier(.3,1.2,.4,1)}
+#grille.plie{transform:translateX(330px)}
+#grille h2{margin:0;font-size:22px;color:var(--pre2)}
+#grille .c{font:800 12px/1 Nunito;letter-spacing:.14em;text-transform:uppercase;color:var(--corail);margin:4px 0 10px}
+#grille .r{border-top:2px solid rgba(47,125,79,.25);padding:8px 0 6px}
+#grille .r b{display:flex;justify-content:space-between;font:800 13.5px/1.2 Nunito;color:var(--pre2)}
+#grille .r b i{font-style:normal;color:#b9c4bb}
+#grille .r.ok b i{color:var(--pre)}
+#grille .r p{margin:4px 0 0;font:700 19px/1.1 Caveat;color:#3a3320;animation:pop .4s both}
+#grille .r p.vide{font:600 13px/1.3 Nunito;color:#9aa69d;animation:none}
+#plier{position:absolute;left:-18px;top:18px;width:36px;height:36px;border-radius:50%;border:0;background:var(--pre);color:#fff;font:800 15px/1 Nunito;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.35)}
+#zoom{position:absolute;left:40px;bottom:30px;display:flex;gap:8px;z-index:12}
+#zoom button{width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:rgba(28,43,36,.75);color:#fff;font:800 22px/1 Nunito;cursor:pointer;backdrop-filter:blur(4px)}
+#astuce{position:absolute;left:210px;bottom:42px;font:800 14px/1.3 Nunito;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.8);pointer-events:none}
+#mini{position:absolute;left:30px;bottom:96px;display:flex;gap:12px;align-items:flex-end;pointer-events:none;z-index:11}
+#mini img{width:74px;height:74px;border-radius:50%;border:3px solid var(--ble);box-shadow:0 8px 18px rgba(0,0,0,.4)}
+#mini .bulle{position:static;max-width:420px;font-size:16px;padding:12px 16px}
+
+/* la fiche objet */
+#fiche{position:absolute;inset:0;z-index:40;display:none;background:radial-gradient(900px 700px at 32% 50%,rgba(40,80,60,.55),rgba(8,18,13,.9));backdrop-filter:blur(7px)}
+#fiche.on{display:block;animation:ouvre .4s both}
+@keyframes ouvre{from{opacity:0}}
+#socle{position:absolute;left:90px;top:110px;width:680px;height:680px;perspective:1100px;cursor:grab;touch-action:none}
+#socle .tour{position:absolute;inset:0;transform-style:preserve-3d;animation:monte .9s cubic-bezier(.2,1.3,.4,1) both}
+@keyframes monte{from{transform:translateY(120px) scale(.4) rotateY(-180deg);opacity:0}}
+#socle .plan{position:absolute;inset:60px;transform-style:preserve-3d;animation:leve 5s ease-in-out infinite}
+#socle img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 30px 30px rgba(0,0,0,.55));backface-visibility:visible}
+#socle .ombre{position:absolute;left:170px;right:170px;bottom:10px;height:40px;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(14px)}
+#socle .anneau{position:absolute;left:90px;right:90px;bottom:-10px;height:90px;border-radius:50%;border:3px solid rgba(246,196,69,.55);transform:rotateX(74deg);box-shadow:0 0 40px rgba(246,196,69,.35),inset 0 0 40px rgba(246,196,69,.25)}
+#socle model-viewer{position:absolute;inset:0;width:100%;height:100%;--poster-color:transparent}
+#tourne{position:absolute;left:90px;top:800px;width:680px;text-align:center;font:800 13px/1 Nunito;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+#ftxt{position:absolute;left:840px;top:120px;width:680px;color:#fff}
+#ftxt .sur{color:var(--ble)}
+#ftxt h2{margin:8px 0 8px;font-size:44px;line-height:1.02}
+#ftxt p{margin:0 0 18px;font:700 19px/1.45 Nunito;color:rgba(255,255,255,.9)}
+.nbt{display:block;width:100%;text-align:left;border:2px solid rgba(255,255,255,.35);background:rgba(255,248,234,.1);color:#fff;border-radius:18px;padding:15px 18px 15px 52px;margin-bottom:11px;font:700 23px/1.12 Caveat;cursor:pointer;position:relative;transition:all .2s;animation:entree .45s both}
+.nbt::before{content:"✏️";position:absolute;left:16px;top:13px;font-size:20px}
+.nbt:hover{background:rgba(255,248,234,.22);border-color:var(--ble);transform:translateX(6px)}
+.nbt.choisi{background:var(--creme);color:var(--encre);border-color:var(--ble)}
+.nbt.gris{opacity:.4;pointer-events:none}
+.nbt .tag{position:absolute;right:12px;top:-10px;font:800 11px/1 Nunito;letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:6px 10px;background:var(--corail);color:#fff}
+.nbt .tag.fait{background:var(--pre)}
+#retourC{display:flex;gap:12px;align-items:center;background:rgba(28,43,36,.85);border-radius:18px;padding:12px 16px;font:700 16.5px/1.4 Nunito;margin-top:6px;animation:entree .45s both}
+#retourC img{width:54px;height:54px;border-radius:50%;flex:none;border:2px solid var(--ble)}
+#retourC b{color:var(--ble)}
+#fermer{margin-top:16px}
+#final{position:absolute;inset:0;z-index:45;display:none;background:rgba(10,20,15,.75);backdrop-filter:blur(6px)}
+#final.on{display:block}
+#final .c{position:absolute;left:50%;top:50%;width:900px;margin:-230px 0 0 -450px;background:var(--creme);border-radius:30px;padding:38px 44px;box-shadow:0 40px 90px rgba(0,0,0,.5);animation:pop .45s both}
+#final h2{margin:0 0 12px;font-size:36px;color:var(--pre2)}
+#final p{font:700 19px/1.5 Nunito;margin:0 0 12px}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="vue"><div id="monde"><img id="photo" alt=""><div id="soleil"></div><div id="fx"></div><div id="objs"></div></div></div>
+ <div id="hautVoile"></div>
+ <div id="tete"><div class="sur">Au champ de foire · La grille d'observation</div><h1>La fête de l'an dernier</h1></div>
+ <div id="grille"><button id="plier">›</button><h2>Ma grille d'observation</h2><div class="c" id="gC">0 / 5 observations</div><div id="gR"></div></div>
+ <div id="mini"><img src="img/camille-profil.jpg" alt=""><div class="bulle" id="mTxt"><span class="qui">Camille</span>J'ai retrouvé la fête de l'an dernier. <b>Cinq objets</b> flottent dans la scène : déplace-toi, zoome, et attrape-les pour remplir la grille.</div></div>
+ <div id="zoom"><button id="zM">−</button><button id="zP">+</button></div>
+ <div id="astuce">Glisse pour te déplacer · molette ou boutons pour zoomer</div>
+
+ <div id="fiche">
+  <div id="socle"></div><div id="tourne">↔ Fais-le tourner</div>
+  <div id="ftxt"></div>
+ </div>
+ <div id="final"></div>
+</div>
+<script src="js/commun.js?v=1"></script>
+<script src="js/terrain-donnees.js?v=1"></script>
+<script>
+(function(){
+ const T=window.TERRAIN,$=s=>document.querySelector(s),vue=$('#vue'),monde=$('#monde');
+ const IW=T.image.w,IH=T.image.h,K0=Math.max(1600/IW,900/IH);
+ $('#photo').src=T.image.src;$('#photo').width=IW;$('#photo').height=IH;monde.style.width=IW+'px';monde.style.height=IH+'px';
+ let k=K0*1.18,cx=IW/2,cy=IH/2+30,vus={},dernier=performance.now();
+ function borne(){const dw=800/k,dh=450/k;cx=Math.min(IW-dw,Math.max(dw,cx));cy=Math.min(IH-dh,Math.max(dh,cy))}
+ function applique(anim){borne();monde.style.transition=anim?'transform .7s cubic-bezier(.3,1,.4,1)':'none';monde.style.transform='translate('+(800-cx*k)+'px,'+(450-cy*k)+'px) scale('+k+')'}
+ applique();
+ const ech=()=>$('#stage').getBoundingClientRect().width/1600;
+ let drag=null,bouge=0;
+ vue.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,cx,cy};bouge=0;vue.classList.add('prise');vue.setPointerCapture(e.pointerId)});
+ vue.addEventListener('pointermove',e=>{if(!drag)return;const s=ech();const dx=(e.clientX-drag.x)/s,dy=(e.clientY-drag.y)/s;bouge=Math.max(bouge,Math.abs(dx)+Math.abs(dy));cx=drag.cx-dx/k;cy=drag.cy-dy/k;applique();dernier=performance.now()});
+ vue.addEventListener('pointerup',e=>{vue.classList.remove('prise');const d=drag;drag=null;
+  if(bouge<6){const el=document.elementsFromPoint(e.clientX,e.clientY).find(x=>x.closest&&x.closest('.obj'));if(el)ouvrir(el.closest('.obj').dataset.id)}});
+ function zoome(f,px,py){const s=ech(),r=vue.getBoundingClientRect();const sx=px==null?800:(px-r.left)/s,sy=py==null?450:(py-r.top)/s;
+  const wx=cx+(sx-800)/k,wy=cy+(sy-450)/k;const nk=Math.min(K0*3,Math.max(K0,k*f));cx=wx-(sx-800)/nk;cy=wy-(sy-450)/nk;k=nk;applique(px==null);dernier=performance.now()}
+ vue.addEventListener('wheel',e=>{e.preventDefault();zoome(e.deltaY<0?1.12:1/1.12,e.clientX,e.clientY)},{passive:false});
+ $('#zP').onclick=()=>zoome(1.4);$('#zM').onclick=()=>zoome(1/1.4);
+
+ /* vie de la scène */
+ const fx=$('#fx');
+ [[1105,380],[1130,372],[1180,395]].forEach((p,i)=>{for(let j=0;j<3;j++){const f=document.createElement('div');f.className='fumee';f.style.left=p[0]+'px';f.style.top=p[1]+'px';f.style.setProperty('--r',(-i*1.3-j*1.7)+'s');fx.appendChild(f)}});
+ const bulles=T.paroles.map(p=>{const b=document.createElement('div');b.className='parole';b.textContent=p.t;b.style.left=p.x+'px';b.style.top=p.y+'px';fx.appendChild(b);return b});
+ let ib=0;setInterval(()=>{if(document.hidden||$('#fiche').classList.contains('on'))return;const b=bulles[ib++%bulles.length];b.classList.add('on');setTimeout(()=>b.classList.remove('on'),3200)},2600);
+
+ /* objets flottants */
+ $('#objs').innerHTML=T.objets.map((o,i)=>'<div class="obj" data-id="'+o.id+'" style="left:'+o.x+'px;top:'+o.y+'px;--r:-'+(i*.9)+'s"><div class="h"><div class="halo"></div><img src="'+o.img+'" alt="" draggable="false"></div><div class="sol"></div></div>').join('');
+ function grille(){
+  const n=Object.keys(vus).length;$('#gC').textContent=n+' / '+T.objets.length+' observations';
+  $('#gR').innerHTML=T.objets.map(o=>'<div class="r'+(vus[o.id]?' ok':'')+'"><b>'+o.rub+'<i>'+(vus[o.id]?'✓':'…')+'</i></b>'+(vus[o.id]?'<p>'+o.notes.fait+'</p>':'<p class="vide">À observer</p>')+'</div>').join('');
+ }
+ grille();
+ $('#plier').onclick=()=>{const g=$('#grille');g.classList.toggle('plie');$('#plier').textContent=g.classList.contains('plie')?'‹':'›'};
+ // coup de pouce doux après 12 s sans trouvaille : le halo d'un objet grandit et la vue s'en approche un peu
+ setInterval(()=>{if($('#fiche').classList.contains('on')||performance.now()-dernier<12000)return;const o=T.objets.find(o=>!vus[o.id]);if(!o)return;
+  document.querySelectorAll('.obj').forEach(e=>e.classList.toggle('aide',e.dataset.id===o.id));dernier=performance.now()},1500);
+
+ /* la fiche : objet en relief qu'on fait tourner */
+ let modeleVu=false;
+ async function ouvrir(id){
+  const o=T.objets.find(x=>x.id===id);dernier=performance.now();son.bip('trouve');
+  document.querySelectorAll('.obj').forEach(e=>e.classList.remove('aide'));
+  const socle=$('#socle');let glb=false;
+  try{glb=(await fetch(o.glb,{method:'HEAD'})).ok}catch(e){}
+  if(glb){if(!modeleVu){modeleVu=true;const s=document.createElement('script');s.type='module';s.src='https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js';document.head.appendChild(s)}
+   socle.innerHTML='<div class="anneau"></div><model-viewer src="'+o.glb+'" camera-controls disable-zoom auto-rotate auto-rotate-delay="0" rotation-per-second="28deg" interaction-prompt="none" shadow-intensity="1.2" exposure="1.1" camera-orbit="30deg 72deg auto"></model-viewer>'}
+  else{socle.innerHTML='<div class="anneau"></div><div class="ombre"></div><div class="tour"><div class="plan"><img src="'+o.img+'" alt="" draggable="false"></div></div>';tourner(socle)}
+  const ordre=['fait','avis','supposition'].sort(()=>Math.random()-.5);
+  $('#ftxt').innerHTML='<div class="sur">Trouvé · '+o.rub+'</div><h2>'+o.t+'</h2><p>'+o.q+'</p><div id="nbs">'+ordre.map((t,i)=>'<button class="nbt" data-t="'+t+'" style="animation-delay:'+(.25+i*.08)+'s">'+o.notes[t]+'</button>').join('')+'</div><div id="suiteF"></div>';
+  $('#fiche').classList.add('on');
+  document.querySelectorAll('.nbt').forEach(b=>b.onclick=()=>{
+   const t=b.dataset.t;document.querySelectorAll('.nbt').forEach(x=>{x.classList.add(x===b?'choisi':'gris');if(x.dataset.t==='fait'){x.classList.remove('gris');x.classList.add('choisi');x.insertAdjacentHTML('beforeend','<span class="tag fait">Un fait</span>')}else if(x===b)x.insertAdjacentHTML('beforeend','<span class="tag">'+(t==='avis'?'Un avis':'Une supposition')+'</span>')});
+   son.bip(t==='fait'?'ok':'non');
+   $('#suiteF').innerHTML='<div id="retourC"><img src="img/camille-profil.jpg" alt=""><span>'+T.retours[t]+'</span></div><button class="btn" id="fermer">Noter dans ma grille</button>';
+   $('#fermer').onclick=()=>{vus[o.id]=1;carnet.noter('obs','<b>'+o.rub+' :</b> '+o.notes.fait);document.querySelector('.obj[data-id="'+o.id+'"]').classList.add('vu');grille();$('#fiche').classList.remove('on');socle.innerHTML='';
+    $('#grille').classList.remove('plie');const n=Object.keys(vus).length;
+    $('#mTxt').innerHTML='<span class="qui">Camille</span>'+(n<T.objets.length?'C\'est noté ! Encore <b>'+(T.objets.length-n)+'</b> à trouver. Certains sont bien cachés : pense à zoomer.':'Grille complète !');
+    if(n===T.objets.length)setTimeout(fin,900)};
+  });
+ }
+ function tourner(socle){
+  const tour=socle.querySelector('.tour');let a=-18,v=.25,pris=null,raf;
+  function pas(){if(!socle.contains(tour))return;if(!pris){a+=v;if(a>32||a<-32)v=-v}tour.style.transform='rotateY('+a+'deg) rotateX(4deg)';raf=requestAnimationFrame(pas)}
+  setTimeout(pas,950);
+  socle.onpointerdown=e=>{pris={x:e.clientX,a};socle.setPointerCapture(e.pointerId)};
+  socle.onpointermove=e=>{if(pris)a=Math.max(-70,Math.min(70,pris.a+(e.clientX-pris.x)*.4))};
+  socle.onpointerup=()=>{pris=null};
+ }
+ function fin(){
+  carnet.lieu('foire');son.bip('trouve');
+  $('#final').innerHTML='<div class="c"><h2>Ta grille est complète</h2><p>Tu viens de faire une vraie <b>observation de terrain</b> : cinq rubriques, cinq faits que n\'importe qui peut vérifier. Pas d\'avis, pas de supposition.</p><p>Et tu as déjà trois pistes pour cette année : <b>mieux communiquer</b>, <b>flécher le parking depuis la route</b>, <b>prévoir plus de places assises</b>.</p><button class="btn vert" id="bFin">Continuer à explorer</button> <span style="font:700 15px Nunito;color:var(--gris);margin-left:12px">ou retourne au village pour la suite</span></div>';
+  $('#final').classList.add('on');$('#bFin').onclick=()=>$('#final').classList.remove('on');
+ }
+ window.__terrain={ouvrir,fin,va:(x,y,z)=>{cx=x;cy=y;k=K0*z;applique(true)}};
+})();
+</script>
+</body>
+</html>

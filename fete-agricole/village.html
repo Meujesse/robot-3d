@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Le village · Organiser un événement agricole</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="commun.css?v=1">
+<style>
+#carte{position:absolute;left:0;top:-83px;width:1600px;height:1067px;animation:plane 50s ease-in-out infinite alternate;transform-origin:55% 40%}
+@keyframes plane{from{transform:scale(1.0)}to{transform:scale(1.035) translate(-8px,4px)}}
+#carte img{width:100%;height:100%;display:block}
+.nuage{position:absolute;width:520px;height:260px;border-radius:50%;background:radial-gradient(closest-side,rgba(20,40,30,.20),transparent);animation:nuage var(--t) linear infinite;top:var(--y);left:-600px;pointer-events:none}
+@keyframes nuage{to{transform:translateX(2400px)}}
+.oiseau{position:absolute;font-size:0;width:22px;height:8px;border-top:3px solid rgba(30,40,35,.65);border-radius:50% 50% 0 0;animation:vol var(--t) linear infinite;left:-40px;top:var(--y)}
+.oiseau::after{content:"";position:absolute;left:19px;top:-3px;width:22px;height:8px;border-top:3px solid rgba(30,40,35,.65);border-radius:50% 50% 0 0}
+@keyframes vol{to{transform:translate(1800px,-120px)}}
+#chemin{position:absolute;inset:0;pointer-events:none}
+#chemin path{fill:none;stroke:#fff;stroke-width:5;stroke-dasharray:2 14;stroke-linecap:round;opacity:.9;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+#voile{position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,28,22,.55),transparent 22%,transparent 62%,rgba(14,28,22,.6));pointer-events:none}
+#tete{position:absolute;left:60px;top:34px;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.6)}
+#tete h1{margin:8px 0 0;font-size:44px;line-height:1}
+.lieu{position:absolute;transform:translate(-50%,-100%);text-decoration:none;color:inherit;cursor:pointer;animation:flotte 5s ease-in-out infinite;animation-delay:var(--r)}
+@keyframes flotte{50%{translate:0 -7px}}
+.lieu .pin{width:74px;height:74px;margin:0 auto;border-radius:50% 50% 50% 6px;rotate:-45deg;background:var(--creme);border:5px solid var(--pre);display:grid;place-items:center;box-shadow:0 12px 22px rgba(0,0,0,.4);transition:scale .25s cubic-bezier(.2,1.6,.4,1)}
+.lieu .pin span{rotate:45deg;font-size:32px}
+.lieu:hover .pin{scale:1.12}
+.lieu .et{margin-top:16px;background:var(--encre);color:#fff;border-radius:14px;padding:9px 14px;text-align:center;white-space:nowrap;box-shadow:0 8px 20px rgba(0,0,0,.35)}
+.lieu .et b{display:block;font:800 16px/1.1 "Bricolage Grotesque"}
+.lieu .et i{font:700 12.5px/1.2 Nunito;font-style:normal;color:var(--ble)}
+.lieu .n{position:absolute;left:50%;top:-12px;margin-left:24px;width:30px;height:30px;border-radius:50%;background:var(--corail);color:#fff;font:800 15px/30px Nunito;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+.lieu.fait .pin{background:var(--pre);border-color:#fff}
+.lieu.fait .n{background:var(--pre)}
+.lieu.suivant .pin{border-color:var(--ble);box-shadow:0 0 0 10px rgba(246,196,69,.35),0 12px 22px rgba(0,0,0,.4)}
+#camille{left:40px;height:560px}
+#bulle{left:330px;bottom:70px;width:440px}
+#bulle::after{content:"";position:absolute;left:-13px;bottom:40px;border:13px solid transparent;border-right-color:var(--creme);border-left:0}
+</style>
+</head>
+<body>
+<div id="stage">
+ <div id="carte"><img src="img/village.jpg" alt=""></div>
+ <div class="nuage" style="--t:70s;--y:80px"></div><div class="nuage" style="--t:95s;--y:480px;animation-delay:-40s"></div>
+ <div class="oiseau" style="--t:26s;--y:300px"></div><div class="oiseau" style="--t:34s;--y:520px;animation-delay:-12s"></div>
+ <div id="voile"></div>
+ <svg id="chemin" viewBox="0 0 1600 900"><path d="M800 300 C 980 300,1080 230,1210 190 M1210 190 C 1000 330,560 300,350 370 M350 370 C 640 520,1000 560,1230 500"/></svg>
+ <div id="tete" class="entree"><div class="sur">Chapitre 1 · Observer et recueillir les données</div><h1>Combelune, avant la fête</h1></div>
+ <div id="lieux"></div>
+ <div id="camille" class="perso entree" style="--d:.2s"><img id="cImg" src="img/camille-explique.webp" alt=""></div>
+ <div id="bulle" class="bulle entree" style="--d:.45s"><span class="qui">Camille</span><span id="bTxt"></span></div>
+</div>
+<script src="js/commun.js?v=1"></script>
+<script>
+(function(){
+ const L=[
+  {id:'mairie',x:800,y:250,ic:'🏛️',t:'La mairie',s:'Le projet en 7 questions',page:'questions.html'},
+  {id:'foire',x:1237,y:140,ic:'🎪',t:'Le champ de foire',s:'Observer la fête de l\'an dernier',page:'terrain.html'},
+  {id:'marche',x:331,y:325,ic:'🧺',t:'La place du marché',s:'Interroger les habitants',page:'micro.html'},
+  {id:'texto',x:1248,y:455,ic:'📱',t:'Le café',s:'Débrief avec Camille',page:'texto.html'}];
+ const fait=carnet.lieux(),suivant=L.find(l=>!fait[l.id]);
+ const seul=window.top===window;
+ document.getElementById('lieux').innerHTML=L.map((l,i)=>'<a class="lieu entree'+(fait[l.id]?' fait':'')+(suivant&&suivant.id===l.id?' suivant':'')+'" style="left:'+l.x+'px;top:'+l.y+'px;--d:'+(.3+i*.12)+'s;--r:-'+i*1.3+'s" '+(seul?'href="'+l.page+location.search+'"':'')+'><div class="n">'+(fait[l.id]?'✓':i+1)+'</div><div class="pin"><span>'+l.ic+'</span></div><div class="et"><b>'+l.t+'</b><i>'+l.s+'</i></div></a>').join('');
+ const nb=L.filter(l=>fait[l.id]).length;
+ const txt=nb===0?'Voilà Combelune ! On a <b>quatre arrêts</b> à faire avant de lancer quoi que ce soit. Commence par <b>la mairie</b>, j\'y ai laissé toutes mes notes.':
+  nb<L.length?'Bien joué, ton carnet se remplit ! Prochain arrêt conseillé : <b>'+suivant.t.toLowerCase()+'</b>. Mais tu peux y aller dans l\'ordre que tu veux.':
+  'On a fait le tour ! Ouvre ton <b>carnet de bord</b> : tout notre diagnostic est dedans.';
+ document.getElementById('bTxt').innerHTML=txt;
+ document.getElementById('cImg').src='img/camille-'+(nb===0?'explique':nb<L.length?'bravo':'salut')+'.webp';
+})();
+</script>
+</body>
+</html>
