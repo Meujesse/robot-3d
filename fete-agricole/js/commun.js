@@ -2,7 +2,11 @@
 (function(){
  const stage=document.getElementById('stage');
  function fit(){const k=Math.max(innerWidth/1600,innerHeight/900);if(k>0)stage.style.setProperty('--s',k)}
- addEventListener('resize',fit);new ResizeObserver(fit).observe(document.documentElement);fit();
+ addEventListener('resize',fit);
+ // la scène ne doit jamais se décaler : un focus ou un élément hors cadre peut faire défiler un bloc « overflow:hidden »
+ const recale=e=>{const c=e.target===document?document.scrollingElement:e.target;if(!c||!(c.scrollTop||c.scrollLeft))return;const o=getComputedStyle(c);if(c!==document.scrollingElement&&/(auto|scroll)/.test(o.overflowY+o.overflowX))return;   // les vraies zones à ascenseur (messages, carnet) restent libres
+  c.scrollTop=0;c.scrollLeft=0};
+ addEventListener('scroll',recale,true);new ResizeObserver(fit).observe(document.documentElement);fit();
  const P=new URLSearchParams(location.search);
  const MUET=P.has('muet')||P.has('mute');
 
