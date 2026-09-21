@@ -51,3 +51,11 @@ body:not([data-sans-carnet]) #bSonAide{right:auto;left:50%;translate:-50% 0;top:
 body:not([data-sans-carnet]) #bSonAide::after{display:none}
 #carnet .raz{position:absolute;left:66px;bottom:18px;border:0;background:none;font:800 13px/1 Nunito;color:var(--gris);cursor:pointer;text-decoration:underline}
 #carnet .cols{height:510px}
+/* barre de navigation entre activités (géométrie fixe : les zones Genially sont posées dessus) */
+#navG{position:absolute;left:579px;top:16px;width:442px;height:56px;z-index:65;display:flex;align-items:center;gap:6px;padding:6px;border-radius:99px;background:rgba(28,43,36,.88);border:2px solid rgba(255,255,255,.55);backdrop-filter:blur(6px);box-shadow:0 8px 20px rgba(0,0,0,.35);pointer-events:none;box-sizing:border-box}
+#navG span{height:40px;border-radius:99px;display:flex;align-items:center;justify-content:center;gap:5px;font:800 15px/1 Nunito;color:#fff}
+#navG .v{width:150px;background:rgba(255,255,255,.14)}
+#navG .a{width:64px;font-size:17px}
+#navG .a b{width:20px;height:20px;border-radius:50%;background:var(--corail);font:800 11px/20px Nunito;text-align:center}
+#navG .a.ici{background:var(--ble)}
+#navG .a.ici b{background:var(--encre)}

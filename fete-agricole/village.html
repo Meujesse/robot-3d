@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Le village · Organiser un événement agricole</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="commun.css?v=5">
+<link rel="stylesheet" href="commun.css?v=8">
 <style>
 #carte{position:absolute;left:0;top:-83px;width:1600px;height:1067px;animation:plane 50s ease-in-out infinite alternate;transform-origin:55% 40%}
 @keyframes plane{from{transform:scale(1.0)}to{transform:scale(1.035) translate(-8px,4px)}}
@@ -74,7 +74,7 @@
  <div id="act"><iframe id="cadreAct" allow="autoplay; fullscreen" title="Activité"></iframe><div id="menuV"></div></div>
  <div id="bulle" class="bulle entree" style="--d:.45s"><span class="qui">Camille</span><span id="bTxt"></span></div>
 </div>
-<script src="js/commun.js?v=7"></script>
+<script src="js/commun.js?v=8"></script>
 <script>
 (function(){
  const L=[
@@ -83,6 +83,7 @@
   {id:'marche',x:331,y:325,ic:'🧺',t:'La place du marché',s:'Interroger les habitants',page:'micro.html',d:'Trois personnes, trois façons de poser la question. À toi de voir laquelle rapporte le plus d\'informations.'},
   {id:'texto',x:1248,y:455,ic:'📱',t:'Le café',s:'Débrief avec Camille',page:'texto.html',d:'Camille t\'écrit pour faire le point. Tes réponses changent ses réactions, et tu repars avec ton récap.'}];
  const Q=new URLSearchParams(location.search),FIN=Q.has('fin');
+ const GENIALLY=window.top!==window;   // page intégrée : les zones cliquables de Genially sont posées par-dessus les lieux
  const info=document.getElementById('info'),act=document.getElementById('act'),cadre=document.getElementById('cadreAct');
  function rendre(){
   const fait=carnet.lieux(),ok=l=>fait[l.id]||FIN,suivant=L.find(l=>!ok(l));
@@ -95,10 +96,11 @@
     const st=document.getElementById('stage').getBoundingClientRect(),k=st.width/1600,r=a.getBoundingClientRect();
     const haut=(r.top-st.top)/k,bas=(r.bottom-st.top)/k,cx=((r.left+r.right)/2-st.left)/k;
     info.style.left=Math.min(1600-450,Math.max(20,cx-215))+'px';info.style.top=(haut-hI-14>92?haut-hI-14:bas+22)+'px';info.classList.remove('on');void info.offsetWidth;info.classList.add('on')};
-   a.onmouseleave=()=>info.classList.remove('on');
-   a.onclick=e=>{e.preventDefault();info.classList.remove('on');son.bip('pop');ouvrir(l)}});
+   a.montre=a.onmouseenter;
+   if(GENIALLY){a.onmouseenter=null;a.onclick=e=>e.preventDefault()}
+   else{a.onmouseleave=()=>info.classList.remove('on');a.onclick=e=>{e.preventDefault();info.classList.remove('on');son.bip('pop');ouvrir(l)}}});
   const nb=L.filter(ok).length;
-  const txt=nb===0?'Voilà Combelune ! On a <b>quatre arrêts</b> à faire avant de lancer quoi que ce soit. Passe la souris sur un lieu pour voir ce qui t\'attend, et clique pour y aller. On commence par <b>la mairie</b> ?':
+  const txt=nb===0?'Voilà Combelune ! On a <b>quatre arrêts</b> à faire avant de lancer quoi que ce soit. Approche la souris d\'un lieu pour voir ce qui t\'attend, et clique pour y aller. On commence par <b>la mairie</b>&nbsp;?':
    nb<L.length?'Bien joué, ton carnet se remplit ! Prochain arrêt conseillé : <b>'+suivant.t.toLowerCase()+'</b>. Mais tu peux y aller dans l\'ordre que tu veux.':
    'On a fait le tour ! Ouvre ton <b>carnet de bord</b>, en haut à droite : tout notre diagnostic est dedans. Merci pour le coup de main !';
   document.getElementById('bTxt').innerHTML=txt;
@@ -113,6 +115,15 @@
  function ouvrir(l){const q=new URLSearchParams(location.search);q.delete('fin');q.delete('zero');q.set('dans','1');cadre.src=l.page+'?'+q.toString();act.classList.add('on');menu(l)}
  function fermer(){act.classList.remove('on');cadre.src='about:blank';rendre();document.dispatchEvent(new Event('majCarnet'))}
  rendre();
+ if(GENIALLY){
+  // la souris disparaît pour la page dès qu'elle passe sur une zone Genially : on affiche donc la fiche du lieu le plus proche, et on la garde
+  let dernier=null;const stage=document.getElementById('stage');
+  stage.addEventListener('mousemove',e=>{let pres=null,dm=170;document.querySelectorAll('.lieu').forEach(a=>{const r=a.getBoundingClientRect(),d=Math.hypot(e.clientX-(r.left+r.right)/2,e.clientY-(r.top+r.bottom)/2)/(stage.getBoundingClientRect().width/1600);if(d<dm){dm=d;pres=a}});
+   if(pres!==dernier){dernier=pres;if(pres)pres.montre();else info.classList.remove('on')}});
+  // Genially garde les pages en mémoire : on remet la carte à jour à chaque retour
+  new IntersectionObserver(es=>{if(es[0].isIntersecting){rendre();dernier=null;document.dispatchEvent(new Event('majCarnet'))}}).observe(stage);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)rendre()});
+ }
 })();
 </script>
 </body>

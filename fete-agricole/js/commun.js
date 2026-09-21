@@ -69,6 +69,15 @@
  const io=new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting&&innerWidth>50){document.documentElement.classList.remove('anim');void document.documentElement.offsetWidth;document.documentElement.classList.add('anim')}}});
  io.observe(stage);
 
+ /* ---------- dans Genially : barre « Village · 1 · 2 · 3 · 4 » dessinée ici, cliquable grâce aux zones Genially posées dessus ---------- */
+ const PAGE=(location.pathname.split('/').pop()||'').replace('.html','');
+ const ARRETS=[['questions','🏛️'],['terrain','🎪'],['micro','🎤'],['texto','📱']];
+ if(window.top!==window&&!P.has('dans')&&ARRETS.some(a=>a[0]===PAGE)){
+  const n=document.createElement('div');n.id='navG';
+  n.innerHTML='<span class="v">🏘️ Village</span>'+ARRETS.map((a,i)=>'<span class="a'+(a[0]===PAGE?' ici':'')+'"><b>'+(i+1)+'</b>'+a[1]+'</span>').join('');
+  stage.appendChild(n);
+ }
+
  /* ---------- carnet de bord ---------- */
  const RUB=[['cq','Le projet en 7 questions'],['obs','Ma grille d\'observation'],['micro','Ce que les gens m\'ont dit']];
  const carnet=window.carnet={
