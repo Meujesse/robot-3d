@@ -28,8 +28,8 @@ h1,h2,h3,.titre{font-family:"Bricolage Grotesque",Nunito,sans-serif;letter-spaci
 @keyframes pop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:none}}
 
 /* bouton son et carnet de bord */
-#bSon{position:absolute;right:22px;top:20px;width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.7);color:#fff;font-size:19px;cursor:pointer;z-index:60;display:grid;place-items:center;backdrop-filter:blur(4px)}
-#bCarnet{position:absolute;right:80px;top:20px;height:46px;padding:0 18px 0 14px;border-radius:99px;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.7);color:#fff;font:800 14px/1 Nunito;cursor:pointer;z-index:60;display:flex;align-items:center;gap:8px;backdrop-filter:blur(4px)}
+#bSon{position:absolute;right:74px;top:20px;width:46px;height:46px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.7);color:#fff;font-size:19px;cursor:pointer;z-index:60;display:grid;place-items:center;backdrop-filter:blur(4px)}
+#bCarnet{position:absolute;right:132px;top:20px;height:46px;padding:0 18px 0 14px;border-radius:99px;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.7);color:#fff;font:800 14px/1 Nunito;cursor:pointer;z-index:60;display:flex;align-items:center;gap:8px;backdrop-filter:blur(4px)}
 #bCarnet .nb{background:var(--ble);color:var(--encre);border-radius:99px;padding:4px 8px;font-size:12px}
 #bCarnet.neuf{animation:neuf .7s cubic-bezier(.2,1.6,.4,1)}
 @keyframes neuf{40%{transform:scale(1.14)}}
