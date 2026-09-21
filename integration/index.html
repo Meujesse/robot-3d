@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Micro-learning managers · Accueillir une recrue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+#fond{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:kenburns 40s ease-in-out infinite alternate;transform-origin:70% 60%}
+@keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.1) translate(-10px,-6px)}}
+#voile{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,24,28,.92) 0%,rgba(8,24,28,.78) 42%,rgba(8,24,28,.18) 70%,rgba(8,24,28,0) 100%),linear-gradient(0deg,rgba(8,24,28,.55),rgba(8,24,28,0) 35%)}
+.kicker{position:absolute;left:70px;top:120px;display:inline-flex;align-items:center;gap:10px;font:700 13px/1 Nunito;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--vert);padding:9px 14px;border-radius:6px}
+h1{position:absolute;left:68px;top:150px;margin:0;font:900 66px/1.02 Nunito;color:#fff;letter-spacing:-.01em}
+h1 span{color:#ffb547}
+.chapo{position:absolute;left:72px;top:238px;width:820px;margin:0;font:400 19px/1.5 Nunito;color:rgba(255,255,255,.86)}
+/* tableau des départs */
+#tableau{position:absolute;left:70px;top:330px;width:800px;border-radius:14px;background:linear-gradient(180deg,#121a1c,#0b1113);box-shadow:0 30px 70px rgba(0,0,0,.55),inset 0 0 0 1px rgba(255,255,255,.06);padding:14px 18px 10px;color:#fff}
+#tableau .entete{display:flex;align-items:center;gap:12px;padding:4px 4px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
+#tableau .entete b{font:700 15px/1 'Bricolage Grotesque';letter-spacing:.16em;text-transform:uppercase;color:#ffd24a}
+#tableau .entete small{font:500 13px/1 Nunito;color:rgba(255,255,255,.5)}
+#horloge{margin-left:auto;font:700 22px/1 'JetBrains Mono';color:#ffd24a;background:#000;padding:6px 10px;border-radius:6px;letter-spacing:.06em}
+.cols{display:grid;grid-template-columns:70px 1fr 170px;padding:8px 4px 2px;font:500 11px/1 Nunito;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+.ligne{display:grid;grid-template-columns:70px 1fr 170px;align-items:center;height:37px;padding:0 4px;border-radius:8px;color:inherit;text-decoration:none}
+.ligne:nth-child(odd){background:rgba(255,255,255,.025)}
+.voie{font:700 17px/1 'JetBrains Mono';color:rgba(255,255,255,.55)}
+.dest{display:flex;gap:2px}
+.dest i{display:inline-grid;place-items:center;width:19px;height:27px;font:700 16px/1 'JetBrains Mono';font-style:normal;color:#ece8f2;background:linear-gradient(180deg,#232b2d 0 49%,#1a2123 51% 100%);border-radius:3px;box-shadow:inset 0 -1px 0 rgba(0,0,0,.6)}
+.dest i.vide{background:transparent;box-shadow:none;width:8px}
+.etat{font:700 13px/1 'Bricolage Grotesque';letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.38);display:flex;align-items:center;gap:8px}
+.ligne.quai{background:linear-gradient(90deg,rgba(106,47,168,.38),rgba(106,47,168,.12))!important;box-shadow:inset 3px 0 0 #ffb547;cursor:pointer;transition:background .2s}
+.ligne.quai:hover{background:linear-gradient(90deg,rgba(106,47,168,.6),rgba(106,47,168,.2))!important}
+.ligne.quai .voie{color:#ffb547}
+.ligne.quai .dest i{color:#fff;background:linear-gradient(180deg,#6a2fa8 0 49%,#56248c 51% 100%)}
+.ligne.quai .etat{color:#ffb547}
+.point{width:9px;height:9px;border-radius:50%;background:#ffb547;box-shadow:0 0 0 0 rgba(255,181,71,.7);animation:pouls 1.6s infinite}
+@keyframes pouls{70%{box-shadow:0 0 0 9px rgba(255,181,71,0)}100%{box-shadow:0 0 0 0 rgba(255,181,71,0)}}
+#go{position:absolute;left:70px;top:806px}
+.caro{left:1150px;bottom:0;width:470px;height:800px}
+.caro img.perso{height:790px}
+#bulle{left:885px;top:120px;width:340px}
+.mention{left:70px;right:auto;text-align:left;max-width:780px;color:rgba(255,255,255,.55)}
+.integre #horloge{}
+</style>
+</head>
+<body>
+<div id="stage">
+  <img id="fond" src="img/hero.jpg" alt="">
+  <div id="voile"></div>
+  <header class="topbar"><span class="marque"><i>▶</i>Campus managers</span><span class="sep"></span><span class="fil"><b>Micro-learning managers</b></span><span class="demo">Démo</span></header>
+
+  <div class="kicker apparait" style="--d:.1s">Micro-learning managers</div>
+  <h1 class="apparait" style="--d:.2s">Bienvenue <span>à bord</span></h1>
+  <p class="chapo apparait" style="--d:.3s">Des modules de cinq minutes pour les managers : un sujet, cinq étapes, des gestes à appliquer dès demain.</p>
+
+  <section id="tableau" class="apparait" style="--d:.45s" aria-label="Modules du parcours">
+    <div class="entete"><b>Départs</b><small>Modules du parcours</small><span id="horloge">--:--</span></div>
+    <div class="cols"><span>Voie</span><span>Destination</span><span>État</span></div>
+    <div id="lignes"></div>
+  </section>
+
+  <a id="go" class="nav-btn nav-lien apparait" style="--d:.9s" href="train.html">Monter dans le train « Accueillir une recrue » <span></span></a>
+
+  <div class="caro apparait" style="--d:.35s"><img class="perso" src="img/mentor-accueil.png" alt="Salomé, votre mentor"></div>
+  <div id="bulle" class="bulle"></div>
+  <div class="mention"></div>
+</div>
+<script type="module">
+import { THEMES, MENTIONS, A_QUAI } from './contenu.js';
+import { bulleMentor, FLECHE_D } from './base.js';
+document.querySelector('.mention').textContent = MENTIONS;
+document.querySelector('#go span').outerHTML = FLECHE_D;
+bulleMentor(document.getElementById('bulle'), "Bonjour et bienvenue ! Je suis <b>Salomé</b>, votre mentor. Ici, chaque module tient en cinq minutes et se termine par une fiche à télécharger. Aujourd'hui, on embarque pour <b>l'accueil d'une nouvelle recrue</b>.", 'audio/intro.mp3');
+
+const hote = document.getElementById('lignes');
+const CH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const lignes = THEMES.map((t, i) => {
+  const quai = t === A_QUAI;
+  const el = document.createElement(quai ? 'a' : 'div');
+  el.className = 'ligne' + (quai ? ' quai nav-lien' : '');
+  if (quai) el.href = 'train.html';
+  const txt = t.toUpperCase();
+  el.innerHTML = `<span class="voie">${String(i + 1).padStart(2, '0')}</span><span class="dest">${[...txt].map(c => c === ' ' ? '<i class="vide"></i>' : `<i>${c}</i>`).join('')}</span><span class="etat">${quai ? '<span class="point"></span>À quai' : 'Prochainement'}</span>`;
+  hote.appendChild(el);
+  return [...el.querySelectorAll('.dest i:not(.vide)')];
+});
+
+// Palettes « split-flap » : les lettres défilent puis se posent, ligne après ligne.
+function palettes(){
+  const t0 = performance.now();
+  const cibles = lignes.flatMap((tuiles, l) => tuiles.map((el, k) => ({ el, fin: el.dataset.c || (el.dataset.c = el.textContent), t: 700 + l * 110 + k * 28 })));
+  (function pas(now){
+    let reste = false;
+    for (const c of cibles){
+      if (now - t0 < c.t){ reste = true; if (Math.random() < .5) c.el.textContent = /[A-Z]/.test(c.fin) ? CH[Math.random() * 26 | 0] : c.fin; }
+      else if (c.el.textContent !== c.fin) c.el.textContent = c.fin;
+    }
+    if (reste) requestAnimationFrame(pas);
+  })(t0);
+}
+document.addEventListener('page-visible', palettes);
+
+const h = document.getElementById('horloge');
+function heure(){ const d = new Date(); h.textContent = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }); }
+heure(); setInterval(heure, 15000);
+</script>
+</body>
+</html>

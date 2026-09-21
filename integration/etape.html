@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Accueillir une recrue · Micro-learning managers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+:root{--c:#6a2fa8}
+#photo{position:absolute;left:0;top:78px;width:760px;height:500px;overflow:hidden;background:#233}
+#socle{position:absolute;left:0;top:578px;width:760px;height:322px;background:linear-gradient(180deg,#ebe6f2,#f6f4f9 60%);border-top:4px solid var(--c)}
+#droite::before{content:"";position:absolute;left:-50px;top:-18px;bottom:0;width:1px;background:var(--ligne)}
+#photo img{width:100%;height:100%;object-fit:cover;animation:zoom 26s ease-in-out infinite alternate}
+@keyframes zoom{from{transform:scale(1.02)}to{transform:scale(1.1)}}
+#photo::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,24,28,.88) 0%,rgba(8,24,28,.35) 38%,rgba(8,24,28,0) 60%)}
+#titre{position:absolute;left:44px;top:420px;z-index:3;color:#fff;width:460px}
+#titre .ligne1{display:flex;align-items:center;gap:14px}
+#titre .n{display:grid;place-items:center;width:62px;height:62px;border-radius:12px;background:var(--c);font:900 30px/1 Nunito;box-shadow:0 10px 24px rgba(0,0,0,.3)}
+#titre .quand{font:700 14px/1 'Bricolage Grotesque';letter-spacing:.14em;text-transform:uppercase;background:rgba(255,255,255,.16);backdrop-filter:blur(6px);padding:9px 12px;border-radius:6px}
+#titre h1{margin:12px 0 0;font:900 46px/1.04 Nunito;text-shadow:0 4px 30px rgba(0,0,0,.4)}
+.caro{left:440px;bottom:-150px;width:330px;height:560px;overflow:visible}
+.caro img.perso{height:560px}
+#bulle{left:36px;top:636px;width:420px}
+/* colonne de droite */
+#droite{position:absolute;left:810px;top:96px;width:750px;bottom:0}
+#progres{display:flex;align-items:center;gap:14px;height:44px}
+#progres .lbl{font:700 13px/1 'Bricolage Grotesque';letter-spacing:.12em;text-transform:uppercase;color:var(--gris)}
+#progres .segs{display:flex;gap:6px}
+#progres .seg{width:46px;height:10px;border-radius:3px;background:#dcd4e8;display:block}
+#progres .seg.fait{background:#c3a6e6}
+#progres .seg.ici{background:var(--c);box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+#progres .retour{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font:700 14px/1 Nunito;color:var(--vert);text-decoration:none;padding:8px 12px;border-radius:8px;background:#efe8f8}
+#progres .retour svg{width:16px;height:16px}
+h2{margin:0;font:700 13px/1 'Bricolage Grotesque';letter-spacing:.14em;text-transform:uppercase;color:var(--gris);display:flex;align-items:center;gap:10px}
+h2 .compte{margin-left:auto;font:700 12px/1 Nunito;letter-spacing:0;text-transform:none;color:var(--c);background:#fff;border:1px solid var(--ligne);border-radius:999px;padding:5px 10px}
+#afaire{margin-top:12px}
+#liste{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px}
+#liste li{display:flex;align-items:center;gap:14px;min-height:50px;padding:6px 16px;background:#fff;border-radius:12px;border:1px solid var(--ligne);font:400 16px/1.3 Nunito;cursor:pointer;user-select:none;transition:border-color .2s,background .2s}
+#liste li:hover{border-color:var(--c)}
+#liste .case{flex:none;width:28px;height:28px;border-radius:50%;border:2px solid #bfb5cf;display:grid;place-items:center;transition:.25s}
+#liste .case svg{width:16px;height:16px;color:#fff;opacity:0;transform:scale(.4);transition:.25s}
+#liste li.ok{background:#f7f3fb}
+#liste li.ok .case{background:var(--c);border-color:var(--c)}
+#liste li.ok .case svg{opacity:1;transform:none}
+#liste li.ok .t{color:#5d6b66}
+.anim #liste li{animation:app .6s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(.4s + var(--i) * .08s)}
+#bas{display:grid;grid-template-columns:230px 1fr;gap:18px;margin-top:18px}
+.chips{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.chip{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--ligne);border-radius:10px;padding:7px 12px;font:500 15px/1.1 Nunito}
+.chip i{flex:none;width:30px;height:30px;border-radius:50%;background:#f0ebf6;display:grid;place-items:center;color:var(--gris)}
+.chip svg{width:17px;height:17px}
+.res{margin-top:12px;display:grid;gap:8px}
+.res button{all:unset;box-sizing:border-box;display:block;width:100%;background:#fff;border:1px solid var(--ligne);border-radius:10px;padding:7px 14px;cursor:pointer;transition:border-color .2s}
+.res button:hover{border-color:var(--c)}
+.res .h{display:flex;align-items:center;gap:10px;font:500 15px/1.2 Nunito}
+.res .h i{flex:none;width:30px;height:30px;border-radius:8px;background:var(--c);display:grid;place-items:center;color:#fff}
+.res .h svg{width:16px;height:16px}
+.res .plus{margin-left:auto;font:400 22px/1 Nunito;color:var(--gris);transition:transform .25s}
+.res .aide{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s}
+.res .aide>div{overflow:hidden;font:400 14.5px/1.4 Nunito;color:#46524e;padding-left:40px}
+.res button.ouvert .aide{grid-template-rows:1fr}
+.res button.ouvert .aide>div{padding-top:6px}
+.res button.ouvert .plus{transform:rotate(45deg)}
+#savais{margin-top:14px;display:flex;gap:14px;align-items:flex-start;background:#fff8e1;border:1px solid #f1dc98;border-radius:12px;padding:10px 14px;font:400 14.5px/1.35 Nunito;color:#4a3f14}
+#savais b{display:block;font:700 12px/1 'Bricolage Grotesque';letter-spacing:.12em;text-transform:uppercase;color:#9a7a12;margin-bottom:5px}
+#savais .ic{flex:none;width:34px;height:34px;border-radius:50%;background:#ffd24a;display:grid;place-items:center;font:900 18px/1 Nunito;color:#4a3f14}
+#nav{position:absolute;left:810px;width:750px;top:818px;display:flex;justify-content:space-between}
+.mention{bottom:4px;right:40px;max-width:760px;font-size:10.5px}
+#nav .nav-btn{padding:12px 18px}
+.aere #liste li{min-height:60px}.aere #liste{gap:9px}.aere #bas{margin-top:30px}.aere #afaire{margin-top:22px}
+</style>
+</head>
+<body>
+<div id="stage">
+  <header class="topbar"><span class="marque"><i>▶</i>Campus managers</span><span class="sep"></span><span class="fil">Micro-learning managers &nbsp;›&nbsp; Accueillir une recrue &nbsp;›&nbsp; <b id="fil"></b></span><span class="demo">Démo</span></header>
+  <div id="photo"><img id="ph" alt=""></div>
+  <div id="socle"></div>
+  <div id="titre" class="apparait" style="--d:.1s"><div class="ligne1"><span class="n"></span><span class="quand"></span></div><h1></h1></div>
+  <div class="caro apparait" style="--d:.25s"><img class="perso" src="img/mentor-montre.png" alt="Salomé, votre mentor"></div>
+  <div id="bulle" class="bulle"></div>
+
+  <section id="droite">
+    <div id="progres" class="apparait"><span class="lbl"></span><span class="segs"></span><a class="retour nav-lien" href="train.html"></a></div>
+    <div id="afaire"><h2>À faire <span class="compte"></span></h2><ul id="liste"></ul></div>
+    <div id="bas" class="apparait" style="--d:.8s">
+      <div><h2>Avec qui</h2><div class="chips"></div></div>
+      <div><h2>Ressources utiles</h2><div class="res"></div></div>
+    </div>
+    <div id="savais" class="apparait" style="--d:1s" hidden><span class="ic">i</span><div><b>Le saviez-vous ?</b><span></span></div></div>
+  </section>
+  <nav id="nav" class="apparait" style="--d:1.1s"><a id="prec" class="nav-btn clair nav-lien"></a><a id="suiv" class="nav-btn nav-lien"></a></nav>
+  <div class="mention"></div>
+</div>
+<script type="module">
+import { ETAPES, MENTIONS } from './contenu.js';
+import { bulleMentor, FLECHE_G, FLECHE_D } from './base.js';
+const n = Math.min(5, Math.max(1, parseInt(new URLSearchParams(location.search).get('e')) || 1));
+const e = ETAPES[n - 1];
+const $ = s => document.querySelector(s);
+document.documentElement.style.setProperty('--c', e.couleur);
+document.title = `${e.titre} · Micro-learning managers`;
+$('.mention').textContent = MENTIONS;
+$('#fil').textContent = e.titre;
+$('#ph').src = e.photo;
+$('#titre .n').textContent = e.n;
+$('#titre .quand').textContent = e.quand;
+$('#titre h1').textContent = e.titre;
+bulleMentor($('#bulle'), e.phrase, `audio/etape-${n}.mp3`);
+$('#bulle').style.borderLeftColor = e.couleur;
+
+let vus = [];
+try { vus = JSON.parse(localStorage.getItem('mlm-vus') || '[]'); if (!vus.includes(n)){ vus.push(n); localStorage.setItem('mlm-vus', JSON.stringify(vus)); } } catch {}
+$('#progres .lbl').textContent = `Étape ${n} sur 5`;
+$('#progres .segs').innerHTML = ETAPES.map(x => `<span class="seg ${x.n === n ? 'ici' : vus.includes(x.n) ? 'fait' : ''}" title="${x.titre}"></span>`).join('');
+$('#progres .retour').innerHTML = `${FLECHE_G} Retour au train`;
+
+const COCHE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+const cle = `mlm-coche-${n}`;
+let coches = [];
+try { coches = JSON.parse(localStorage.getItem(cle) || '[]'); } catch {}
+const liste = $('#liste');
+function compte(){ $('.compte').textContent = `${coches.length} / ${e.actions.length} cochées`; }
+e.actions.forEach((a, i) => {
+  const li = document.createElement('li');
+  li.style.setProperty('--i', i);
+  li.className = coches.includes(i) ? 'ok' : '';
+  li.innerHTML = `<span class="case">${COCHE}</span><span class="t">${a}</span>`;
+  li.setAttribute('role', 'checkbox'); li.tabIndex = 0;
+  const bascule = () => {
+    li.classList.toggle('ok');
+    coches = li.classList.contains('ok') ? [...new Set([...coches, i])] : coches.filter(k => k !== i);
+    li.setAttribute('aria-checked', li.classList.contains('ok'));
+    try { localStorage.setItem(cle, JSON.stringify(coches)); } catch {}
+    compte();
+  };
+  li.addEventListener('click', bascule);
+  li.addEventListener('keydown', ev => { if (ev.key === ' ' || ev.key === 'Enter'){ ev.preventDefault(); bascule(); } });
+  liste.appendChild(li);
+});
+compte();
+
+const PERS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>';
+const DOC = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>';
+$('.chips').innerHTML = e.avecQui.map(p => `<span class="chip"><i>${PERS}</i>${p}</span>`).join('');
+$('.res').innerHTML = e.outils.map(o => `<button type="button"><span class="h"><i>${DOC}</i>${o.nom}<span class="plus">+</span></span><span class="aide"><div>${o.aide}</div></span></button>`).join('');
+const boutons = [...document.querySelectorAll('.res button')];
+boutons.forEach(b => b.addEventListener('click', () => { const o = !b.classList.contains('ouvert'); boutons.forEach(x => x.classList.remove('ouvert')); b.classList.toggle('ouvert', o); }));
+if (e.savais){ $('#savais').hidden = false; $('#savais span:last-child').textContent = e.savais; } else $('#droite').classList.add('aere');
+
+const prec = $('#prec'), suiv = $('#suiv');
+prec.href = n === 1 ? 'train.html' : `etape.html?e=${n - 1}`;
+prec.innerHTML = `${FLECHE_G} ${n === 1 ? 'Retour au train' : 'Étape précédente'}`;
+suiv.href = n === 5 ? 'recap.html' : `etape.html?e=${n + 1}`;
+suiv.innerHTML = `${n === 5 ? 'Voir le récapitulatif' : 'Étape suivante'} ${FLECHE_D}`;
+</script>
+</body>
+</html>

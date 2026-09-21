@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cinq wagons pour bien accueillir · Micro-learning managers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+#fond{position:absolute;inset:-20px;width:calc(100% + 40px);height:calc(100% + 40px);object-fit:cover;filter:blur(3px) saturate(.9);animation:derive 30s ease-in-out infinite alternate}
+@keyframes derive{from{transform:scale(1.03)}to{transform:scale(1.08) translate(-12px,-4px)}}
+#voile{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,24,28,.9) 0%,rgba(8,24,28,.62) 38%,rgba(8,24,28,.5) 70%,rgba(8,24,28,.82) 100%)}
+.kicker{position:absolute;left:60px;top:112px;display:inline-flex;font:700 13px/1 Nunito;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--vert);padding:9px 14px;border-radius:6px}
+h1{position:absolute;left:58px;top:142px;margin:0;font:900 54px/1.05 Nunito;color:#fff}
+.sous{position:absolute;left:60px;top:212px;margin:0;font:400 19px/1.4 Nunito;color:rgba(255,255,255,.8)}
+#bulle{left:930px;top:108px;width:620px;padding-left:112px;min-height:150px}
+#bulle::before{content:"";position:absolute;left:18px;top:18px;width:78px;height:78px;border-radius:50%;background:url(img/mentor-tete.jpg) center/cover;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--vert)}
+/* cartes des étapes */
+.carte{position:absolute;top:292px;width:240px;border-radius:14px;overflow:hidden;background:#fff;color:#1c2426;text-decoration:none;box-shadow:0 20px 44px rgba(0,0,0,.38);transition:transform .25s,box-shadow .25s}
+.carte:hover,.col.survol .carte{transform:translateY(-8px);box-shadow:0 30px 60px rgba(0,0,0,.5)}
+.carte .ph{height:172px;background:#d5cde2 center/cover;position:relative}
+.carte .num{position:absolute;left:12px;bottom:-20px;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font:900 20px/1 Nunito;color:#fff;box-shadow:0 0 0 4px #fff}
+.carte .vu{position:absolute;right:10px;top:10px;font:700 11px/1 Nunito;color:#fff;background:rgba(0,0,0,.55);padding:6px 9px;border-radius:999px;display:none}
+.carte.consulte .vu{display:block}
+.carte .corps{padding:28px 16px 14px}
+.carte .quand{font:700 12px/1 'Bricolage Grotesque';letter-spacing:.12em;text-transform:uppercase}
+.carte h2{margin:7px 0 10px;font:700 21px/1.15 Nunito;min-height:48px}
+.carte .meta{display:flex;align-items:center;justify-content:space-between;font:500 13px/1 Nunito;color:var(--gris);border-top:1px solid var(--ligne);padding-top:11px}
+.carte .meta svg{width:18px;height:18px;color:var(--vert)}
+.lien{position:absolute;top:622px;width:2px;height:106px;background:repeating-linear-gradient(180deg,rgba(255,255,255,.75) 0 6px,transparent 6px 12px)}
+.lien::after{content:"";position:absolute;left:-5px;bottom:-6px;width:12px;height:12px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgba(255,255,255,.25)}
+/* panneau de voie au-dessus de la locomotive */
+#panneau{position:absolute;left:34px;top:560px;width:250px;display:flex;align-items:center;gap:12px;background:#0f2a4a;border-radius:10px;padding:12px 14px;color:#fff;box-shadow:0 14px 30px rgba(0,0,0,.4)}
+#panneau b{display:grid;place-items:center;width:52px;height:52px;border-radius:8px;background:#fff;color:#0f2a4a;font:900 30px/1 Nunito}
+#panneau span{font:700 17px/1.2 Nunito}#panneau small{display:block;font:500 13px/1.3 Nunito;color:rgba(255,255,255,.7)}
+#panneau::before,#panneau::after{content:"";position:absolute;top:-40px;width:3px;height:40px;background:#6f7a7e}
+#panneau::before{left:40px}#panneau::after{right:40px}
+/* le train */
+#voie{position:absolute;left:0;right:0;top:810px;height:46px;background:linear-gradient(180deg,#8d9396 0 5px,#3b4245 5px 9px,transparent 9px),repeating-linear-gradient(90deg,#5b4a3c 0 16px,transparent 16px 44px) 0 12px/100% 10px no-repeat,linear-gradient(180deg,#6d6a64,#4a4843);opacity:.95}
+#train{position:absolute;left:21px;top:738px;height:72px;width:1560px}
+#train img{position:absolute;bottom:0}
+#loco{left:0;height:56px}
+.wagon{position:absolute;bottom:0;width:254px;height:69px;cursor:pointer;display:block}
+.wagon img{width:254px;height:auto}
+.wagon .teinte{position:absolute;left:9px;top:27px;width:236px;height:25px;mix-blend-mode:multiply;opacity:.92;border-radius:3px}
+.wagon .etiq{position:absolute;left:9px;top:27px;width:236px;height:25px;display:flex;align-items:center;gap:8px;padding:0 10px;color:#fff;font:700 13px/1.1 'Bricolage Grotesque';text-transform:uppercase;letter-spacing:.04em;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+.wagon .etiq b{font:900 17px/1 Nunito}
+.wagon:hover .teinte,.col.survol .teinte{opacity:1;filter:brightness(1.25)}
+#phare{position:absolute;left:-6px;top:52px;width:18px;height:10px;border-radius:50%;background:#fff6c8;box-shadow:0 0 18px 8px rgba(255,240,170,.55)}
+.anim #train{animation:arrivee 3.4s cubic-bezier(.12,.62,.2,1) backwards}
+@keyframes arrivee{from{transform:translateX(1620px)}}
+.anim .carte,.anim .lien,.anim #panneau{animation:app .7s cubic-bezier(.2,.8,.2,1) backwards;animation-delay:calc(2.2s + var(--i,0) * .14s)}
+.anim #train .wagon img,.anim #loco{animation:cahot 3.4s ease-out backwards}
+@keyframes cahot{0%,80%{translate:0 0}85%{translate:0 -1px}90%{translate:0 0}}
+.mention{left:60px;right:auto;text-align:left;color:rgba(255,255,255,.6);bottom:12px}
+#retour{position:absolute;right:50px;top:230px}
+</style>
+</head>
+<body>
+<div id="stage">
+  <img id="fond" src="img/hero.jpg" alt="">
+  <div id="voile"></div>
+  <header class="topbar"><span class="marque"><i>▶</i>Campus managers</span><span class="sep"></span><span class="fil">Micro-learning managers &nbsp;›&nbsp; <b>Accueillir une recrue</b></span><span class="demo">Démo</span></header>
+
+  <div class="kicker apparait" style="--d:.1s">Module 7 · Accueillir une recrue</div>
+  <h1 class="apparait" style="--d:.2s">Cinq wagons pour bien accueillir</h1>
+  <p class="sous apparait" style="--d:.3s">Cinq wagons, cinq moments clés. Cliquez sur un wagon pour l'ouvrir.</p>
+  <div id="bulle" class="bulle"></div>
+
+  <div id="cols"></div>
+  <div id="panneau" style="--i:0"><b>7</b><span>Accueillir une recrue<small>5 arrêts jusqu'à la fin de la période d'essai</small></span></div>
+  <div id="voie"></div>
+  <div id="train"><img id="loco" src="img/loco.png" alt="Locomotive"><span id="phare"></span></div>
+  <div class="mention"></div>
+</div>
+<script type="module">
+import { ETAPES, MENTIONS } from './contenu.js';
+import { bulleMentor, FLECHE_D } from './base.js';
+document.querySelector('.mention').textContent = MENTIONS;
+bulleMentor(document.getElementById('bulle'), "Quelqu'un rejoint bientôt votre équipe ? Ce train compte <b>cinq wagons</b>, un par moment clé. Cliquez sur un wagon pour découvrir ce qu'il faut faire.", 'audio/train.mp3');
+
+let vus = [];
+try { vus = JSON.parse(localStorage.getItem('mlm-vus') || '[]'); } catch {}
+const cols = document.getElementById('cols'), train = document.getElementById('train');
+ETAPES.forEach((e, i) => {
+  const x = 289 + i * 254;            // position du wagon dans le train
+  const col = document.createElement('div'); col.className = 'col';
+  col.innerHTML = `
+    <a class="carte nav-lien ${vus.includes(e.n) ? 'consulte' : ''}" href="etape.html?e=${e.n}" style="left:${21 + x + 7}px;--i:${i + 1}">
+      <div class="ph" style="background-image:url(${e.photo})"><span class="num" style="background:${e.couleur}">${e.n}</span><span class="vu">✓ Consulté</span></div>
+      <div class="corps"><div class="quand" style="color:${e.couleur === '#4D4F53' ? '#4D4F53' : e.couleur}">${e.quand}</div><h2>${e.titre}</h2>
+      <div class="meta"><span>${e.actions.length} actions · ${e.outils.length} ressources</span>${FLECHE_D}</div></div>
+    </a>
+    <span class="lien" style="left:${21 + x + 126}px;--i:${i + 1}"></span>`;
+  cols.appendChild(col);
+  const w = document.createElement('a');
+  w.className = 'wagon nav-lien'; w.href = `etape.html?e=${e.n}`; w.style.left = x + 'px';
+  w.innerHTML = `<img src="img/wagon.png" alt=""><span class="teinte" style="background:${e.couleur}"></span><span class="etiq"><b>${e.n}</b>${e.n === 5 ? "Fin d'essai" : e.titre}</span>`;
+  train.appendChild(w);
+  for (const el of [col.querySelector('.carte'), w]){
+    el.addEventListener('mouseenter', () => col.classList.add('survol'));
+    el.addEventListener('mouseleave', () => col.classList.remove('survol'));
+  }
+});
+</script>
+</body>
+</html>

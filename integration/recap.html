@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Récapitulatif · Micro-learning managers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+#stage{background:radial-gradient(ellipse at 85% 30%,#ece4f6 0%,#f6f4f9 55%)}
+#rails{position:absolute;left:0;right:0;bottom:0;height:120px;background:url(img/hero.jpg) center 78%/cover;opacity:.12;filter:grayscale(1)}
+.kicker{position:absolute;left:60px;top:106px;display:inline-flex;font:700 13px/1 Nunito;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--vert);padding:9px 14px;border-radius:6px}
+h1{position:absolute;left:58px;top:136px;margin:0;font:900 42px/1.1 Nunito;color:#1c2426}
+#cols{position:absolute;left:60px;top:212px;width:1070px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.col{background:#fff;border-radius:14px;border:1px solid var(--ligne);overflow:hidden;box-shadow:0 10px 24px rgba(26,18,48,.06);display:flex;flex-direction:column}
+.col .tete{padding:12px 14px 10px;color:#fff;position:relative}
+.col .tete .q{font:700 11px/1 'Bricolage Grotesque';letter-spacing:.12em;text-transform:uppercase;opacity:.85}
+.col .tete b{display:block;margin-top:5px;font:700 16px/1.15 Nunito;min-height:37px;padding-right:18px}
+.col .tete .nb{position:absolute;right:12px;top:10px;font:900 26px/1 Nunito;opacity:.35}
+.col ul{list-style:none;margin:0;padding:10px 12px 8px;display:grid;gap:7px}
+.col li{display:flex;gap:7px;font:400 12.5px/1.3 Nunito;color:#39443f}
+.col li i{flex:none;width:14px;height:14px;margin-top:1px;border-radius:50%;border:1.6px solid #bfb5cf}
+.col li.ok i{background:var(--vert);border-color:var(--vert);box-shadow:inset 0 0 0 2px #fff}
+.col .pied{margin-top:auto;padding:8px 12px 11px;border-top:1px solid var(--ligne);font:500 12px/1 Nunito;color:var(--gris);display:flex;align-items:center;gap:8px}
+.col .barre{flex:1;height:5px;border-radius:3px;background:#e4dfec;overflow:hidden}
+.col .barre span{display:block;height:100%;background:var(--vert);border-radius:3px}
+#contacts{position:absolute;left:60px;top:664px;width:1070px}
+#contacts h2{margin:0 0 10px;font:700 13px/1 'Bricolage Grotesque';letter-spacing:.14em;text-transform:uppercase;color:var(--gris)}
+#contacts .ligne{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.ct{background:#fff;border:1px solid var(--ligne);border-radius:12px;padding:10px 12px;display:flex;gap:10px;align-items:flex-start}
+.ct i{flex:none;width:32px;height:32px;border-radius:50%;background:#efe8f8;color:var(--vert);display:grid;place-items:center}
+.ct svg{width:17px;height:17px}
+.ct b{display:block;font:700 14px/1.15 Nunito}
+.ct span{display:block;margin-top:3px;font:400 12px/1.3 Nunito;color:#56625d}
+#actions{position:absolute;left:60px;top:806px;display:flex;gap:14px;align-items:center}
+#actions .note{font:400 13px/1.3 Nunito;color:var(--gris);max-width:330px}
+.caro{left:1150px;bottom:0;width:450px;height:700px}
+.caro img.perso{height:690px}
+#bulle{left:1160px;top:104px;width:400px}
+.mention{bottom:8px;right:auto;left:60px;text-align:left;max-width:1000px}
+#toast{position:absolute;left:50%;top:96px;transform:translateX(-50%);background:#1a1230;color:#fff;font:500 15px/1 Nunito;padding:12px 18px;border-radius:10px;z-index:40;display:none}
+</style>
+</head>
+<body>
+<div id="stage">
+  <header class="topbar"><span class="marque"><i>▶</i>Campus managers</span><span class="sep"></span><span class="fil">Micro-learning managers &nbsp;›&nbsp; Accueillir une recrue &nbsp;›&nbsp; <b>Récapitulatif</b></span><span class="demo">Démo</span></header>
+  <div class="kicker apparait">Récapitulatif</div>
+  <h1 class="apparait" style="--d:.1s">Accueillir une recrue, en un coup d'œil</h1>
+  <div id="cols"></div>
+  <section id="contacts" class="apparait" style="--d:.9s"><h2>Vos interlocuteurs</h2><div class="ligne"></div></section>
+  <div id="actions" class="apparait" style="--d:1.1s">
+    <button id="pdf" class="nav-btn" type="button"></button>
+    <a id="debut" class="nav-btn clair nav-lien" href="index.html"></a>
+    <span class="note">Le PDF reprend les cinq étapes, vos cases cochées et les interlocuteurs.</span>
+  </div>
+  <div class="caro apparait" style="--d:.3s"><img class="perso" src="img/mentor-accueil.png" alt="Salomé, votre mentor"></div>
+  <div id="bulle" class="bulle"></div>
+  <div id="toast"></div>
+  <div class="mention"></div>
+</div>
+<script type="module">
+import { ETAPES, CONTACTS, MENTIONS } from './contenu.js';
+import { bulleMentor, FLECHE_G } from './base.js';
+const $ = s => document.querySelector(s);
+$('.mention').textContent = MENTIONS;
+bulleMentor($('#bulle'), "Voici votre <b>fiche mémo</b>. Téléchargez-la : elle tient sur une page et vous suivra à chaque arrivée.", 'audio/recap.mp3');
+const DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>';
+$('#pdf').innerHTML = `${DL} Télécharger le récap (PDF)`;
+$('#debut').innerHTML = `${FLECHE_G} Revenir au début`;
+
+function coches(n){ try { return JSON.parse(localStorage.getItem(`mlm-coche-${n}`) || '[]'); } catch { return []; } }
+function rendre(){
+  $('#cols').innerHTML = ETAPES.map((e, i) => {
+    const c = coches(e.n);
+    return `<div class="col apparait" style="--d:${.25 + i * .1}s"><div class="tete" style="background:${e.couleur}"><span class="nb">${e.n}</span><span class="q">${e.quand}</span><b>${e.titre}</b></div>
+      <ul>${e.actions.map((a, k) => `<li class="${c.includes(k) ? 'ok' : ''}"><i></i>${a}</li>`).join('')}</ul>
+      <div class="pied"><span class="barre"><span style="width:${c.length / e.actions.length * 100}%"></span></span>${c.length}/${e.actions.length}</div></div>`;
+  }).join('');
+}
+rendre();
+document.addEventListener('page-visible', rendre);   // relit les coches faites sur les pages précédentes
+const PERS = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>';
+$('#contacts .ligne').innerHTML = CONTACTS.map(c => `<div class="ct"><i>${PERS}</i><div><b>${c.fonction}</b><span>${c.pour}</span></div></div>`).join('');
+
+async function imageEnDataURL(src){
+  const img = new Image(); img.src = src; await img.decode();
+  const cv = document.createElement('canvas'); cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+  cv.getContext('2d').drawImage(img, 0, 0); return [cv.toDataURL('image/png'), img.naturalWidth / img.naturalHeight];
+}
+function hex(h){ return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); }
+$('#pdf').addEventListener('click', async () => {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+  const W = 297, M = 12;
+  doc.setFillColor(255, 255, 255); doc.rect(0, 0, W, 210, 'F');
+
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(18); doc.setTextColor(28, 36, 38);
+  doc.text("Micro-learning managers : accueillir une recrue", M, 15);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(9.5); doc.setTextColor(77, 79, 83);
+  doc.text("Récapitulatif des cinq étapes, avec vos cases cochées. Démo Meujesse Learning : contenus d'exemple.", M, 21);
+  doc.setDrawColor(106, 47, 168); doc.setLineWidth(.8); doc.line(M, 27, W - M, 27);
+  const colW = (W - 2 * M - 4 * 4) / 5, top = 32;
+  ETAPES.forEach((e, i) => {
+    const x = M + i * (colW + 4), c = coches(e.n);
+    doc.setFillColor(...hex(e.couleur)); doc.roundedRect(x, top, colW, 16, 2, 2, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+    doc.text(e.quand.toUpperCase(), x + 3, top + 5.5);
+    doc.setFontSize(11); doc.text(`${e.n}. ${e.titre}`, x + 3, top + 12);
+    let y = top + 23;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.6); doc.setTextColor(40, 48, 46);
+    e.actions.forEach((a, k) => {
+      doc.setDrawColor(150, 165, 158); doc.setLineWidth(.3); doc.rect(x + 1, y - 3, 3.4, 3.4);
+      if (c.includes(k)){ doc.setDrawColor(106, 47, 168); doc.setLineWidth(.7); doc.line(x + 1.6, y - 1.3, x + 2.5, y - .2); doc.line(x + 2.5, y - .2, x + 4, y - 2.6); }
+      const l = doc.splitTextToSize(a, colW - 7); doc.text(l, x + 6, y); y += l.length * 3.7 + 2.6;
+    });
+    y += 1; doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(77, 79, 83); doc.text('AVEC QUI', x, y);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.4); doc.setTextColor(40, 48, 46);
+    y += 4; const q = doc.splitTextToSize(e.avecQui.join(', '), colW); doc.text(q, x, y); y += q.length * 3.6 + 3;
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5); doc.setTextColor(77, 79, 83); doc.text('RESSOURCES', x, y);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.4); doc.setTextColor(40, 48, 46); y += 4;
+    e.outils.forEach(o => { const l = doc.splitTextToSize('• ' + o.nom, colW); doc.text(l, x, y); y += l.length * 3.6 + .6; });
+    if (e.savais){ y += 2; doc.setFillColor(255, 248, 225); const l = doc.splitTextToSize(e.savais, colW - 5); doc.roundedRect(x, y - 3, colW, l.length * 3.5 + 4, 1.5, 1.5, 'F'); doc.setFontSize(7.8); doc.setTextColor(74, 63, 20); doc.text(l, x + 2.5, y + 1); }
+  });
+  const yc = 170;
+  doc.setDrawColor(223, 229, 226); doc.setLineWidth(.3); doc.line(M, yc - 5, W - M, yc - 5);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(77, 79, 83); doc.text('VOS INTERLOCUTEURS', M, yc);
+  CONTACTS.forEach((c, i) => {
+    const x = M + i * (colW + 4);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9.5); doc.setTextColor(106, 47, 168); doc.text(c.fonction, x, yc + 6);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8.2); doc.setTextColor(40, 48, 46); doc.text(doc.splitTextToSize(c.pour, colW), x, yc + 10.5);
+  });
+  doc.setFontSize(7.2); doc.setTextColor(120, 128, 125); doc.text(MENTIONS, M, 203);
+  doc.save('fiche-memo-accueillir-une-recrue.pdf');
+  const t = $('#toast'); t.textContent = 'Récapitulatif téléchargé'; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2500);
+});
+</script>
+</body>
+</html>
