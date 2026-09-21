@@ -180,7 +180,7 @@
  }
  function fin(){
   carnet.lieu('foire');son.bip('trouve');
-  $('#final').innerHTML='<div class="c"><h2>Ta grille est complète</h2><p>Tu viens de faire une vraie <b>observation de terrain</b> : cinq rubriques, cinq faits que n\'importe qui peut vérifier. Pas d\'avis, pas de supposition.</p><p>Et tu as déjà trois pistes pour cette année : <b>mieux communiquer</b>, <b>flécher le parking depuis la route</b>, <b>prévoir plus de places assises</b>.</p><button class="btn vert" id="bFin">Continuer à explorer</button> <span style="font:700 15px Nunito;color:var(--gris);margin-left:12px">ou retourne au village pour la suite</span></div>';
+  $('#final').innerHTML='<div class="c"><h2>Ta grille est complète</h2><p>Tu viens de faire une vraie <b>observation de terrain</b> : cinq rubriques, cinq faits que n\'importe qui peut vérifier. Pas d\'avis, pas de supposition.</p><p>Et tu as déjà trois pistes pour cette année : <b>mieux communiquer</b>, <b>flécher le parking depuis la route</b>, <b>prévoir plus de places assises</b>.</p><button class="btn vert" id="bFin">Continuer à explorer</button> <span style="font:700 15px Nunito;color:var(--gris);margin-left:12px">ou passe à la suite du module</span></div>';
   $('#final').classList.add('on');$('#bFin').onclick=()=>$('#final').classList.remove('on');
  }
  window.__terrain={ouvrir,fin,va:(x,y,z)=>{cx=x;cy=y;k=K0*z;applique(true)}};

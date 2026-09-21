@@ -122,7 +122,7 @@
   const r=$('#regards');r.classList.add('on');let vus=0;
   $('#cartes').innerHTML=REG.map(g=>'<div class="rg" style="--c:'+g.c+'"><div class="in"><div class="f av"><span>'+g.ic+'</span><b>'+g.t+'</b><i>Touche pour retourner</i></div><div class="f ar"><b>'+g.t+'</b><p>'+g.p+'</p><em>'+g.e+'</em></div></div></div>').join('');
   document.querySelectorAll('.rg').forEach(c=>c.onclick=()=>{if(!c.classList.contains('vu')){c.classList.add('vu');son.bip('pop');if(++vus===3){carnet.lieu('mairie');
-   $('#finR').innerHTML='<div class="bulle pop" style="position:static;display:inline-block;background:var(--ble)"><b style="color:var(--encre)">Première étape bouclée.</b> Retourne au village : on va observer sur place.</div>';son.bip('trouve')}}});
+   $('#finR').innerHTML='<div class="bulle pop" style="position:static;display:inline-block;background:var(--ble)"><b style="color:var(--encre)">Première étape bouclée.</b> Passe à la suite : on va observer sur place.</div>';son.bip('trouve')}}});
  }
  if(new URLSearchParams(location.search).has('regards'))regards();
 })();

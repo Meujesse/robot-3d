@@ -33,6 +33,14 @@
 .lieu.fait .pin{background:var(--pre);border-color:#fff}
 .lieu.fait .n{background:var(--pre)}
 .lieu.suivant .pin{border-color:var(--ble);box-shadow:0 0 0 10px rgba(246,196,69,.35),0 12px 22px rgba(0,0,0,.4)}
+#info{position:absolute;left:50%;top:50%;width:560px;margin:-150px 0 0 -280px;background:var(--creme);border-radius:26px;padding:28px 30px 26px 118px;box-shadow:0 30px 80px rgba(0,0,0,.5);display:none;z-index:30}
+#info.on{display:block;animation:pop .4s both}
+#info .ic{position:absolute;left:28px;top:28px;width:68px;height:68px;border-radius:20px;background:var(--pre);display:grid;place-items:center;font-size:34px}
+#info .n{font:800 12px/1 Nunito;letter-spacing:.22em;text-transform:uppercase;color:var(--corail)}
+#info h2{margin:6px 0 8px;font-size:30px;color:var(--pre2)}
+#info p{margin:0;font:700 17px/1.5 Nunito}
+#info .ou{margin-top:12px;font:800 14px/1.4 Nunito;color:var(--pre2);background:#e6f3e6;border-radius:12px;padding:10px 12px}
+#info button{position:absolute;right:14px;top:12px;width:38px;height:38px;border:0;border-radius:50%;background:#fff;font:800 16px/1 Nunito;cursor:pointer;box-shadow:0 4px 10px rgba(0,0,0,.15)}
 #camille{left:40px;height:560px}
 #bulle{left:330px;bottom:70px;width:440px}
 #bulle::after{content:"";position:absolute;left:-13px;bottom:40px;border:13px solid transparent;border-right-color:var(--creme);border-left:0}
@@ -48,23 +56,28 @@
  <div id="tete" class="entree"><div class="sur">Chapitre 1 · Observer et recueillir les données</div><h1>Combelune, avant la fête</h1></div>
  <div id="lieux"></div>
  <div id="camille" class="perso entree" style="--d:.2s"><img id="cImg" src="img/camille-explique.webp" alt=""></div>
+ <div id="info"></div>
  <div id="bulle" class="bulle entree" style="--d:.45s"><span class="qui">Camille</span><span id="bTxt"></span></div>
 </div>
 <script src="js/commun.js?v=1"></script>
 <script>
 (function(){
  const L=[
-  {id:'mairie',x:800,y:250,ic:'🏛️',t:'La mairie',s:'Le projet en 7 questions',page:'questions.html'},
-  {id:'foire',x:1237,y:140,ic:'🎪',t:'Le champ de foire',s:'Observer la fête de l\'an dernier',page:'terrain.html'},
-  {id:'marche',x:331,y:325,ic:'🧺',t:'La place du marché',s:'Interroger les habitants',page:'micro.html'},
-  {id:'texto',x:1248,y:455,ic:'📱',t:'Le café',s:'Débrief avec Camille',page:'texto.html'}];
+  {id:'mairie',x:800,y:250,ic:'🏛️',t:'La mairie',s:'Le projet en 7 questions',page:'questions.html',d:'Camille y a laissé ses notes en vrac. Tu les ranges sous les sept questions du diagnostic, puis tu découvres ses trois regards.'},
+  {id:'foire',x:1237,y:140,ic:'🎪',t:'Le champ de foire',s:'Observer la fête de l\'an dernier',page:'terrain.html',d:'Une grande scène vivante à explorer. Cinq objets flottent dedans : attrape-les et remplis ta grille d\'observation.'},
+  {id:'marche',x:331,y:325,ic:'🧺',t:'La place du marché',s:'Interroger les habitants',page:'micro.html',d:'Trois personnes, trois façons de poser la question. À toi de voir laquelle rapporte le plus d\'informations.'},
+  {id:'texto',x:1248,y:455,ic:'📱',t:'Le café',s:'Débrief avec Camille',page:'texto.html',d:'Camille t\'écrit pour faire le point. Tes réponses changent ses réactions, et tu repars avec ton récap.'}];
  const fait=carnet.lieux(),suivant=L.find(l=>!fait[l.id]);
  const seul=window.top===window;
- document.getElementById('lieux').innerHTML=L.map((l,i)=>'<a class="lieu entree'+(fait[l.id]?' fait':'')+(suivant&&suivant.id===l.id?' suivant':'')+'" style="left:'+l.x+'px;top:'+l.y+'px;--d:'+(.3+i*.12)+'s;--r:-'+i*1.3+'s" '+(seul?'href="'+l.page+location.search+'"':'')+'><div class="n">'+(fait[l.id]?'✓':i+1)+'</div><div class="pin"><span>'+l.ic+'</span></div><div class="et"><b>'+l.t+'</b><i>'+l.s+'</i></div></a>').join('');
- const nb=L.filter(l=>fait[l.id]).length;
- const txt=nb===0?'Voilà Combelune ! On a <b>quatre arrêts</b> à faire avant de lancer quoi que ce soit. Commence par <b>la mairie</b>, j\'y ai laissé toutes mes notes.':
+ document.getElementById('lieux').innerHTML=L.map((l,i)=>'<a class="lieu entree'+((fait[l.id]||new URLSearchParams(location.search).has('fin'))?' fait':'')+(suivant&&suivant.id===l.id?' suivant':'')+'" style="left:'+l.x+'px;top:'+l.y+'px;--d:'+(.3+i*.12)+'s;--r:-'+i*1.3+'s" '+(seul?'href="'+l.page+location.search+'"':'')+'><div class="n">'+(fait[l.id]?'✓':i+1)+'</div><div class="pin"><span>'+l.ic+'</span></div><div class="et"><b>'+l.t+'</b><i>'+l.s+'</i></div></a>').join('');
+ const FIN=new URLSearchParams(location.search).has('fin');
+ if(!seul)document.querySelectorAll('.lieu').forEach((a,i)=>a.onclick=e=>{e.preventDefault();const l=L[i],b=document.getElementById('info');son.bip('pop');
+  b.innerHTML='<button>✕</button><div class="ic">'+l.ic+'</div><div class="n">Arrêt '+(i+1)+' sur '+L.length+'</div><h2>'+l.t+'</h2><p>'+l.d+'</p><div class="ou">➜ '+(fait[l.id]?'Déjà fait ! Tu peux y revenir avec les flèches du module.':'Avance avec la flèche du module : les arrêts se suivent dans cet ordre.')+'</div>';
+  b.classList.add('on');b.querySelector('button').onclick=()=>b.classList.remove('on')});
+ const nb=FIN?L.length:L.filter(l=>fait[l.id]).length;
+ const txt=nb===0?'Voilà Combelune ! On a <b>quatre arrêts</b> à faire avant de lancer quoi que ce soit. Clique sur un lieu pour voir ce qui t\'attend. On commence par <b>la mairie</b>, j\'y ai laissé toutes mes notes.':
   nb<L.length?'Bien joué, ton carnet se remplit ! Prochain arrêt conseillé : <b>'+suivant.t.toLowerCase()+'</b>. Mais tu peux y aller dans l\'ordre que tu veux.':
-  'On a fait le tour ! Ouvre ton <b>carnet de bord</b> : tout notre diagnostic est dedans.';
+  'On a fait le tour ! Ouvre ton <b>carnet de bord</b>, en haut à droite : tout notre diagnostic est dedans. Merci pour le coup de main !';
  document.getElementById('bTxt').innerHTML=txt;
  document.getElementById('cImg').src='img/camille-'+(nb===0?'explique':nb<L.length?'bravo':'salut')+'.webp';
 })();

@@ -133,7 +133,7 @@
  function bilan(){
   carnet.lieu('marche');const B=M.bilan,b=$('#bilan');
   b.innerHTML='<div class="c"><h2>'+B.titre+'</h2><ul>'+B.lignes.map(l=>'<li>'+l+'</li>').join('')+'</ul><div class="cm"><img src="img/camille-profil.jpg" alt=""><span>'+B.camille+'</span></div><button class="btn vert" id="bF">Continuer sur la place</button></div>';
-  b.classList.add('on');son.bip('trouve');$('#bF').onclick=()=>{b.classList.remove('on');$('#bTxt').innerHTML='Tu peux encore poser les questions qui te restent, ou <b>retourner au village</b> pour la suite.';$('#cImg').src='img/camille-bravo.webp'};
+  b.classList.add('on');son.bip('trouve');$('#bF').onclick=()=>{b.classList.remove('on');$('#bTxt').innerHTML='Tu peux encore poser les questions qui te restent, ou <b>passer à la suite</b> du module.';$('#cImg').src='img/camille-bravo.webp'};
  }
  window.__micro={ouvrir:id=>ouvrir(M.gens.find(g=>g.id===id)),bilan};
 })();
