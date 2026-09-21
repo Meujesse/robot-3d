@@ -25,7 +25,7 @@
 .ch:nth-child(2){animation-delay:.08s}
 .ch::before{content:"💬";position:absolute;left:20px;top:16px;font-size:22px}
 .ch:hover{background:var(--pre);border-color:var(--ble);transform:translateX(6px)}
-#consigne{position:absolute;left:870px;font:700 14px/1.3 Nunito;color:rgba(255,255,255,.8)}
+#consigne{position:absolute;left:870px;font:700 14px/1.3 Nunito;color:#fff;background:rgba(28,43,36,.7);border-radius:99px;padding:6px 12px;backdrop-filter:blur(4px)}
 #suite{position:absolute;left:870px}
 #pts{position:absolute;left:70px;bottom:40px;display:flex;gap:8px}
 #pts i{width:34px;height:6px;border-radius:9px;background:rgba(255,255,255,.3);transition:background .3s}
@@ -47,7 +47,7 @@
 </div>
 <script src="js/commun.js?v=5"></script>
 <script src="js/camille-rig.js?v=5"></script>
-<script src="js/rencontre-donnees.js?v=5"></script>
+<script src="js/rencontre-donnees.js?v=6"></script>
 <script>
 (async function(){
  const R=window.RENCONTRE,$=s=>document.querySelector(s),VITE=new URLSearchParams(location.search).has('vite');
@@ -55,7 +55,7 @@
  const rep=$('#replique'),choix=$('#choix'),suite=$('#suite'),cons=$('#consigne');
  $('#pts').innerHTML=R.etapes.map(()=>'<i></i>').join('');
  const att=ms=>new Promise(r=>setTimeout(r,VITE?20:ms));
- function place(){const b=rep.offsetTop+rep.offsetHeight+22;cons.style.top=b+'px';choix.style.top=(b+(cons.hidden?0:34))+'px';suite.style.top=b+'px'}
+ function place(){const b=rep.offsetTop+rep.offsetHeight+22;cons.style.top=b+'px';choix.style.top=(b+(cons.hidden?0:42))+'px';suite.style.top=b+'px'}
  async function dire(o){
   choix.innerHTML='';suite.innerHTML='';cons.hidden=true;
   await rig.setPose(o.pose,{plan:o.plan,force:true});
@@ -63,18 +63,20 @@
   const sp=[...rep.querySelectorAll('.m')];
   // à l'écran : français écrit (dit) · à l'oreille : français parlé (oral)
   const p=parler(rig,o.voix?'audio/'+o.voix+'.mp3':null,o.oral||o.dit);
-  const total=VITE?20:await p.duree;
-  for(let i=0;i<sp.length;i++){sp[i].classList.add('v');await att(total*0.92/sp.length)}
-  await p.fin;
+  // le texte s'affiche vite (sans attendre la voix), puis on rend la main tout de suite
+  const total=VITE?20:Math.min(2600,o.dit.length*16);
+  for(let i=0;i<sp.length;i++){sp[i].classList.add('v');await att(total/sp.length)}
+  return p;
  }
+ const coupe=()=>{son.stop();rig.stopText();rig.setState('idle')};
  await quandVisible;await att(500);
  for(let k=0;k<R.etapes.length;k++){
   const e=R.etapes[k];[...$('#pts').children].forEach((p,i)=>p.classList.toggle('on',i<=k));
   await dire(e);
   if(e.choix){
    cons.hidden=false;place();
-   const c=await new Promise(r=>{e.choix.forEach(c=>{const b=document.createElement('button');b.className='ch';b.textContent=c.t;b.onclick=()=>{son.bip('pop');r(c)};choix.appendChild(b)})});
-   await dire(c.re);await att(700);
+   const c=await new Promise(r=>{e.choix.forEach(c=>{const b=document.createElement('button');b.className='ch';b.textContent=c.t;b.onclick=()=>{coupe();son.bip('pop');r(c)};choix.appendChild(b)})});
+   const rp=await dire(c.re);await Promise.race([rp.fin,att(9000)]);await att(350);
   }else{
    const b=document.createElement('div');b.className='bulle pop';b.style.position='static';b.style.background='var(--ble)';b.innerHTML='<b style="color:var(--encre)">'+e.fin+' →</b><br><span style="font-size:15px">Passe à la page suivante.</span>';suite.appendChild(b);place();
    carnet.lieu('rencontre');

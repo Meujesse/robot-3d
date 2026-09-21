@@ -41,11 +41,20 @@
 #fiche{position:absolute;left:60px;top:32px;display:flex;align-items:center;gap:10px;background:rgba(28,43,36,.75);backdrop-filter:blur(6px);color:#fff;border-radius:99px;padding:8px 18px 8px 8px}
 #fiche span{width:40px;height:40px;border-radius:50%;background:var(--corail);display:grid;place-items:center;font-size:19px}
 #fiche b{font:800 18px/1.1 "Bricolage Grotesque";display:block}#fiche i{font:700 12.5px/1 Nunito;font-style:normal;color:var(--ble)}
-#retour{position:absolute;left:60px;bottom:36px;border:2px solid rgba(255,255,255,.6);background:rgba(28,43,36,.7);color:#fff;border-radius:99px;padding:12px 20px;font:800 15px/1 Nunito;cursor:pointer;backdrop-filter:blur(6px)}
+#retour{position:absolute;left:60px;top:104px;border:0;background:var(--ble);color:var(--encre);border-radius:99px;padding:13px 22px 13px 14px;font:800 17px/1 Nunito;cursor:pointer;box-shadow:0 8px 0 #c9982a,0 16px 30px rgba(0,0,0,.35);display:flex;align-items:center;gap:10px;transition:transform .15s;z-index:3}
+#retour:hover{transform:translateY(-2px)}
+#retour span{width:34px;height:34px;border-radius:50%;background:var(--encre);color:#fff;display:grid;place-items:center;font-size:17px}
+#autres{position:absolute;left:60px;bottom:34px;display:flex;align-items:center;gap:12px;background:rgba(28,43,36,.78);backdrop-filter:blur(6px);border-radius:99px;padding:8px 18px 8px 10px;color:#fff;font:800 13px/1.2 Nunito;z-index:3}
+#autres button{border:0;background:none;padding:0;cursor:pointer;position:relative;transition:scale .2s}
+#autres button:hover{scale:1.1}
+#autres img{width:58px;height:58px;border-radius:50%;object-fit:cover;border:3px solid #fff;display:block}
+#autres button.ici img{border-color:var(--ble);box-shadow:0 0 0 4px rgba(246,196,69,.45)}
+#autres button em{position:absolute;right:-4px;bottom:-4px;font:800 10px/1 Nunito;font-style:normal;background:var(--pre);color:#fff;border-radius:99px;padding:3px 5px}
 #parole{position:absolute;left:940px;top:150px;width:600px;min-height:96px;background:var(--creme);border-radius:8px 26px 26px 26px;padding:22px 26px;font:700 23px/1.42 Nunito;box-shadow:0 22px 60px rgba(0,0,0,.4)}
 #parole .m{opacity:0;transition:opacity .18s}#parole .m.v{opacity:1}
 #parole .qui{display:block;font:800 11px/1 Nunito;letter-spacing:.2em;text-transform:uppercase;color:var(--corail);margin-bottom:8px}
 #coach{position:absolute;left:940px;width:600px;display:flex;gap:12px;align-items:center;background:rgba(28,43,36,.82);backdrop-filter:blur(6px);color:#fff;border-radius:18px;padding:12px 16px;font:700 16px/1.4 Nunito;animation:entree .45s both}
+#coach[hidden]{display:none}
 #coach img{width:52px;height:52px;border-radius:50%;flex:none;border:2px solid var(--ble)}
 #coach b{color:var(--ble)}
 #qs{position:absolute;left:940px;width:600px;display:flex;flex-direction:column;gap:10px}
@@ -81,13 +90,14 @@
   <div id="scene"></div><div class="ombre"></div>
   <div id="fiche"><span>🎤</span><div><b id="fNom"></b><i id="fRole"></i></div></div>
   <div id="parole"></div><div id="coach" hidden></div><div id="qs"></div>
-  <button id="retour">← Retour sur la place</button>
+  <button id="retour"><span>←</span>Revenir aux trois personnes</button>
+  <div id="autres"></div>
  </div>
  <div id="bilan"></div>
 </div>
 <script src="js/commun.js?v=5"></script>
 <script src="js/camille-rig.js?v=5"></script>
-<script src="js/micro-donnees.js?v=3"></script>
+<script src="js/micro-donnees.js?v=6"></script>
 <script>
 (async function(){
  const M=window.MICRO,$=s=>document.querySelector(s),VITE=new URLSearchParams(location.search).has('vite');
@@ -101,33 +111,37 @@
  jetons();
  function jauge(){const p=Math.round(100*gain/MAX);$('#jTxt').textContent=p+' %';$('#jB').style.width=p+'%'}
  function place(){let y=$('#parole').offsetTop+$('#parole').offsetHeight+16;const c=$('#coach');if(!c.hidden){c.style.top=y+'px';y+=c.offsetHeight+16}$('#qs').style.top=y+'px'}
- async function repond(g,texte,voix,oral){
+ let jeton=0;
+ function autres(g){$('#autres').innerHTML='<span>Interroger :</span>'+M.gens.map(x=>'<button class="'+(x===g?'ici':'')+'" data-id="'+x.id+'" title="'+x.nom+'"><img src="gens/'+x.id+'-tete.jpg" alt="'+x.nom+'"><em>'+etat[x.id].length+'/3</em></button>').join('');
+  document.querySelectorAll('#autres button').forEach(b=>b.onclick=()=>{const x=M.gens.find(y=>y.id===b.dataset.id);if(x!==g){son.bip('pop');ouvrir(x)}})}
+ async function repond(g,texte,voix,oral){const mien=++jeton;
   occupe=true;const p=$('#parole');p.innerHTML='<span class="qui">'+g.nom+'</span>'+texte.split(' ').map(m=>'<span class="m">'+m+' </span>').join('');place();
   const P=parler(rig,'audio/'+voix+'.mp3',oral||texte);const sp=[...p.querySelectorAll('.m')],total=VITE?20:await P.duree;
-  for(const s of sp){s.classList.add('v');await att(total*0.92/sp.length)}
-  await P.fin;occupe=false;
+  for(const s of sp){if(mien!==jeton)return false;s.classList.add('v');await att(Math.min(total*0.92,texte.length*26)/sp.length)}
+  await P.fin;if(mien!==jeton)return false;occupe=false;return true;
  }
  function questions(g){
   const z=$('#qs');z.innerHTML='<div class="lab">Ta question</div>';
   g.questions.map((q,k)=>({q,k})).sort(()=>Math.random()-.5).forEach(({q,k})=>{
    const b=document.createElement('button');b.className='qb';b.innerHTML=q.t;
    if(etat[g.id].includes(k)){b.classList.add('posee');b.innerHTML+='<span class="tag '+q.type+'">'+M.types[q.type].nom+'</span>'}
-   b.onclick=async()=>{if(occupe)return;etat[g.id].push(k);son.bip('envoi');$('#coach').hidden=true;z.innerHTML='';
-    await repond(g,q.re,q.voix,q.oral);
+   b.onclick=async()=>{etat[g.id].push(k);son.bip('envoi');$('#coach').hidden=true;z.innerHTML='';
+    if(!await repond(g,q.re,q.voix,q.oral))return;
     const T=M.types[q.type];gain+=T.gain;jauge();if(q.note){carnet.noter('micro',q.note);son.bip('ok')}
     const c=$('#coach');c.hidden=false;c.innerHTML='<img src="img/camille-profil.jpg" alt=""><span>'+T.camille+'</span>';
-    questions(g);place()};
+    questions(g);autres(g);place()};
    z.appendChild(b)});
   place();
  }
  async function ouvrir(g){
+  jeton++;occupe=false;son.stop();if(rig){rig.stopText();rig.setState('idle')}autres(g);
   $('#itw').classList.add('on');$('#fNom').textContent=g.nom;$('#fRole').textContent=g.role;$('#coach').hidden=true;$('#qs').innerHTML='';$('#parole').innerHTML='';
   if(!rig){rig=CamilleRig.create({stage:$('#scene'),base:'gens/',depart:g.id});await rig.init();window.__rig=rig}else await rig.setPose(g.id,{force:true});
   await att(350);
-  if(!etat[g.id].length)await repond(g,g.bonjour,g.id[0]+'-b',g.oralB);else{$('#parole').innerHTML='<span class="qui">'+g.nom+'</span>Autre chose ?'}
+  if(!etat[g.id].length){questions(g);if(!await repond(g,g.bonjour,g.id[0]+'-b',g.oralB))return}else{$('#parole').innerHTML='<span class="qui">'+g.nom+'</span>Autre chose ?'}
   questions(g);
  }
- $('#retour').onclick=()=>{if(occupe)return;son.stop();$('#itw').classList.remove('on');jetons();
+ $('#retour').onclick=()=>{jeton++;occupe=false;son.stop();if(rig){rig.stopText();rig.setState('idle')}$('#itw').classList.remove('on');jetons();
   const vus=M.gens.filter(g=>etat[g.id].length).length;
   if(vus===M.gens.length)bilan();else $('#bTxt').innerHTML='Bien ! Il te reste <b>'+(M.gens.length-vus)+' personne'+(M.gens.length-vus>1?'s':'')+'</b> à rencontrer. Pense à tester plusieurs façons de poser la question.'};
  function bilan(){

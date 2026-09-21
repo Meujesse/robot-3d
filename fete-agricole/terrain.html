@@ -148,7 +148,7 @@
 </head>
 <body>
 <div id="stage">
- <svg width="0" height="0" style="position:absolute"><filter id="vent" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="2" seed="4" result="b"><animate attributeName="baseFrequency" dur="9s" values="0.012 0.03;0.02 0.045;0.012 0.03" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="b" scale="9" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+ <svg width="0" height="0" style="position:absolute"><filter id="vent" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="2" seed="4" result="b"><animate attributeName="baseFrequency" dur="9s" values="0.012 0.03;0.02 0.045;0.012 0.03" repeatCount="indefinite"/></feTurbulence><feDisplacementMap in="SourceGraphic" in2="b" scale="6" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
  <div id="vue"><div id="monde"><img id="photo" alt=""><div class="soleil"></div><div class="rayons"></div><div id="fx"></div><div id="plonges"></div></div></div>
  <div id="hautVoile"></div>
  <div id="scene"></div>
@@ -164,7 +164,7 @@
  <div id="final"></div>
 </div>
 <script src="js/commun.js?v=5"></script>
-<script src="js/terrain-donnees.js?v=5"></script>
+<script src="js/terrain-donnees.js?v=6"></script>
 <script>
 (function(){
  const T=window.TERRAIN,$=s=>document.querySelector(s),vue=$('#vue'),monde=$('#monde');
@@ -204,7 +204,7 @@
  // guirlandes d'ampoules qui scintillent
  T.guirlandes.forEach(([x1,y1,x2,y2,n],g)=>{for(let i=0;i<n;i++){const t=i/(n-1),l=el('lueur',{left:(x1+(x2-x1)*t)+'px',top:(y1+(y2-y1)*t+Math.sin(t*Math.PI)*9)+'px'});l.style.setProperty('--d','13px');l.style.setProperty('--t',(1.8+((i*7+g*3)%5)*.45)+'s');l.style.setProperty('--r',(-(i*0.37+g))+'s')}});
  // vent, nuages, feuilles · puis oiseaux, poussières dorées, papillons
- vie(fx,T.image.src,IW,IH,T.arbres,{n:4,y0:.005,y1:.075,e:.6,t:70});
+ vie(fx,T.image.src,IW,IH,T.arbres,{n:3,y0:-.012,y1:.008,e:.5,t:75});
  [[70,38],[120,52],[95,44]].forEach(([y,t],i)=>{const o=el('oiseau',{top:y+'px',left:'0px'});o.style.setProperty('--t',t+'s');o.style.setProperty('--r',(-i*15)+'s')});
  for(let i=0;i<26;i++){const g=el('grain',{left:(Math.random()*IW)+'px',top:(420+Math.random()*560)+'px'});g.style.setProperty('--t',(8+Math.random()*9)+'s');g.style.setProperty('--r',(-Math.random()*14)+'s');g.style.setProperty('--x',(Math.random()*120-60)+'px')}
  [[640,880],[1290,900],[250,800]].forEach(([x,y],i)=>{const p=el('papillon',{left:x+'px',top:y+'px'});p.textContent='🦋';p.style.setProperty('--t',(7+i*2)+'s');p.style.setProperty('--r',(-i*3)+'s')});
@@ -227,7 +227,7 @@
   const sc=$('#scene');sceneOuverte=s;
   sc.innerHTML='<div class="cadre"><div class="plan"><img class="f" src="'+s.img+'" alt="" draggable="false"><div class="soleil"></div><div class="rayons"></div><div id="sfx"></div><div id="sobj"></div></div><div class="ombre"></div></div>'+
    '<div class="camille"><img src="img/camille-profil.jpg" alt=""><div class="bulle"><span class="qui">Camille</span><span id="sTxt">'+s.camille.replace(/ ([!?:;])/g,'\u00a0$1')+'</span></div></div><button id="retourVue"><span>🔍</span>Dézoomer : revenir à la fête</button>';
-  const sfx=sc.querySelector('#sfx');vie(sfx,s.img,1680,1120,s.arbres,{n:4,y0:.11,y1:.24,e:1,t:75});
+  const sfx=sc.querySelector('#sfx');vie(sfx,s.img,1680,1120,s.arbres,{n:3,y0:.085,y1:.12,e:.75,t:80});
   s.lueurs.forEach(([x,y],i)=>{const l=document.createElement('div');l.className='lueur';l.style.left=(x*100)+'%';l.style.top=(y*100)+'%';l.style.setProperty('--d','26px');l.style.setProperty('--t',(1.9+(i%5)*.4)+'s');l.style.setProperty('--r',(-i*.43)+'s');sfx.appendChild(l)});
   if(s.fumee)for(let j=0;j<5;j++){const f=document.createElement('div');f.className='fumee';f.style.left=(s.fumee[0]*100)+'%';f.style.top=(s.fumee[1]*100)+'%';f.style.width=f.style.height='44px';f.style.setProperty('--r',(-j)+'s');sfx.appendChild(f)}
   for(let i=0;i<14;i++){const g=document.createElement('div');g.className='grain';g.style.left=(Math.random()*100)+'%';g.style.top=(45+Math.random()*50)+'%';g.style.setProperty('--t',(7+Math.random()*8)+'s');g.style.setProperty('--r',(-Math.random()*10)+'s');g.style.setProperty('--x',(Math.random()*120-60)+'px');sfx.appendChild(g)}

@@ -44,13 +44,17 @@
 #act.on{display:block;animation:ouvreAct .5s cubic-bezier(.2,.9,.3,1) both}
 @keyframes ouvreAct{from{opacity:0;transform:scale(1.06)}}
 #act iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-#menuV{position:absolute;left:50%;top:16px;translate:-50% 0;z-index:71;display:flex;gap:6px;padding:6px;border-radius:99px;background:rgba(28,43,36,.88);border:2px solid rgba(255,255,255,.55);backdrop-filter:blur(6px);box-shadow:0 8px 20px rgba(0,0,0,.35)}
-#menuV button{border:0;border-radius:99px;padding:9px 14px;font:800 14px/1 Nunito;color:#fff;background:transparent;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:background .2s}
-#menuV button:hover{background:rgba(255,255,255,.16)}
-#menuV button.ici{background:var(--ble);color:var(--encre)}
-#menuV button b{width:22px;height:22px;border-radius:50%;background:var(--corail);color:#fff;font:800 12px/22px Nunito;text-align:center}
-#menuV button.ici b{background:var(--encre)}
-#menuV .sep{width:2px;background:rgba(255,255,255,.3);margin:4px 2px}
+#menuV{position:absolute;left:50%;top:14px;translate:-50% 0;z-index:71}
+#bMenu{width:50px;height:50px;border-radius:50%;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.85);color:#fff;font-size:21px;cursor:pointer;display:grid;place-items:center;margin:0 auto;backdrop-filter:blur(6px);box-shadow:0 8px 20px rgba(0,0,0,.35);transition:background .2s}
+#bMenu:hover,#menuV.ouvert #bMenu{background:var(--pre)}
+#listeV{display:none;margin-top:10px;min-width:270px;background:rgba(28,43,36,.95);border:2px solid rgba(255,255,255,.4);border-radius:20px;padding:8px;backdrop-filter:blur(8px);box-shadow:0 18px 40px rgba(0,0,0,.45)}
+#menuV.ouvert #listeV{display:block;animation:pop .25s both}
+#listeV button{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:14px;padding:11px 14px;font:800 15px/1 Nunito;color:#fff;background:transparent;cursor:pointer;text-align:left;transition:background .2s}
+#listeV button:hover{background:rgba(255,255,255,.14)}
+#listeV button.ici{background:var(--ble);color:var(--encre)}
+#listeV button b{width:24px;height:24px;border-radius:50%;background:var(--corail);color:#fff;font:800 13px/24px Nunito;text-align:center;flex:none}
+#listeV button.ici b{background:var(--encre)}
+#listeV hr{border:0;border-top:1px solid rgba(255,255,255,.2);margin:6px 8px}
 #camille{left:40px;height:560px}
 #bulle{left:330px;bottom:70px;width:440px}
 #bulle::after{content:"";position:absolute;left:-13px;bottom:40px;border:13px solid transparent;border-right-color:var(--creme);border-left:0}
@@ -101,9 +105,10 @@
   document.getElementById('cImg').src='img/camille-'+(nb===0?'explique':nb<L.length?'bravo':'salut')+'.webp';
  }
  function menu(ici){
-  const m=document.getElementById('menuV');
-  m.innerHTML='<button data-v="1">🏘️ Village</button><div class="sep"></div>'+L.map((l,i)=>'<button data-i="'+i+'" class="'+(l===ici?'ici':'')+'"><b>'+(i+1)+'</b>'+l.t.replace(/^(La |Le )/,'').replace(/^./,c=>c.toUpperCase())+'</button>').join('');
-  m.querySelectorAll('button').forEach(b=>b.onclick=()=>{son.bip('pop');if(b.dataset.v)fermer();else ouvrir(L[+b.dataset.i])});
+  const m=document.getElementById('menuV');m.classList.remove('ouvert');
+  m.innerHTML='<button id="bMenu" title="Menu">☰</button><div id="listeV"><button data-v="1"><b style="background:none;font-size:17px">🏘️</b>Retour au village</button><hr>'+L.map((l,i)=>'<button data-i="'+i+'" class="'+(l===ici?'ici':'')+'"><b>'+(i+1)+'</b>'+l.t+'</button>').join('')+'</div>';
+  document.getElementById('bMenu').onclick=()=>{m.classList.toggle('ouvert');son.bip('pop')};
+  m.querySelectorAll('#listeV button').forEach(b=>b.onclick=()=>{son.bip('pop');if(b.dataset.v)fermer();else if(L[+b.dataset.i]!==ici)ouvrir(L[+b.dataset.i]);else m.classList.remove('ouvert')});
  }
  function ouvrir(l){const q=new URLSearchParams(location.search);q.delete('fin');q.delete('zero');q.set('dans','1');cadre.src=l.page+'?'+q.toString();act.classList.add('on');menu(l)}
  function fermer(){act.classList.remove('on');cadre.src='about:blank';rendre();document.dispatchEvent(new Event('majCarnet'))}
