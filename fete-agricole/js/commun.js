@@ -15,7 +15,7 @@
  window.mem=mem;
 
  /* ---------- son : coupé tant que l'apprenant ne l'a pas activé ---------- */
- let actif=!MUET&&mem.lire('son',false)===true, courant=null, ctx=null;
+ let actif=!MUET&&mem.lire('son',true)!==false, courant=null, ctx=null;   // son actif par défaut ; ?muet le coupe toujours
  const b=document.createElement('button');b.id='bSon';b.title='Son';stage.appendChild(b);
  const maj=()=>{b.textContent=actif?'🔊':'🔇';b.classList.toggle('coupe',!actif)};maj();
  // sur les pages parlées, une étiquette douce rappelle qu'on peut activer la voix
@@ -29,9 +29,10 @@
   stop(){if(courant){courant.pause();courant=null}},
   // petits bruitages synthétiques (aucun fichier)
   bip(type){if(!actif)return;try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
-    const t=ctx.currentTime,notes={ok:[660,880],non:[300,240],pop:[520],envoi:[740,990],recu:[880,660],trouve:[523,659,784]}[type]||[440];
+    const t=ctx.currentTime,notes={ok:[660,880],non:[300,240],pop:[520],envoi:[520],recu:[440],trouve:[523,659,784]}[type]||[440];
+    const vol={envoi:.025,recu:.03,pop:.06}[type]||.1;
     notes.forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.value=f;
-     g.gain.setValueAtTime(0,t+i*.09);g.gain.linearRampToValueAtTime(.12,t+i*.09+.015);g.gain.exponentialRampToValueAtTime(.001,t+i*.09+.22);
+     g.gain.setValueAtTime(0,t+i*.09);g.gain.linearRampToValueAtTime(vol,t+i*.09+.02);g.gain.exponentialRampToValueAtTime(.001,t+i*.09+.22);
      o.connect(g).connect(ctx.destination);o.start(t+i*.09);o.stop(t+i*.09+.25)})}catch(e){}}
  };
  document.addEventListener('visibilitychange',()=>{if(document.hidden)son.stop()});
@@ -40,7 +41,7 @@
  // renvoie {fin: promesse résolue à la fin de la réplique, duree: promesse de la durée en ms}
  window.parler=function(rig,fichier,oral){
   const estime=Math.max(1200,oral.length*62);
-  const a=son.jouer(fichier);
+  const a=fichier?son.jouer(fichier):null;
   if(!a){const fin=rig.speakText(oral).then(()=>{});return {fin:Promise.race([fin,new Promise(r=>setTimeout(r,estime+900))]).then(()=>{rig.stopText();rig.setState('idle')}),duree:Promise.resolve(estime)}}
   let amp=()=>0;
   try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();if(ctx.state==='suspended')ctx.resume();
@@ -55,6 +56,10 @@
    secours=setTimeout(termine,estime*2+6000)});
   return {fin,duree};
  };
+
+ /* ---------- Genially précharge les pages : rien ne démarre (ni voix ni dialogue) tant que la scène n'est pas réellement à l'écran ---------- */
+ window.quandVisible=new Promise(r=>{const o=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)&&innerWidth>50&&!document.hidden){o.disconnect();r()}});o.observe(stage);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){o.disconnect();o.observe(stage)}})});
 
  /* ---------- entrées animées quand la page Genially devient visible ---------- */
  const io=new IntersectionObserver(es=>{for(const e of es){if(e.isIntersecting&&innerWidth>50){document.documentElement.classList.remove('anim');void document.documentElement.offsetWidth;document.documentElement.classList.add('anim')}}});
@@ -76,7 +81,8 @@
   majNb();document.addEventListener('majCarnet',()=>majNb());
   bc.onclick=()=>{const c=carnet.tout();
    pan.innerHTML='<div class="livre"><button class="x">✕</button><h2>Carnet de bord</h2><div class="ss">Tout ce que tu récoltes pendant le diagnostic se range ici.</div><div class="cols">'+
-    RUB.map(([k,t])=>'<div><h3>'+t+'</h3>'+((c[k]||[]).length?'<ul>'+c[k].map(x=>'<li>'+x+'</li>').join('')+'</ul>':'<div class="vide">Rien pour l\'instant.</div>')+'</div>').join('')+'</div></div>';
+    RUB.map(([k,t])=>'<div><h3>'+t+'</h3>'+((c[k]||[]).length?'<ul>'+c[k].map(x=>'<li>'+x+'</li>').join('')+'</ul>':'<div class="vide">Rien pour l\'instant.</div>')+'</div>').join('')+'</div><button class="raz">↺ Tout recommencer</button></div>';
+   pan.querySelector('.raz').onclick=()=>{['carnet','lieux'].forEach(k=>{try{localStorage.removeItem('fa_'+k)}catch(e){}});(window.parent!==window&&new URLSearchParams(location.search).has('dans')?window.parent:window).location.reload()};
    pan.classList.add('on');pan.querySelector('.x').onclick=()=>pan.classList.remove('on');son.bip('pop')};
   pan.addEventListener('click',e=>{if(e.target===pan)pan.classList.remove('on')});
  } else { var majNb=function(){}; }

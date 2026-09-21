@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Le village · Organiser un événement agricole</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="commun.css?v=4">
+<link rel="stylesheet" href="commun.css?v=5">
 <style>
 #carte{position:absolute;left:0;top:-83px;width:1600px;height:1067px;animation:plane 50s ease-in-out infinite alternate;transform-origin:55% 40%}
 @keyframes plane{from{transform:scale(1.0)}to{transform:scale(1.035) translate(-8px,4px)}}
@@ -30,8 +30,7 @@
 .lieu .et b{display:block;font:800 16px/1.1 "Bricolage Grotesque"}
 .lieu .et i{font:700 12.5px/1.2 Nunito;font-style:normal;color:var(--ble)}
 .lieu .n{position:absolute;left:50%;top:-12px;margin-left:24px;width:30px;height:30px;border-radius:50%;background:var(--corail);color:#fff;font:800 15px/30px Nunito;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.35)}
-.lieu.fait .pin{background:var(--pre);border-color:#fff}
-.lieu.fait .n{background:var(--pre)}
+.lieu .et u{display:block;text-decoration:none;font:800 11px/1 Nunito;letter-spacing:.12em;text-transform:uppercase;color:#9fd8b4;margin-top:5px}
 .lieu.suivant .pin{border-color:var(--ble);box-shadow:0 0 0 10px rgba(246,196,69,.35),0 12px 22px rgba(0,0,0,.4)}
 #info{position:absolute;left:0;top:0;width:430px;background:var(--creme);border-radius:22px;padding:20px 22px 18px 96px;box-shadow:0 30px 80px rgba(0,0,0,.5);display:none;z-index:30}
 #info.on{display:block;animation:pop .3s both;pointer-events:none}
@@ -45,8 +44,13 @@
 #act.on{display:block;animation:ouvreAct .5s cubic-bezier(.2,.9,.3,1) both}
 @keyframes ouvreAct{from{opacity:0;transform:scale(1.06)}}
 #act iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
-#retourV{position:absolute;left:50%;top:18px;translate:-50% 0;z-index:71;border:2px solid rgba(255,255,255,.75);background:rgba(28,43,36,.85);color:#fff;border-radius:99px;padding:12px 20px;font:800 15px/1 Nunito;cursor:pointer;backdrop-filter:blur(6px);box-shadow:0 8px 20px rgba(0,0,0,.35)}
-#retourV:hover{background:var(--pre)}
+#menuV{position:absolute;left:50%;top:16px;translate:-50% 0;z-index:71;display:flex;gap:6px;padding:6px;border-radius:99px;background:rgba(28,43,36,.88);border:2px solid rgba(255,255,255,.55);backdrop-filter:blur(6px);box-shadow:0 8px 20px rgba(0,0,0,.35)}
+#menuV button{border:0;border-radius:99px;padding:9px 14px;font:800 14px/1 Nunito;color:#fff;background:transparent;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:background .2s}
+#menuV button:hover{background:rgba(255,255,255,.16)}
+#menuV button.ici{background:var(--ble);color:var(--encre)}
+#menuV button b{width:22px;height:22px;border-radius:50%;background:var(--corail);color:#fff;font:800 12px/22px Nunito;text-align:center}
+#menuV button.ici b{background:var(--encre)}
+#menuV .sep{width:2px;background:rgba(255,255,255,.3);margin:4px 2px}
 #camille{left:40px;height:560px}
 #bulle{left:330px;bottom:70px;width:440px}
 #bulle::after{content:"";position:absolute;left:-13px;bottom:40px;border:13px solid transparent;border-right-color:var(--creme);border-left:0}
@@ -63,10 +67,10 @@
  <div id="lieux"></div>
  <div id="camille" class="perso entree" style="--d:.2s"><img id="cImg" src="img/camille-explique.webp" alt=""></div>
  <div id="info"></div>
- <div id="act"><iframe id="cadreAct" allow="autoplay; fullscreen" title="Activité"></iframe><button id="retourV">🏘️ Retour au village</button></div>
+ <div id="act"><iframe id="cadreAct" allow="autoplay; fullscreen" title="Activité"></iframe><div id="menuV"></div></div>
  <div id="bulle" class="bulle entree" style="--d:.45s"><span class="qui">Camille</span><span id="bTxt"></span></div>
 </div>
-<script src="js/commun.js?v=4"></script>
+<script src="js/commun.js?v=5"></script>
 <script>
 (function(){
  const L=[
@@ -82,7 +86,11 @@
   document.querySelectorAll('.lieu').forEach(a=>{const l=L[+a.dataset.i];
    // au survol : la fiche du lieu · au clic : on y va
    a.onmouseenter=()=>{info.innerHTML='<div class="ic">'+l.ic+'</div><div class="n">Arrêt '+(+a.dataset.i+1)+' sur '+L.length+(ok(l)?' · déjà fait':'')+'</div><h2>'+l.t+'</h2><p>'+l.d+'</p><div class="ou">➜ Clique pour y aller</div>';
-    const x=l.x>900?l.x-490:l.x+60,y=Math.min(620,Math.max(90,l.y-120));info.style.left=x+'px';info.style.top=y+'px';info.classList.remove('on');void info.offsetWidth;info.classList.add('on')};
+    info.style.left='0px';info.style.top='-999px';info.classList.add('on');const hI=info.offsetHeight;info.classList.remove('on');
+    // la fiche se place au-dessus du lieu, ou en dessous s'il n'y a pas la place : jamais dessus
+    const st=document.getElementById('stage').getBoundingClientRect(),k=st.width/1600,r=a.getBoundingClientRect();
+    const haut=(r.top-st.top)/k,bas=(r.bottom-st.top)/k,cx=((r.left+r.right)/2-st.left)/k;
+    info.style.left=Math.min(1600-450,Math.max(20,cx-215))+'px';info.style.top=(haut-hI-14>92?haut-hI-14:bas+22)+'px';info.classList.remove('on');void info.offsetWidth;info.classList.add('on')};
    a.onmouseleave=()=>info.classList.remove('on');
    a.onclick=e=>{e.preventDefault();info.classList.remove('on');son.bip('pop');ouvrir(l)}});
   const nb=L.filter(ok).length;
@@ -92,8 +100,13 @@
   document.getElementById('bTxt').innerHTML=txt;
   document.getElementById('cImg').src='img/camille-'+(nb===0?'explique':nb<L.length?'bravo':'salut')+'.webp';
  }
- function ouvrir(l){const q=new URLSearchParams(location.search);q.delete('fin');q.delete('zero');q.set('dans','1');cadre.src=l.page+'?'+q.toString();act.classList.add('on')}
- document.getElementById('retourV').onclick=()=>{act.classList.remove('on');cadre.src='about:blank';son.bip('pop');rendre();document.dispatchEvent(new Event('majCarnet'))};
+ function menu(ici){
+  const m=document.getElementById('menuV');
+  m.innerHTML='<button data-v="1">🏘️ Village</button><div class="sep"></div>'+L.map((l,i)=>'<button data-i="'+i+'" class="'+(l===ici?'ici':'')+'"><b>'+(i+1)+'</b>'+l.t.replace(/^(La |Le )/,'').replace(/^./,c=>c.toUpperCase())+'</button>').join('');
+  m.querySelectorAll('button').forEach(b=>b.onclick=()=>{son.bip('pop');if(b.dataset.v)fermer();else ouvrir(L[+b.dataset.i])});
+ }
+ function ouvrir(l){const q=new URLSearchParams(location.search);q.delete('fin');q.delete('zero');q.set('dans','1');cadre.src=l.page+'?'+q.toString();act.classList.add('on');menu(l)}
+ function fermer(){act.classList.remove('on');cadre.src='about:blank';rendre();document.dispatchEvent(new Event('majCarnet'))}
  rendre();
 })();
 </script>

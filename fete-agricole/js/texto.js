@@ -13,7 +13,7 @@
  $('#heure').textContent=heure();
  $('#tel .date').textContent=maintenant.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
  $('#notifTxt').textContent=D.accroche.texte;
- setTimeout(()=>{$('#notif').classList.add('on','vibre');son.bip('recu')},VITE?50:1200);
+ quandVisible.then(()=>setTimeout(()=>{$('#notif').classList.add('on','vibre');son.bip('recu')},VITE?50:1200));
  $('#notif').onclick=()=>{son.bip('pop');$('#accroche').classList.add('part');setTimeout(()=>{$('#accroche').hidden=true;$('#appli').hidden=false;demarrer()},VITE?30:600)};
 
  /* ---------- briques ---------- */

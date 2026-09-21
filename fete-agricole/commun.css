@@ -49,3 +49,5 @@ h1,h2,h3,.titre{font-family:"Bricolage Grotesque",Nunito,sans-serif;letter-spaci
 #bSonAide.part{opacity:0;pointer-events:none}
 body:not([data-sans-carnet]) #bSonAide{right:auto;left:50%;translate:-50% 0;top:78px}
 body:not([data-sans-carnet]) #bSonAide::after{display:none}
+#carnet .raz{position:absolute;left:66px;bottom:18px;border:0;background:none;font:800 13px/1 Nunito;color:var(--gris);cursor:pointer;text-decoration:underline}
+#carnet .cols{height:510px}

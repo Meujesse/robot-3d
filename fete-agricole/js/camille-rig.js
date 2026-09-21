@@ -177,6 +177,7 @@
       blinkTimer = setTimeout(() => { clignote(); if (Math.random() < 0.2) setTimeout(clignote, 320); planifieClignement(); }, 1900 + Math.random() * 4600);
     }
     function hoche(k = 0.32) {
+      if (CFG && CFG[pose] && CFG[pose].fixe) return;   // portrait avec décor : on ne secoue pas tout le cadre
       nod.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${(k * 1.2).toFixed(2)}%)`, offset: .3 },
         { transform: `translateY(${(-k * 0.25).toFixed(2)}%)`, offset: .7 }, { transform: 'translateY(0)' }], { duration: 900, easing: 'ease-out' });
     }
@@ -269,6 +270,7 @@
       const cut = () => {
         pose = nom;
         body.style.width = c.w + 'px'; body.style.height = c.h + 'px';
+        stage.classList.toggle('fixe', !!c.fixe);
         corps.dataset.tete = ''; dessineCorps();
         if (c.clos && CLOS[nom]) { clos.src = CLOS[nom].src; clos.style.left = c.clos[0] + 'px'; clos.style.top = c.clos[1] + 'px'; clos.style.width = c.clos[2] + 'px'; clos.style.height = c.clos[3] + 'px'; clos.style.display = ''; }
         else clos.style.display = 'none';
@@ -295,7 +297,7 @@
         dessineCorps();
         tickBouche();
         // lent rapprochement pendant qu'elle parle, retour doux sinon
-        const want = state === 'speaking' ? 1.06 : 1.0;
+        const want = (state === 'speaking' && !(CFG[pose] && CFG[pose].fixe)) ? 1.06 : 1.0;
         const nk = pushK + (want - pushK) * 0.004;
         if (Math.abs(nk - pushK) > 0.00005) { pushK = nk; appliqueCam(false); }
       }
@@ -351,6 +353,7 @@
   .lisa-corps { position: absolute; left: 0; top: 0; display: block; }
   .lisa-clos { position: absolute; opacity: 0; pointer-events: none; }
   .lisa-bouche { position: absolute; visibility: hidden; pointer-events: none; }
+  .lisa-stage.fixe .lisa-sway { animation: none; }
   @keyframes lisa-balance { from { transform: rotate(-.26deg); } to { transform: rotate(.28deg); } }`;
   const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
 

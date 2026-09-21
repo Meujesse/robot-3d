@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Rencontre avec Camille · Organiser un événement agricole</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="commun.css?v=4">
+<link rel="stylesheet" href="commun.css?v=5">
 <style>
 #fond{animation:derive 36s ease-in-out infinite alternate;transform-origin:50% 60%;filter:blur(2px) saturate(1.05)}
 @keyframes derive{from{transform:scale(1.06) translateX(-10px)}to{transform:scale(1.12) translateX(14px)}}
@@ -45,9 +45,9 @@
  <div id="suite"></div>
  <div id="pts"></div>
 </div>
-<script src="js/commun.js?v=4"></script>
-<script src="js/camille-rig.js?v=3"></script>
-<script src="js/rencontre-donnees.js?v=3"></script>
+<script src="js/commun.js?v=5"></script>
+<script src="js/camille-rig.js?v=5"></script>
+<script src="js/rencontre-donnees.js?v=5"></script>
 <script>
 (async function(){
  const R=window.RENCONTRE,$=s=>document.querySelector(s),VITE=new URLSearchParams(location.search).has('vite');
@@ -62,11 +62,12 @@
   const mots=o.dit.split(' ');rep.innerHTML=mots.map(m=>'<span class="m">'+m+' </span>').join('');place();
   const sp=[...rep.querySelectorAll('.m')];
   // à l'écran : français écrit (dit) · à l'oreille : français parlé (oral)
-  const p=parler(rig,'audio/'+o.voix+'.mp3',o.oral||o.dit);
+  const p=parler(rig,o.voix?'audio/'+o.voix+'.mp3':null,o.oral||o.dit);
   const total=VITE?20:await p.duree;
   for(let i=0;i<sp.length;i++){sp[i].classList.add('v');await att(total*0.92/sp.length)}
   await p.fin;
  }
+ await quandVisible;await att(500);
  for(let k=0;k<R.etapes.length;k++){
   const e=R.etapes[k];[...$('#pts').children].forEach((p,i)=>p.classList.toggle('on',i<=k));
   await dire(e);

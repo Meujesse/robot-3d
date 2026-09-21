@@ -2,6 +2,8 @@
 // Positions : vue d'ensemble en pixels de l'image (1536x1024) ; dans les scènes, en fractions de l'image (0 à 1).
 window.TERRAIN={
  image:{src:'img/foire.jpg',w:1536,h:1024},
+ // zones d'arbres où souffle le vent : [centre x, centre y, demi-largeur, demi-hauteur] en fractions de l'image
+ arbres:[[.1,.14,.11,.15],[.3,.06,.08,.07],[.58,.1,.09,.09],[.74,.11,.07,.08],[.95,.17,.06,.12],[.03,.42,.04,.08]],
  retours:{
   fait:'Oui ! Un <b>fait</b>, précis, que n\'importe qui peut vérifier sur place. C\'est exactement ce qu\'on met dans une grille.',
   avis:'Ça, c\'est ton <b>avis</b>. Dans une grille d\'observation, on note ce qu\'on voit, pas ce qu\'on en pense. Je garde plutôt la note factuelle.',
@@ -10,13 +12,16 @@ window.TERRAIN={
  scenes:[
   {id:'entree',nom:'L\'entrée',ic:'🚪',img:'img/sc-entree.jpg',x:1000,y:650,
    camille:'Nous voilà à <b>l\'entrée</b>. Deux bénévoles accueillent les visiteurs… mais regarde au fond à droite : les voitures se garent où elles peuvent. Deux objets flottent ici, attrape-les !',
-   lueurs:[[.255,.2],[.262,.33],[.815,.17],[.808,.3],[.3,.12],[.5,.1],[.7,.11]],fumee:null},
+   lueurs:[[.255,.2],[.262,.33],[.815,.17],[.808,.3],[.3,.12],[.5,.1],[.7,.11]],fumee:null,
+   arbres:[[.05,.16,.09,.16],[.95,.2,.08,.18],[.28,.1,.06,.07],[.8,.08,.07,.07]]},
   {id:'buvette',nom:'La buvette',ic:'🍽️',img:'img/sc-buvette.jpg',x:1150,y:430,
    camille:'Midi à <b>la buvette</b>. Le barbecue tourne à plein régime et il n\'y a plus une place assise : regarde ceux qui mangent sur les bottes de paille. Deux objets à trouver ici.',
-   lueurs:[[.04,.17],[.09,.16],[.14,.17],[.19,.16],[.5,.22],[.56,.23],[.62,.22],[.68,.23],[.74,.22],[.8,.23],[.86,.22],[.92,.23]],fumee:[.965,.3]},
+   lueurs:[[.04,.17],[.09,.16],[.14,.17],[.19,.16],[.5,.22],[.56,.23],[.62,.22],[.68,.23],[.74,.22],[.8,.23],[.86,.22],[.92,.23]],fumee:[.965,.3],
+   arbres:[[.05,.08,.08,.1],[.27,.16,.08,.1],[.78,.07,.12,.09],[.5,.2,.05,.07]]},
   {id:'stands',nom:'Les stands',ic:'🧀',img:'img/sc-stands.jpg',x:300,y:600,
    camille:'<b>L\'allée des producteurs.</b> On fait goûter le fromage, les enfants filent voir les vaches juste derrière. Un objet t\'attend par ici.',
-   lueurs:[[.03,.24],[.09,.25],[.15,.24],[.21,.25],[.27,.24],[.33,.25],[.62,.2],[.7,.21],[.78,.2]],fumee:null}
+   lueurs:[[.03,.24],[.09,.25],[.15,.24],[.21,.25],[.27,.24],[.33,.25],[.62,.2],[.7,.21],[.78,.2]],fumee:null,
+   arbres:[[.12,.04,.1,.06],[.63,.05,.06,.06],[.97,.12,.05,.08]]}
  ],
  objets:[
   {id:'affiche',scene:'entree',fx:.13,fy:.5,img:'img/obj-affiche.webp',t:'L\'affiche de la fête',rub:'Communication',
