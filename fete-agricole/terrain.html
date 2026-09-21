@@ -15,8 +15,8 @@
 /* la vie de la scène */
 .vent{position:absolute;pointer-events:none;background-repeat:no-repeat;filter:url(#vent);-webkit-mask-image:radial-gradient(closest-side,#000 55%,transparent);mask-image:radial-gradient(closest-side,#000 55%,transparent);animation:balance var(--t,6s) ease-in-out infinite alternate;animation-delay:var(--r);transform-origin:50% 100%}
 @keyframes balance{from{transform:skewX(-1.6deg) translateX(-2px)}to{transform:skewX(1.8deg) translateX(3px)}}
-.feuille{position:absolute;width:11px;height:6px;border-radius:0 100% 0 100%;background:linear-gradient(135deg,#c9b458,#7d9a3c);pointer-events:none;opacity:0;animation:feuille var(--t) linear infinite;animation-delay:var(--r)}
-@keyframes feuille{0%{transform:translate(0,0) rotate(0);opacity:0}8%{opacity:.9}100%{transform:translate(var(--x),var(--y)) rotate(760deg);opacity:0}}
+.volante{position:absolute;width:11px;height:6px;border-radius:0 100% 0 100%;background:linear-gradient(135deg,#c9b458,#7d9a3c);pointer-events:none;opacity:0;animation:volante var(--t) linear infinite;animation-delay:var(--r)}
+@keyframes volante{0%{transform:translate(0,0) rotate(0);opacity:0}8%{opacity:.9}100%{transform:translate(var(--x),var(--y)) rotate(760deg);opacity:0}}
 .gros-nuage{position:absolute;pointer-events:none;animation:nuage var(--t) linear infinite;animation-delay:var(--r);opacity:.9}
 .gros-nuage i{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgba(255,250,240,.95),rgba(255,244,225,.55) 60%,rgba(255,244,225,0));filter:blur(3px)}
 .soleil{position:absolute;inset:0;background:radial-gradient(600px 420px at 78% 8%,rgba(255,226,150,.35),transparent 70%);mix-blend-mode:screen;pointer-events:none;animation:soleil 9s ease-in-out infinite alternate}
@@ -194,7 +194,7 @@
   for(let n=0;n<ciel.n;n++){const g=document.createElement('div');g.className='gros-nuage';g.style.top=(ciel.y0+n*(ciel.y1-ciel.y0)/Math.max(1,ciel.n-1))*H+'px';g.style.left='0px';
    const e=ciel.e*(.8+((n*37)%10)/25);[[0,18,150,60],[70,0,190,84],[180,14,170,66],[120,30,230,58]].forEach(([l,t,w,h])=>{const b=document.createElement('i');Object.assign(b.style,{left:l*e+'px',top:t*e+'px',width:w*e+'px',height:h*e+'px'});g.appendChild(b)});
    const t=ciel.t+n*17;g.style.setProperty('--t',t+'s');g.style.setProperty('--r',(-(n+.4)*t/ciel.n)+'s');hote.appendChild(g)}
-  for(let i=0;i<12;i++){const f=document.createElement('div');f.className='feuille';f.style.left=(-5+Math.random()*60)+'%';f.style.top=(5+Math.random()*55)+'%';
+  for(let i=0;i<12;i++){const f=document.createElement('div');f.className='volante';f.style.left=(-5+Math.random()*60)+'%';f.style.top=(5+Math.random()*55)+'%';
    f.style.setProperty('--t',(9+Math.random()*8)+'s');f.style.setProperty('--r',(-Math.random()*16)+'s');f.style.setProperty('--x',(W*(.35+Math.random()*.4))+'px');f.style.setProperty('--y',(H*(.1+Math.random()*.3))+'px');hote.appendChild(f)}
  }
 
