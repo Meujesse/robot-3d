@@ -1449,10 +1449,23 @@ function applyCaptureState() {
 }
 
 if (CAPTURE) applyCaptureState();
-requestAnimationFrame(() => {
+let started = false;
+function start() {
+  if (started) return;
+  started = true;
+  fit();
   $('#loading').classList.add('done');
   schedule();
-});
+}
+requestAnimationFrame(start);
+setTimeout(start, 1500); // rAF peut rester bloqué dans un iframe que l'hôte n'affiche pas encore
+
+// état envoyé à la page hôte (diagnostic d'intégration)
+setInterval(() => {
+  try {
+    parent.postMessage({ corpsDiag: { w: innerWidth, h: innerHeight, cw: document.documentElement.clientWidth, ch: document.documentElement.clientHeight, hidden: document.hidden, started, t: stage.style.transform } }, '*');
+  } catch (e) {}
+}, 1000);
 
 // petit accès de débogage
 window.__corps = { organs, state, camera, controls, openCard, closeCard, setTab, goStep };
