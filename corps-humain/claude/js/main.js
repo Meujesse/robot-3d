@@ -38,14 +38,23 @@ camera.position.set(0, 0.2, 19.5);
 
 /* --- Mise à l'échelle 16:9 --- */
 let stageScale = 1;
+let fitW = -1, fitH = -1;
 function fit() {
-  const s = Math.min(innerWidth / W, innerHeight / H);
+  // Genially (et d'autres hôtes) peut créer l'iframe à taille nulle puis l'agrandir sans événement resize
+  const w = document.documentElement.clientWidth || innerWidth;
+  const h = document.documentElement.clientHeight || innerHeight;
+  if (w === fitW && h === fitH) return;
+  fitW = w; fitH = h;
+  if (!w || !h) return;
+  const s = Math.min(w / W, h / H);
   stageScale = s;
-  stage.style.transform = `translate(${(innerWidth - W * s) / 2}px, ${(innerHeight - H * s) / 2}px) scale(${s})`;
+  stage.style.transform = `translate(${(w - W * s) / 2}px, ${(h - H * s) / 2}px) scale(${s})`;
   renderer.setPixelRatio(clamp(s * (devicePixelRatio || 1), 0.75, 2));
   renderer.setSize(W, H, false);
 }
 addEventListener('resize', fit);
+if ('ResizeObserver' in window) new ResizeObserver(fit).observe(document.documentElement);
+setInterval(fit, 500);
 fit();
 
 /* --- Lumières --- */
