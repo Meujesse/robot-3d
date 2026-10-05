@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voyage au cœur du tronc humain</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="stage">
+  <div class="bg-glow"></div>
+  <canvas id="scene" width="1920" height="1080"></canvas>
+  <svg id="leaders" width="1920" height="1080" viewBox="0 0 1920 1080"></svg>
+  <div id="labels"></div>
+  <div id="tags"></div>
+
+  <header class="brand">
+    <h1>Voyage au cœur<br>du tronc humain</h1>
+    <p>Cliquez sur un organe</p>
+  </header>
+
+  <nav id="organList" aria-label="Liste des organes">
+    <h2>Les organes</h2>
+    <ul></ul>
+  </nav>
+
+  <div id="help">
+    <div class="help-row"><span class="ico"><svg viewBox="0 0 32 32"><path d="M10 4v16l4-4 3 7 3-1-3-7h6z" fill="currentColor"/></svg></span>Survolez : le nom s'affiche</div>
+    <div class="help-row"><span class="ico"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="6" fill="currentColor"/><circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2.5"/></svg></span>Cliquez : la fiche s'ouvre</div>
+    <div class="help-row"><span class="ico"><svg viewBox="0 0 32 32"><path d="M5 16h22M5 16l5-5M5 16l5 5M27 16l-5-5M27 16l-5 5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Glissez : le corps pivote</div>
+    <p class="help-note">Vu de face : la droite du corps est à votre gauche.</p>
+  </div>
+
+  <div id="toolbar">
+    <button id="btnLabels" class="pill toggle" aria-pressed="false"><span class="switch"><span></span></span>Étiquettes</button>
+    <button id="btnReset" class="pill ghost"><svg viewBox="0 0 32 32"><path d="M26 16a10 10 0 1 1-3-7.1M26 5v6h-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Recentrer</button>
+  </div>
+
+  <div id="tooltip" role="status"></div>
+
+  <aside id="card" aria-live="polite">
+    <div class="card-head">
+      <span class="dot" id="cDot"></span>
+      <div class="card-title">
+        <p class="kicker">Fiche organe</p>
+        <h2 id="cName">Le cœur</h2>
+      </div>
+      <button id="btnBack" class="pill back"><svg viewBox="0 0 32 32"><path d="M19 7l-9 9 9 9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Retour au corps</button>
+    </div>
+    <p id="cRole"></p>
+    <div class="tabs" role="tablist">
+      <button role="tab" data-tab="3d" class="tab">Voir en 3D</button>
+      <button role="tab" data-tab="fonction" class="tab">Comment il fonctionne</button>
+      <button role="tab" data-tab="greffe" class="tab">Prélèvement pour greffe</button>
+    </div>
+
+    <section class="pane" data-pane="3d">
+      <div class="hint"><span class="hint-ico"><svg viewBox="0 0 48 48"><path d="M8 24a16 8 0 0 0 32 0" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/><path d="M34 19l6 5-7 4" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="24" cy="15" r="6" fill="currentColor"/></svg></span>
+        <p>Faites glisser pour tourner l'organe dans tous les sens. La molette rapproche ou éloigne.</p></div>
+      <div class="row-btns">
+        <button id="btnSpin" class="pill primary"><svg viewBox="0 0 32 32"><path d="M26 16a10 10 0 1 1-3-7.1M26 5v6h-6" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Faire tourner</span></button>
+        <button id="btnFront" class="pill ghost">Vue de face</button>
+      </div>
+      <div class="fact"><p class="fact-k">Le saviez-vous ?</p><p id="cFact"></p></div>
+    </section>
+
+    <section class="pane" data-pane="fonction">
+      <div class="row-btns">
+        <button id="btnPlay" class="pill primary big"><svg class="i-play" viewBox="0 0 32 32"><path d="M10 6l16 10-16 10z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 32 32"><rect x="8" y="6" width="6" height="20" rx="2" fill="currentColor"/><rect x="18" y="6" width="6" height="20" rx="2" fill="currentColor"/></svg><span>Lancer l'animation</span></button>
+      </div>
+      <ol id="captions" class="captions"></ol>
+      <div id="fLegend" class="legend"></div>
+    </section>
+
+    <section class="pane" data-pane="greffe">
+      <ol id="stepper" class="stepper"></ol>
+      <div id="gBody">
+        <div class="g-step">
+          <div class="g-ico" id="gIco"></div>
+          <div class="g-txt">
+            <h3 id="gTitle"></h3>
+            <p id="gText"></p>
+            <p id="gChip" class="chip"></p>
+          </div>
+        </div>
+        <div class="row-btns nav">
+          <button id="btnPrev" class="pill ghost"><svg viewBox="0 0 32 32"><path d="M19 7l-9 9 9 9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Précédent</button>
+          <button id="btnNext" class="pill primary">Suivant<svg viewBox="0 0 32 32"><path d="M13 7l9 9-9 9" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+      <div id="gNo" class="g-no">
+        <div class="g-no-ico"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="28" fill="#E8F5F3"/><path d="M32 18v18" stroke="#1B998B" stroke-width="6" stroke-linecap="round"/><circle cx="32" cy="46" r="4" fill="#1B998B"/></svg></div>
+        <div><h3>Cet organe n'est pas greffé couramment</h3><p id="gNoText"></p></div>
+      </div>
+      <div class="g-list"><p class="g-list-k">En France, on greffe surtout :</p><p class="g-chips"><span>Rein</span><span>Foie</span><span>Cœur</span><span>Poumons</span><span>Pancréas</span><span>Intestin</span></p></div>
+    </section>
+  </aside>
+
+  <div id="loading"><div class="spinner"></div><p>Préparation du corps en 3D…</p></div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
