@@ -13,11 +13,12 @@ export const CHAMPIGNONS = {
    tubes: ["Couche de tubes", "Sous la chair du chapeau, la couche de tubes se détache facilement : c'est le signe d'un bolet."],
    mycelium: ["Mycélium et racine d'arbre", "Le vrai champignon est sous terre : un feutrage de filaments blancs, le mycélium, associé aux racines des chênes, hêtres ou épicéas. Le cèpe est une mycorhize."]
   },
-  saisons: {
-   printemps: ["Printemps : rien à voir", "Sous la litière, le mycélium vit toute l'année, accroché aux racines des arbres. Au-dessus, pas de cèpe."],
-   ete: ["Été : ça se prépare", "Après les orages d'août, si la chaleur reste, le mycélium prépare ses premiers cèpes. Les cueilleurs surveillent."],
-   automne: ["Septembre à novembre : la pousse", "Une dizaine de jours après une bonne pluie, les cèpes sortent : d'abord un bouchon, pied énorme et petit chapeau, puis le chapeau s'étale. C'est la pleine saison."],
-   hiver: ["Hiver : repos", "Les premières gelées arrêtent la pousse. Le mycélium attend l'année prochaine, sous terre."]
+  sosie: ["Le piège : le bolet amer", "Même allure, même chapeau brun, mais regarde : le réseau sur le pied est brun et grossier, et les pores deviennent roses. Et il est immangeable, d'une amertume qui gâche tout le plat. La chair, elle, reste blanche chez les deux."],
+  pousse: {
+   pluie: ["Jours 0 à 2 : il pleut", "Une bonne pluie d'automne, encore de la douceur : sous la litière, le mycélium se gorge d'eau. Rien ne dépasse."],
+   pousse: ["Jours 3 à 5 : le bouchon", "Le cèpe perce la litière : pied énorme, petit chapeau serré dessus, comme un bouchon de champagne. Les tubes sont encore blancs."],
+   point: ["Jours 6 à 9 : à point", "Le chapeau s'étale, les pores jaunissent, la chair est ferme. C'est le moment de cueillir, en tournant le pied."],
+   vieux: ["Jours 10 à 14 : trop tard", "Les pores virent au vert olive, la chair devient molle et souvent véreuse. On le laisse : il lâche ses spores pour l'an prochain."]
   }
  },
  girolle: {
@@ -32,11 +33,12 @@ export const CHAMPIGNONS = {
    couleur: ["Chair blanche, odeur d'abricot", "Sous la peau jaune, la chair est blanche à jaune pâle, ferme. Elle sent l'abricot."],
    mycelium: ["Mycélium et racine d'arbre", "La girolle aussi vit en mycorhize, avec les chênes, hêtres, châtaigniers et conifères. Ce qu'on cueille n'est que le fruit du mycélium."]
   },
-  saisons: {
-   printemps: ["Printemps : sous terre", "Le mycélium se réveille avec les premières chaleurs, mais aucune girolle ne sort encore."],
-   ete: ["Juin à août : premières girolles", "Dès juin, après les pluies, les girolles sortent dans les bois clairs, souvent en groupes serrés. C'est le champignon de l'été."],
-   automne: ["Septembre-octobre : fin de saison", "Les dernières girolles poussent jusqu'aux premières gelées. Elles vieillissent lentement et brunissent."],
-   hiver: ["Hiver : repos", "Plus rien en surface. Le mycélium passe l'hiver dans le sol, lié aux racines."]
+  sosie: ["Le piège : la fausse girolle", "Dessous, des vraies lames : fines, serrées, régulièrement fourchues, qui se détachent à l'ongle. Plus orange, plus molle, elle pousse sur les débris de bois. La girolle, elle, a des plis épais qu'on ne peut pas détacher."],
+  pousse: {
+   pluie: ["Jours 0 à 2 : il pleut", "Après une pluie d'été ou d'automne, le mycélium se réveille sous la mousse. Il faut plusieurs jours avant de voir quelque chose."],
+   pousse: ["Jours 3 à 7 : petits boutons jaunes", "De petits boutons jaune d'œuf percent la mousse, souvent en groupe. Le chapeau est encore bombé."],
+   point: ["Jours 8 à 11 : à point", "Le chapeau se creuse en entonnoir, le bord ondule, les plis descendent sur le pied. Elle sent l'abricot : c'est le moment."],
+   vieux: ["Jours 12 à 15 : elle vieillit", "La girolle vieillit lentement : elle brunit, se dessèche ou se gorge d'eau. Les limaces passent souvent avant toi."]
   }
  },
  amanite: {
@@ -52,13 +54,14 @@ export const CHAMPIGNONS = {
    base: ["Base enterrée", "La volve est sous le niveau du sol. Si on coupe le pied au couteau, on la laisse en terre et on ne la voit jamais. Toujours déterrer le champignon entier."],
    mycelium: ["Mycélium", "Elle vit en mycorhize, surtout avec les chênes et les hêtres. On la trouve au même endroit chaque année."]
   },
-  saisons: {
-   printemps: ["Printemps : sous terre", "Pas d'amanite phalloïde au printemps. Le mycélium attend la fin de l'été."],
-   ete: ["Fin d'été : l'œuf", "Elle sort d'abord sous la forme d'un œuf blanc, entièrement enveloppé. À ce stade, on peut la confondre avec une vesse-de-loup. Coupe l'œuf en deux : on voit déjà le petit champignon dedans."],
-   automne: ["Septembre à novembre : pleine saison", "L'enveloppe se déchire : le pied s'allonge, le chapeau s'ouvre, l'anneau pend, et la volve reste à la base. C'est à ce moment qu'ont lieu la plupart des intoxications."],
-   hiver: ["Hiver : repos", "Les gelées la font disparaître. Le mycélium, lui, est toujours là."]
+  sosie: ["L'erreur du couteau", "Coupée au ras du sol, elle ressemble à bien des champignons blancs : la volve reste en terre, invisible. C'est comme ça qu'on se trompe. On déterre toujours le pied en entier, à la main, pour vérifier la base."],
+  pousse: {
+   pluie: ["Jours 0 à 1 : il pleut", "Sous les chênes, après la pluie, le mycélium prépare ses fructifications. Rien en surface."],
+   pousse: ["Jours 2 à 4 : l'œuf", "Elle sort sous la forme d'un œuf blanc, entièrement enveloppé. À ce stade, on la confond avec une vesse-de-loup. Coupe l'œuf : le petit champignon est déjà dedans."],
+   point: ["Jours 5 à 9 : adulte", "L'enveloppe se déchire : le pied s'allonge, le chapeau vert olive s'étale, l'anneau pend, la volve reste à la base. C'est maintenant qu'on la confond avec un comestible."],
+   vieux: ["Jours 10 à 13 : elle vieillit", "Le chapeau pâlit, les lames jaunissent, l'odeur devient écœurante. Même vieille, même sèche, elle reste mortelle."]
   }
  }
 };
-export const ORDRE_SAISONS = ['printemps','ete','automne','hiver'];
-export const NOMS_SAISONS = {printemps:'Printemps',ete:'Été',automne:'Automne',hiver:'Hiver'};
+export const ORDRE_PHASES = ['pluie','pousse','point','vieux'];
+export const NOMS_PHASES = {pluie:'Pluie',pousse:'Ça pousse',point:'À point',vieux:'Trop vieux'};

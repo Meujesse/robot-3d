@@ -33,6 +33,9 @@
 .btn{flex:1;border:0;border-radius:999px;padding:13px 14px;font:800 15px/1 Nunito;cursor:pointer;background:var(--soleil);color:#3a2a05;box-shadow:0 8px 20px rgba(242,193,78,.35)}
 .btn.sec{background:#fff;color:var(--sapin);box-shadow:0 6px 16px rgba(31,77,58,.12)}
 .btn.on{background:var(--sapin);color:#fff}
+#bSosie{background:#fff4d6;color:#7a4b12;border:2px solid var(--soleil);box-shadow:none}#bSosie.on{background:#7a4b12;color:#fff;border-color:#7a4b12}#bSosie[hidden]{display:none}
+.goutte{border-radius:2px;background:rgba(190,220,245,.85);animation-timing-function:linear}
+#mois span{font-size:9.5px}
 #piege{font:700 13.5px/1.4 Nunito;color:#7a4b12;background:#fff4d6;border-left:4px solid var(--soleil);border-radius:10px;padding:10px 12px}
 #guide{position:absolute;left:1490px;top:24px;display:flex;flex-direction:row-reverse;align-items:flex-start;gap:10px}
 #guide img{width:84px;height:84px;border-radius:50%;box-shadow:0 6px 18px rgba(0,0,0,.2)}
@@ -88,6 +91,7 @@
   <div id="saisons"></div>
   <div id="detail"><span class="num" id="dNum"></span><h2 id="dTitre"></h2><p id="dTexte"></p></div>
   <div id="actions"><button class="btn" id="bCoupe"></button><button class="btn sec" id="bVue">↺ Recentrer</button></div>
+  <button class="btn sosie" id="bSosie" hidden></button>
   <div id="piege"></div>
  </div>
  <div id="frise"><button id="lecture" title="Faire défiler l'année">▶</button><div id="piste"><div id="etiqSaisons"></div><div id="bandes"></div><div id="mois"></div><div id="pouce">🌱</div></div></div>
@@ -98,6 +102,6 @@
 </div>
 <script src="js/commun.js?v=20260917b"></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
-<script type="module" src="js/labo.js?v=1"></script>
+<script type="module" src="js/labo.js?v=2"></script>
 </body>
 </html>

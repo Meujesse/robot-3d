@@ -81,27 +81,45 @@ export function construireCepe(){
  const H=.8; // hauteur du pied
  const profPied=[[.0,0],[.33,0],[.36,.1],[.34,.3],[.3,.5],[.25,.65],[.21,.78],[.2,H]];
  const profChap=[[0,H+.42],[.22,H+.4],[.4,H+.33],[.52,H+.2],[.58,H+.05],[.57,H-.04],[.5,H-.07],[.3,H-.08],[.21,H-.07],[.2,H-.02]];
- const mPied=new THREE.MeshStandardMaterial({map:texPiedCepe(),roughness:.85,side:THREE.DoubleSide}),mChap=new THREE.MeshStandardMaterial({map:texChapeauCepe(),roughness:.55,side:THREE.DoubleSide}),mPores=new THREE.MeshStandardMaterial({map:texPores(),roughness:.9,side:THREE.DoubleSide});
+ const mPied=new THREE.MeshStandardMaterial({map:texPiedCepe(),roughness:.85}),mChap=new THREE.MeshStandardMaterial({map:texChapeauCepe(),roughness:.55}),mPores=new THREE.MeshStandardMaterial({map:texPores(),roughness:.9,side:THREE.DoubleSide});
  const moities=[];
- const faceCoupe=(signe)=>{const sh=new THREE.Shape();const pts=[...profPied,[.2,H-.02],[.21,H-.07],[.3,H-.08],[.5,H-.07],[.57,H-.04],[.58,H+.05],[.52,H+.2],[.4,H+.33],[.22,H+.4],[0,H+.42]];sh.moveTo(0,0);pts.forEach(([r,y])=>sh.lineTo(r*signe,y));sh.lineTo(0,H+.42);
-  const g=new THREE.ShapeGeometry(sh,24);g.computeBoundingBox();const bb=g.boundingBox;const uv=g.attributes.uv;const pos=g.attributes.position;for(let i=0;i<uv.count;i++){uv.setXY(i,(pos.getX(i)-bb.min.x)/(bb.max.x-bb.min.x),(pos.getY(i)-bb.min.y)/(bb.max.y-bb.min.y))}
-  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:sectionCepe(),roughness:.95,side:THREE.DoubleSide}));return m};
+ // face de coupe : silhouette complète (chapeau + pied) dans le plan YZ, texture peinte d'après le profil
+ const PROFIL=[...profPied,[.2,H-.02],[.21,H-.07],[.3,H-.08],[.5,H-.07],[.57,H-.04],[.58,H+.05],[.52,H+.2],[.4,H+.33],[.22,H+.4],[0,H+.42]];
+ const texSection=canvasTex(512,512,(g,w,h)=>{const X=x=>(x+.62)/1.24*w, Y=y=>h-(y/1.25)*h;
+  g.fillStyle='#f6f1e3';g.fillRect(0,0,w,h);
+  const r=rng(77);g.strokeStyle='rgba(205,195,170,.35)';g.lineWidth=1;for(let i=0;i<90;i++){const x=X(-.33+r()*.66);g.beginPath();g.moveTo(x+(r()-.5)*4,Y(.02));g.lineTo(x+(r()-.5)*6,Y(H-.1));g.stroke()}
+  // chair du chapeau un peu plus crème, couche de tubes olive
+  g.fillStyle='#efe6cf';g.beginPath();g.moveTo(X(-.58),Y(H-.08));g.lineTo(X(.58),Y(H-.08));g.lineTo(X(.58),Y(H+.45));g.lineTo(X(-.58),Y(H+.45));g.closePath();g.fill();
+  g.fillStyle='#b4a95a';g.beginPath();g.moveTo(X(-.56),Y(H-.075));g.lineTo(X(.56),Y(H-.075));g.lineTo(X(.5),Y(H+.03));g.lineTo(X(-.5),Y(H+.03));g.closePath();g.fill();
+  g.strokeStyle='rgba(120,110,50,.5)';g.lineWidth=1;for(let i=0;i<110;i++){const x=X(-.55+i*.01);g.beginPath();g.moveTo(x,Y(H-.07));g.lineTo(x,Y(H+.02));g.stroke()}
+  // peau brune fine le long du chapeau
+  g.strokeStyle='#6f4420';g.lineWidth=7;g.lineJoin='round';g.beginPath();const cap=PROFIL.slice(10);cap.forEach(([rr,y],i)=>{i?g.lineTo(X(rr),Y(y)):g.moveTo(X(rr),Y(y))});g.stroke();g.beginPath();cap.forEach(([rr,y],i)=>{i?g.lineTo(X(-rr),Y(y)):g.moveTo(X(-rr),Y(y))});g.stroke();
+ });
+ const faceCoupe=()=>{const sh=new THREE.Shape();sh.moveTo(0,0);PROFIL.forEach(([r,y])=>sh.lineTo(r,y));[...PROFIL].reverse().forEach(([r,y])=>sh.lineTo(-r,y));sh.closePath();
+  const g=new THREE.ShapeGeometry(sh,24);const uv=g.attributes.uv,pos=g.attributes.position;for(let i=0;i<uv.count;i++){uv.setXY(i,(pos.getX(i)+.62)/1.24,pos.getY(i)/1.25)}
+  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({map:texSection,roughness:.95,side:THREE.DoubleSide}));m.rotation.y=Math.PI/2;return m};
  for(const s of [-1,1]){const h=new THREE.Group();const plan=new THREE.Plane(V(s,0,0),0);
   const pied=lathe(profPied,56,mPied.clone());pied.material.clippingPlanes=[plan];
   const chap=lathe(profChap,64,mChap.clone());chap.material.clippingPlanes=[plan];
   const pores=new THREE.Mesh(new THREE.RingGeometry(.21,.5,64,1),mPores.clone());pores.material.clippingPlanes=[plan];pores.rotation.x=Math.PI/2;pores.position.y=H-.075;
-  const face=faceCoupe(s);face.rotation.y=0;face.visible=false;
+  const face=faceCoupe();face.visible=false;
   h.add(pied,chap,pores,face);h.userData={pied,chap,pores,face,s};corps.add(h);moities.push(h)}
  const base=new THREE.Mesh(new THREE.SphereGeometry(.34,24,12,0,7,Math.PI/2,Math.PI/2),mat(0xd9c9a6));base.scale.y=.4;base.position.y=.0;corps.add(base);
- const anim={o:0,cible:0};
+ const anim={o:0,cible:0,sosie:0,sosieCible:0};
+ const texReseauBrun=canvasTex(512,512,(g,w,h)=>{const c=g.createLinearGradient(0,0,0,h);c.addColorStop(0,'#d9c9a4');c.addColorStop(1,'#bfa77a');g.fillStyle=c;g.fillRect(0,0,w,h);g.strokeStyle='rgba(90,55,25,.95)';const r=rng(5);for(let y=0;y<h*.9;y+=16){for(let x=0;x<w;x+=20){g.lineWidth=2.2;g.globalAlpha=.6+.4*(1-y/h);g.beginPath();g.moveTo(x,y);g.lineTo(x+10+(r()-.5)*6,y+16);g.lineTo(x+20,y);g.stroke()}}g.globalAlpha=1});
+ const texPoresRoses=canvasTex(512,512,(g,w,h)=>{g.fillStyle='#e8c9c4';g.fillRect(0,0,w,h);const r=rng(4);for(let y=0;y<h;y+=5)for(let x=0;x<w;x+=5){g.fillStyle=`rgba(150,80,90,${.35+r()*.35})`;g.beginPath();g.arc(x+2.5+(r()-.5),y+2.5+(r()-.5),1.6,0,7);g.fill()}});
+ const texPiedN=mPied.map, texPoresN=mPores.map;
  G.userData={sol,corps,moities,anim,
   vue:{pos:V(.4,1.3,3.3),cible:V(0,.55,0),min:1,max:6},
   points:{chapeau:[moities[1].userData.chap,V(.25,H+.35,.2)],pores:[moities[1].userData.pores,V(.4,0,.2)],reticulum:[moities[1].userData.pied,V(.19,H-.12,.1)],pied:[moities[0].userData.pied,V(-.33,.25,.1)],chair:[moities[0].userData.face,V(-.15,H-.3,0)],tubes:[moities[0].userData.face,V(-.3,H-.04,0)],mycelium:[sol.face,V(.1,-.25,0)]},
   setCoupe:(on,instant)=>{anim.cible=on?1:0;if(instant)anim.o=anim.cible},
-  maj:(dt)=>{anim.o+=(anim.cible-anim.o)*Math.min(1,dt*4);const o=anim.o;moities.forEach(h=>{const s=h.userData.s;h.position.set(s*.26*o,0,s*.05*o);h.rotation.y=s*.55*o;h.userData.face.visible=o>.02})},
-  annee:(m)=>{const k=plage(m,8.3,9.6,10.6,11.6);corps.visible=k>.02;const e=.08+.92*k;corps.scale.set(e,e,e);
-   moities.forEach(h=>{h.userData.chap.scale.set(.55+.45*k,.75+.25*k,.55+.45*k);h.userData.chap.position.y=-(1-k)*.08;h.userData.pores.visible=k>.5;const c=new THREE.Color(0xffffff).lerp(new THREE.Color(0x6a5a40),lisse(10.6,11.6,m));h.userData.chap.material.color.copy(c);h.userData.pied.material.color.copy(c)});
-   sol.mm.emissiveIntensity=plage(m,7,8.3,10.6,11.8)*.6;G.userData.saisonTexte=k>.02?'pousse':m>=7&&m<8.3?'prepare':'repos'}
+  setSosie:(on)=>{anim.sosieCible=on?1:0;moities.forEach(h=>{h.userData.pied.material.map=on?texReseauBrun:texPiedN;h.userData.pied.material.needsUpdate=true;h.userData.pores.material.map=on?texPoresRoses:texPoresN;h.userData.pores.material.needsUpdate=true})},
+  maj:(dt)=>{anim.o+=(anim.cible-anim.o)*Math.min(1,dt*4);const o=anim.o;moities.forEach(h=>{const s=h.userData.s;h.position.set(-s*.42*o,0,.1*o);h.rotation.y=-s*.95*o;h.userData.face.visible=o>.02})},
+  jours:(j)=>{ // j : jours après la pluie, 0 à 15
+   const k=plage(j,2.5,6,10,14);corps.visible=k>.02;const e=.1+.9*k;corps.scale.set(e,e,e);
+   const vieux=lisse(10,14,j);
+   moities.forEach(h=>{h.userData.chap.scale.set(.5+.5*lisse(2.5,7,j),.75+.25*k,.5+.5*lisse(2.5,7,j));h.userData.chap.position.y=-(1-k)*.08;h.userData.pores.visible=j>4;const c=new THREE.Color(0xffffff).lerp(new THREE.Color(0x6a5a40),vieux);h.userData.chap.material.color.copy(c);h.userData.pied.material.color.copy(c);h.userData.pores.material.color.copy(new THREE.Color(0xffffff).lerp(new THREE.Color(0x7a7a30),lisse(6,12,j)))});
+   sol.mm.emissiveIntensity=plage(j,0,1.5,6,9)*.7;}
  };
  return G;
 }
@@ -122,6 +140,10 @@ export function construireGirolle(){
  for(let i=0;i<28;i++){const a=(i/28)*Math.PI*2;const dir=V(Math.cos(a),0,Math.sin(a));const pts=[V(0,.18,0).add(dir.clone().multiplyScalar(.12)),dir.clone().multiplyScalar(.2).setY(H+.02),dir.clone().multiplyScalar(.36).setY(H+.075),dir.clone().multiplyScalar(.52).setY(H+.125)];const t=tube(pts,.012,mPlis,16,6);t.position.y=-.012;plis.add(t);
   if(i%2===0){const a2=a+.07;const d2=V(Math.cos(a2),0,Math.sin(a2));const f=tube([d2.clone().multiplyScalar(.3).setY(H+.05),d2.clone().multiplyScalar(.52).setY(H+.12)],.01,mPlis,10,6);f.position.y=-.012;plis.add(f)}}
  const chair=new THREE.Mesh(new THREE.SphereGeometry(.13,24,16,0,7,0,Math.PI/2),mChair);chair.position.y=.02;chair.visible=false;pivot.add(chair);
+ // sosie : fausse girolle, vraies lames fines, serrées, orange
+ const lamesF=new THREE.Group();lamesF.visible=false;pivot.add(lamesF);const mLF=mat(0xe07a2a,{roughness:.8,side:THREE.DoubleSide});
+ for(let i=0;i<72;i++){const a=i/72*Math.PI*2;const l=new THREE.Mesh(new THREE.PlaneGeometry(.36,.05),mLF);l.position.set(Math.cos(a)*.3,H+.06,Math.sin(a)*.3);l.rotation.y=-a;l.rotation.z=.2;lamesF.add(l)}
+ const mJsosie=new THREE.MeshStandardMaterial({color:0xf0862a,roughness:.7,side:THREE.DoubleSide});
  // deuxième girolle plus petite, derrière
  const petite=lathe(prof,48,mJ);petite.scale.setScalar(.55);petite.position.set(-.55,0,-.35);petite.rotation.z=.15;corps.add(petite);
  const anim={o:0,cible:0};
@@ -129,9 +151,10 @@ export function construireGirolle(){
   vue:{pos:V(.3,1.1,2.9),cible:V(0,.35,0),min:.8,max:6},
   points:{entonnoir:[ch,V(0,H+.17,.3)],marge:[ch,V(.5,H+.15,.25)],plis:[plis,V(.3,H+.04,.25)],pied:[ch,V(.14,.2,.05)],couleur:[ch,V(-.3,H+.1,-.3)],mycelium:[sol.face,V(-.2,-.3,0)]},
   setCoupe:(on,instant)=>{anim.cible=on?1:0;if(instant)anim.o=anim.cible},
+  setSosie:(on)=>{plis.visible=!on;lamesF.visible=on;ch.material=on?mJsosie:mJ;petite.material=ch.material},
   maj:(dt)=>{anim.o+=(anim.cible-anim.o)*Math.min(1,dt*3.5);const o=anim.o;pivot.rotation.x=Math.PI*o;pivot.position.y=o*.62;pivot.position.z=o*.3},
-  annee:(m)=>{const k=plage(m,5.3,7,10,11);corps.visible=k>.02;const e=.1+.9*k;corps.scale.set(e,e,e);const c=new THREE.Color(0xffffff).lerp(new THREE.Color(0x8a6a30),lisse(10,11,m));ch.material.color.copy(c);
-   sol.mm.emissiveIntensity=plage(m,4,5.3,10,11.3)*.6;G.userData.saisonTexte=k>.02?'pousse':m>=4&&m<5.3?'prepare':'repos'}
+  jours:(j)=>{const k=plage(j,3,8,12,15.5);corps.visible=k>.02;const e=.1+.9*k;corps.scale.set(e,e,e);const c=new THREE.Color(0xffffff).lerp(new THREE.Color(0x8a6a30),lisse(12,15,j));ch.material.color.copy(c);
+   sol.mm.emissiveIntensity=plage(j,0,1.5,7,10)*.7;}
  };
  return G;
 }
@@ -157,18 +180,26 @@ export function construireAmanite(){
  const volve=lathe([[.0,Y0-.02],[.2,Y0],[.26,Y0+.1],[.27,Y0+.22],[.24,Y0+.3],[.2,Y0+.33],[.17,Y0+.3]],40,mVolve);pied.add(volve);
  // œuf (stade jeune) : voile général fermé
  const oeuf=new THREE.Mesh(new THREE.SphereGeometry(.22,32,20),mVolve.clone());oeuf.scale.set(1,1.25,1);oeuf.position.y=Y0+.2;oeuf.visible=false;corps.add(oeuf);
- const anim={o:0,cible:0};
- G.userData={sol,corps,pied,anim,chap,lames,anneau,volve,oeuf,
+ const anim={o:0,cible:0,couteau:false};
+ // base qui reste en terre quand on coupe au couteau : volve + bout de pied
+ const reste=new THREE.Group();reste.visible=false;corps.add(reste);
+ const stB=lathe([[.11,Y0],[.13,Y0+.15],[.1,Y0+.3],[.0,Y0+.3]],32,mBlanc);reste.add(stB);
+ const volveB=lathe([[.0,Y0-.02],[.2,Y0],[.26,Y0+.1],[.27,Y0+.22],[.24,Y0+.3],[.2,Y0+.33],[.17,Y0+.3]],40,mVolve);reste.add(volveB);
+ const coupeDisque=new THREE.Mesh(new THREE.CircleGeometry(.1,24),mat(0xf7f2e6));coupeDisque.rotation.x=-Math.PI/2;coupeDisque.position.y=Y0+.3;reste.add(coupeDisque);
+ G.userData={sol,corps,pied,anim,chap,lames,anneau,volve,oeuf,reste,
   vue:{pos:V(.5,1.2,3.4),cible:V(0,.5,0),min:.9,max:6},
   points:{chapeau:[chap,V(.25,Y0+H+.14,.25)],lames:[lames,V(.25,Y0+H-.07,.25)],anneau:[anneau,V(.15,0,.12)],pied:[st,V(.08,Y0+.5,.06)],volve:[volve,V(.22,Y0+.2,.14)],base:[sol.face,V(.0,-.12,0)],mycelium:[sol.face,V(-.3,-.35,0)]},
   setCoupe:(on,instant)=>{anim.cible=on?1:0;if(instant)anim.o=anim.cible},
-  maj:(dt)=>{anim.o+=(anim.cible-anim.o)*Math.min(1,dt*3.5);const o=anim.o;pied.position.set(.55*o,.5*o,.35*o);pied.rotation.z=-.35*o;pied.rotation.x=.25*o;sol.terre.position.y=-.375-.01;sol.face.material.opacity=1},
-  annee:(m)=>{const k=plage(m,7.3,9.2,10.8,11.6);corps.visible=k>.02;
-   const egg=k<.3;oeuf.visible=egg;oeuf.scale.setScalar(Math.max(.05,k/.3));oeuf.scale.y*=1.25;pied.visible=!egg;
-   const kk=lisse(.3,1,k);pied.scale.set(.35+.65*kk,.35+.65*kk,.35+.65*kk);pied.position.y=0;
-   // chapeau d'abord campanulé, puis étalé
-   chap.scale.set(1,1.5-.5*kk,1);const c=new THREE.Color(0xffffff).lerp(new THREE.Color(0x5a5a40),lisse(10.8,11.6,m));chap.material.color.copy(c);
-   sol.mm.emissiveIntensity=plage(m,6,7.3,10.8,11.8)*.6;G.userData.saisonTexte=k>.02?(egg?'oeuf':'pousse'):m>=6&&m<7.3?'prepare':'repos'}
+  setSosie:(on)=>{anim.couteau=on;reste.visible=on;volve.visible=!on;st.visible=true;
+   // coupé au couteau : le pied du champignon cueilli est tronqué au ras du sol, la volve reste en terre
+   st.geometry.dispose();st.geometry=on?new THREE.LatheGeometry([[.1,Y0+.3],[.085,Y0+.7],[.08,Y0+H]].map(([r,y])=>new THREE.Vector2(r,y)),32):new THREE.LatheGeometry([[.11,Y0],[.13,Y0+.15],[.1,Y0+.4],[.085,Y0+.7],[.08,Y0+H]].map(([r,y])=>new THREE.Vector2(r,y)),32);
+   if(on){const d=new THREE.Mesh(new THREE.CircleGeometry(.1,24),mat(0xf7f2e6));d.rotation.x=Math.PI/2;d.position.y=Y0+.3;d.name='disqueCoupe';pied.add(d)}else{const d=pied.getObjectByName('disqueCoupe');if(d)pied.remove(d)}},
+  maj:(dt)=>{anim.o+=(anim.cible-anim.o)*Math.min(1,dt*3.5);const o=anim.o;pied.position.set(.55*o,.5*o,.35*o);pied.rotation.z=-.35*o;pied.rotation.x=.25*o},
+  jours:(j)=>{const k=plage(j,1.5,7,10,13.5);corps.visible=k>.02;
+   const egg=j<3.6&&k>.02;oeuf.visible=egg;const ke=lisse(1.5,3.6,j);oeuf.scale.set(.3+.7*ke,(.3+.7*ke)*1.25,.3+.7*ke);pied.visible=!egg;
+   const kk=lisse(3.6,7.5,j);pied.scale.set(.4+.6*kk,.4+.6*kk,.4+.6*kk);pied.position.y=0;
+   chap.scale.set(1,1.5-.5*kk,1);const c=new THREE.Color(0xffffff).lerp(new THREE.Color(0x5a5a40),lisse(10,13.5,j));chap.material.color.copy(c);
+   sol.mm.emissiveIntensity=plage(j,0,1.5,6,9)*.7;G.userData.oeufVisible=egg;}
  };
  return G;
 }
