@@ -31,7 +31,7 @@
 /* carnet */
 #carnet{position:absolute;inset:0;background:rgba(10,24,17,.55);backdrop-filter:blur(3px);display:none;z-index:30}
 #carnet.on{display:block}
-#page{position:absolute;left:120px;top:60px;width:1360px;height:780px;background:#fbf6ea;border-radius:26px;box-shadow:0 40px 100px rgba(0,0,0,.5);display:grid;grid-template-columns:600px 1fr;overflow:hidden;animation:ouvre .5s cubic-bezier(.2,1,.3,1)}
+#page{position:absolute;left:120px;top:60px;width:1360px;height:780px;background:#fbf6ea;border-radius:26px;box-shadow:0 40px 100px rgba(0,0,0,.5);display:grid;grid-template-columns:800px 1fr;overflow:hidden;animation:ouvre .5s cubic-bezier(.2,1,.3,1)}
 @keyframes ouvre{from{transform:translateY(30px) scale(.97);opacity:0}}
 #photoZone{position:relative;overflow:hidden;background:#222;cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><circle cx='16' cy='16' r='11' fill='rgba(255,255,255,0.18)' stroke='white' stroke-width='4'/><circle cx='16' cy='16' r='11' fill='none' stroke='%231f4d3a' stroke-width='2'/><line x1='24' y1='24' x2='36' y2='36' stroke='white' stroke-width='7' stroke-linecap='round'/><line x1='24' y1='24' x2='36' y2='36' stroke='%231f4d3a' stroke-width='4' stroke-linecap='round'/></svg>") 16 16, zoom-in}
 #calque{position:absolute;inset:0;transition:transform .12s ease-out;transform-origin:50% 50%}
@@ -61,14 +61,14 @@
 @keyframes guide{0%,100%{transform:scale(.92)}50%{transform:scale(1.06)}}
 @keyframes onde{0%{transform:scale(1);opacity:.95}100%{transform:scale(2.1);opacity:0}}
 @keyframes main{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-#droite{padding:34px 40px;display:flex;flex-direction:column;position:relative;background:repeating-linear-gradient(180deg,transparent 0 37px,rgba(31,77,58,.09) 37px 38px)}
+#droite{padding:30px 30px;display:flex;flex-direction:column;position:relative;background:repeating-linear-gradient(180deg,transparent 0 37px,rgba(31,77,58,.09) 37px 38px)}
 #droite .sur{color:var(--sapin2)}
 #droite h2{margin:8px 0 4px;font:700 34px/1.1 Fraunces;color:var(--sapin)}
 #droite .consigne{font:700 16px/1.4 Nunito;color:#5b6b60}
 #indices{margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
 #indices li.vide{background:rgba(255,255,255,.5);color:#8a978e;font-style:italic;box-shadow:none;border:2px dashed rgba(31,77,58,.18)}
 #indices li.vide::before{background:#dfe6da;color:#8a978e}
-#indices li{background:#fff;border-radius:14px;padding:12px 16px 12px 52px;position:relative;font:600 16.5px/1.45 Nunito;box-shadow:0 4px 12px rgba(31,77,58,.08);animation:entre .45s cubic-bezier(.2,1,.3,1)}
+#indices li{background:#fff;border-radius:14px;padding:10px 14px 10px 50px;position:relative;font:600 15px/1.4 Nunito;box-shadow:0 4px 12px rgba(31,77,58,.08);animation:entre .45s cubic-bezier(.2,1,.3,1)}
 #indices li::before{content:attr(data-n);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--soleil);font:800 13px/26px Nunito;text-align:center;color:#3a2a05}
 @keyframes entre{from{transform:translateX(20px);opacity:0}}
 #boutons{margin-top:auto;display:flex;gap:12px}
@@ -84,6 +84,7 @@
 #identite .lat{font:italic 600 34px/1.05 Fraunces;color:var(--soleil)}
 #identite .nom{font:800 18px/1.2 Nunito;margin-top:4px}
 #identite .fam{display:inline-block;margin-top:8px;font:800 12px/1 Nunito;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.15);border-radius:99px;padding:6px 10px}
+#identite .verdict{margin-top:10px;font:800 17px/1.3 Nunito;color:#fff;background:rgba(255,255,255,.14);border-radius:12px;padding:8px 12px}
 #identite .piege{margin-top:10px;font:700 14px/1.4 Nunito;color:#ffe7a8}
 #fermer{position:absolute;right:18px;top:16px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,.15);font:800 20px/1 Nunito;color:var(--sapin);cursor:pointer}
 </style>
@@ -106,7 +107,7 @@
    <h2 id="cTitre">Spécimen n°1</h2>
    <div class="consigne">Trois indices se cachent sur la photo. Trouve-les pour remplir ton carnet.</div>
    <ul id="indices"></ul>
-   <div id="identite"><div class="lat" id="iLat"></div><div class="nom" id="iNom"></div><span class="fam" id="iFam"></span><div class="piege" id="iPiege"></div></div>
+   <div id="identite"><div class="lat" id="iLat"></div><div class="nom" id="iNom"></div><span class="fam" id="iFam"></span><div class="verdict" id="iVerdict"></div><div class="piege" id="iPiege"></div></div>
    <div id="aide"></div><div id="bravoIndices">🎉 Bravo, tu as trouvé tous les indices !</div>
    <div id="boutons"><button class="btn" id="bRevele" disabled>Révéler l'identité</button></div>
   </div>
@@ -115,21 +116,21 @@
 <script src="js/commun.js?v=20260917b"></script>
 <script>
 const SPEC=[
- {k:'ginkgo',leg:'Spécimen A',photo:'img/photos/ginkgo.jpg',iw:960,ih:1280,credit:'Photo : H. Zell, CC BY-SA 3.0, via Wikimedia Commons',
-  lat:'Ginkgo biloba',nom:'Arbre aux quarante écus',fam:'Ginkgoacées',piege:'Pas un conifère : une gymnosperme à part.',
-  indices:[{c:'Feuille en éventail',x:.35,y:.22,r:.11,t:"Feuille en éventail, souvent fendue en deux, sans nervure centrale.",aide:"Regarde bien la forme des feuilles."},
-   {c:'Rameau court',x:.56,y:.24,r:.08,t:"Les feuilles partent en bouquet d'un petit moignon : le rameau court.",aide:"D'où partent les feuilles et les graines ?"},
-   {c:'Graines nues',x:.47,y:.74,r:.14,t:"Ces « fruits » jaunes sont des graines nues : pas de fleur, pas de vrai fruit.",aide:"Et ces boules jaunes, qu'est-ce que c'est vraiment ?"}]},
- {k:'narcisse',leg:'Spécimen B',photo:'img/photos/narcisse.jpg',iw:960,ih:720,credit:'Photo : Meneerke bloem, CC BY-SA 3.0, via Wikimedia Commons',
-  lat:'Narcissus pseudonarcissus',nom:'Jonquille (narcisse trompette)',fam:'Amaryllidacées',piege:'Anciennement Liliacées : ne te fais pas piéger.',
-  indices:[{c:'Couronne (trompette)',x:.48,y:.58,r:.09,t:"Au centre, une trompette : la couronne, aussi longue que les tépales chez la jonquille.",aide:"Qu'y a-t-il au centre de la fleur ?"},
-   {c:'6 tépales',x:.30,y:.34,r:.08,t:"Six tépales jaune pâle entourent la couronne.",aide:"Compte les pièces jaune pâle autour du centre."},
-   {c:'Spathe sèche',x:.46,y:.23,r:.05,t:"Derrière la fleur, une petite spathe brune, sèche comme du papier.",aide:"Regarde juste derrière la fleur, tout en haut."}]},
- {k:'lavande',leg:'Spécimen C',photo:'img/photos/lavande.jpg',iw:800,ih:600,credit:'Photo : Emőke Dénes, CC BY-SA 4.0, via Wikimedia Commons',
-  lat:'Lavandula angustifolia',nom:'Lavande vraie',fam:'Lamiacées',piege:'Épi ramifié et feuilles plus larges ? C\'est plutôt un lavandin.',
-  indices:[{c:'Épi de fleurs',x:.25,y:.57,r:.07,t:"Petites fleurs bleu-violet groupées en épi au bout de la tige.",aide:"Comment sont groupées les fleurs ?"},
-   {c:'Longue tige nue',x:.57,y:.43,r:.06,t:"Une longue tige fine, sans feuille, porte l'épi.",aide:"Qu'est-ce qui porte les fleurs ?"},
-   {c:'Feuilles étroites',x:.72,y:.56,r:.07,t:"Feuilles très étroites et gris-vert : angustifolia veut dire « à feuilles étroites ».",aide:"Regarde les feuilles entre les tiges."}]}
+ {k:'cepe',leg:'Spécimen A',photo:'img/photos/cepe.jpg',iw:1280,ih:960,credit:'Photo : Strobilomyces, CC BY-SA 4.0, via Wikimedia Commons',
+  lat:'Boletus edulis',nom:'Cèpe de Bordeaux',fam:'Bolétacées',piege:'Réseau brun sur le pied et pores qui rosissent ? C\'est le bolet amer, immangeable.',verdict:'🧺 Panier',
+  indices:[{c:'Chapeau brun, bord clair',x:.62,y:.17,r:.12,t:"Chapeau brun noisette, bombé comme un petit pain, avec un liseré plus clair au bord.",aide:"Regarde le chapeau du champignon de droite."},
+   {c:'Pores, pas de lames',x:.17,y:.2,r:.1,t:"Dessous, une éponge de minuscules pores vert-jaune : pas de lames. C'est un bolet.",aide:"Celui de gauche est retourné : qu'y a-t-il sous son chapeau ?"},
+   {c:'Pied ventru à réseau blanc',x:.22,y:.47,r:.09,t:"Un pied épais, renflé, beige, couvert d'un fin réseau blanc vers le haut.",aide:"Observe le pied, juste sous le chapeau de gauche."}]},
+ {k:'girolle',leg:'Spécimen B',photo:'img/photos/girolle.jpg',iw:1280,ih:960,credit:'Photo : Andreas Kunze, CC BY-SA 3.0, via Wikimedia Commons',
+  lat:'Cantharellus cibarius',nom:'Girolle',fam:'Cantharellacées',piege:'Vraies lames fines, couleur orange vif, sur du bois ? Fausse girolle ou clitocybe de l\'olivier.',verdict:'🧺 Panier',
+  indices:[{c:'Chapeau en entonnoir, jaune d\'œuf',x:.36,y:.33,r:.12,t:"Jaune d'œuf, creusé en entonnoir au centre.",aide:"Regarde la forme du grand chapeau, à gauche."},
+   {c:'Plis décurrents',x:.78,y:.56,r:.1,t:"Dessous, des plis épais qui descendent le long du pied : pas de vraies lames.",aide:"Sous les chapeaux de droite, qu'est-ce qui descend sur le pied ?"},
+   {c:'Marge ondulée',x:.6,y:.2,r:.08,t:"Le bord du chapeau est lobé, irrégulier, jamais bien rond.",aide:"Regarde le bord des chapeaux."}]},
+ {k:'amanite',leg:'Spécimen C',photo:'img/photos/amanite.jpg',iw:1280,ih:960,credit:'Photo : Strobilomyces, CC BY-SA 3.0, via Wikimedia Commons',
+  lat:'Amanita phalloides',nom:'Amanite phalloïde',fam:'Amanitacées',piege:'Ni rosé des prés (lames roses, pas de volve) ni russule verte (ni anneau ni volve). Déterre le pied : la volve en sac tranche.',verdict:'☠️ Jamais dans le panier : mortelle',
+  indices:[{c:'Chapeau vert olive, fibrilles',x:.3,y:.27,r:.12,t:"Chapeau vert olive, soyeux, avec de fines fibrilles rayonnantes.",aide:"Regarde la couleur du chapeau de gauche."},
+   {c:'Lames blanches, libres',x:.72,y:.3,r:.1,t:"Lames blanches, fines, serrées, qui n'atteignent pas le pied.",aide:"Celui de droite est retourné : de quelle couleur sont les lames ?"},
+   {c:'Volve en sac',x:.78,y:.72,r:.1,t:"À la base, un sac blanc membraneux : la volve. Et au milieu, un œuf : le stade jeune.",aide:"Regarde la base du pied de celui de droite."}]}
 ];
 const $=id=>document.getElementById(id);const faits=new Set();let cur=null,trouves=new Set(),minuteur=null,etapeAide=0;
 SPEC.forEach((s,i)=>{const d=document.createElement('div');d.className='pola';d.innerHTML=`<div class="scotch"></div><div class="ph"><img src="${s.photo}" alt=""></div><div class="leg">${s.leg}</div><div class="ok">✓</div>`;d.onclick=()=>ouvrir(i);$('polas').appendChild(d)});
@@ -140,7 +141,7 @@ function rafraichirCarnet(){const s=SPEC[cur];$('indices').innerHTML='';s.indice
 function relancer(){clearTimeout(minuteur);calque.querySelectorAll('.guide').forEach(g=>g.remove());if(trouves.size>=3)return;
  minuteur=setTimeout(()=>{const s=SPEC[cur];const i=s.indices.findIndex((_,k)=>!trouves.has(k));$('aide').textContent='💡 '+s.indices[i].aide;$('aide').classList.add('on');
   const p=pos(s.indices[i]);const g=document.createElement('div');g.className='guide';g.innerHTML='<span>👆</span>';g.style.left=Math.min(Math.max(p.x,62),zone.clientWidth-62)+'px';g.style.top=Math.min(Math.max(p.y,62),zone.clientHeight-120)+'px';calque.appendChild(g)},10000)}
-function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : qui es-tu ?';calque.querySelectorAll('.trouve,.rate,.guide,.etiq').forEach(e=>e.remove());
+function ouvrir(i){cur=i;trouves=new Set();const s=SPEC[i];$('cPhoto').src=s.photo;$('cCredit').textContent=s.credit;$('cTitre').textContent=s.leg+' : panier ou pas ?';calque.querySelectorAll('.trouve,.rate,.guide,.etiq').forEach(e=>e.remove());
  $('identite').classList.remove('on');$('aide').classList.remove('on');$('bravoIndices').classList.remove('on');$('bRevele').disabled=true;$('carnet').classList.add('on');zoom=1;calque.style.transformOrigin='50% 50%';appliquerZoom();rafraichirCarnet();voix.stop();relancer()}
 zone.addEventListener('click',e=>{if(cur===null)return;const r=zone.getBoundingClientRect();const k=r.width/zone.clientWidth;const x=(e.clientX-r.left)/k,y=(e.clientY-r.top)/k;
  const s=SPEC[cur];let hit=-1;s.indices.forEach((ind,i)=>{if(trouves.has(i))return;const p=pos(ind);if(Math.hypot(p.x-x,p.y-y)<=Math.max(p.r,34))hit=i});
@@ -158,7 +159,7 @@ $('zSlider').addEventListener('input',e=>{e.stopPropagation();regler(+e.target.v
 $('zPlus').addEventListener('click',e=>{e.stopPropagation();regler(zoom+.25)});
 $('zMoins').addEventListener('click',e=>{e.stopPropagation();regler(zoom-.25)});
 $('zoomBox').addEventListener('click',e=>e.stopPropagation());
-$('bRevele').onclick=()=>{const s=SPEC[cur];$('iLat').textContent=s.lat;$('iNom').textContent=s.nom;$('iFam').textContent=s.fam;$('iPiege').textContent='⚠️ '+s.piege;$('identite').classList.add('on');$('bRevele').disabled=true;$('bravoIndices').classList.remove('on');
+$('bRevele').onclick=()=>{const s=SPEC[cur];$('iLat').textContent=s.lat;$('iNom').textContent=s.nom;$('iFam').textContent=s.fam;$('iVerdict').textContent=s.verdict;$('iPiege').textContent='⚠️ '+s.piege;$('identite').classList.add('on');$('bRevele').disabled=true;$('bravoIndices').classList.remove('on');
  faits.add(cur);document.querySelectorAll('.pola')[cur].classList.add('fait');$('nb').textContent=faits.size;
  voix.jouer('audio/revele-'+s.k+'.mp3');
  if(faits.size===3){$('pose').src='img/lea-bravo.png';$('bulle').innerHTML='Trois sur trois ! Maintenant on les regarde <b>de beaucoup plus près</b> : dessus, dessous, et jusqu\'à la base.'}};
