@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiche mémo droit social</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:radial-gradient(circle at 50% 40%,#16367A,#0B2A66 70%)}
+/* carnet ouvert */
+.carnet{position:absolute;left:50px;top:30px;width:1100px;height:600px;border-radius:18px;background:#0A2358;box-shadow:0 30px 60px rgba(0,0,0,.45);padding:14px}
+.carnet::after{content:"";position:absolute;right:34px;top:-10px;width:22px;height:110px;background:var(--lime);clip-path:polygon(0 0,100% 0,100% 100%,50% 86%,0 100%);box-shadow:0 4px 6px rgba(0,0,0,.25)}
+.pages{position:relative;display:grid;grid-template-columns:1fr 1fr;height:100%;border-radius:8px;overflow:hidden;background:#FBF8F1}
+.pages::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:46px;transform:translateX(-50%);background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.12) 45%,rgba(0,0,0,.18) 50%,rgba(0,0,0,.12) 55%,rgba(0,0,0,0));pointer-events:none;z-index:2}
+.page{position:relative;padding:28px 40px 22px 44px;background:repeating-linear-gradient(transparent 0 33px,rgba(11,42,102,.08) 33px 34px);background-position:0 92px}
+.page.droite{padding-left:48px}
+.entete{display:flex;gap:14px;justify-content:space-between;align-items:baseline;border-bottom:2px solid var(--navy);padding-bottom:8px;margin-bottom:12px}
+.entete h1{margin:0;font:800 23px/1 var(--f-display);color:var(--navy)}
+.entete span{font:600 12px/1 var(--f-body);color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.art{display:grid;grid-template-columns:62px 1fr;gap:8px;margin-bottom:9px;opacity:0;transform:translateY(8px);animation:ecrit .5s ease forwards}
+.art .num{font:800 12px/1.15 var(--f-display);color:#fff;background:var(--navy);border-radius:6px;text-align:center;padding:5px 2px;height:max-content}
+.art p{margin:0;font-size:14.6px;line-height:1.36;color:var(--text)}
+.art p b{color:var(--navy)}
+@keyframes ecrit{to{opacity:1;transform:none}}
+.note{position:absolute;font:700 22px/1.1 "Caveat",cursive;color:#1F4590;transform:rotate(-4deg)}
+.plume{position:absolute;right:26px;bottom:14px;width:210px;transform:rotate(-24deg);filter:drop-shadow(0 6px 6px rgba(0,0,0,.25))}
+.tampon{position:absolute;left:44px;bottom:16px;font:700 12px/1.2 var(--f-display);color:var(--muted)}
+.actions{position:absolute;right:58px;bottom:6px;display:flex;gap:10px;z-index:5}
+.actions .btn{padding:11px 18px;font-size:14px}
+@media print{
+  @page{size:A4 landscape;margin:0}
+  html,body{overflow:visible;background:#fff}
+  #scene{position:static;transform:none!important;width:297mm;height:210mm;background:#fff}
+  .carnet{left:8mm;top:10mm;width:281mm;height:190mm;box-shadow:none}
+  .actions{display:none}
+  .art{opacity:1;transform:none;animation:none}
+}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="carnet"><div class="pages">
+    <section class="page gauche">
+      <div class="entete"><h1>Droit social : l'essentiel</h1><span>Module 1 · fiche mémo</span></div>
+      <div id="g"></div>
+      <div class="note" style="left:300px;bottom:22px">Carnet de Clara et de son binôme ✓</div>
+    </section>
+    <section class="page droite">
+      <div class="entete"><h1>&nbsp;</h1><span>Immersion XYZ Entreprise</span></div>
+      <div id="d"></div>
+      <svg class="plume" viewBox="0 0 220 40" aria-hidden="true">
+        <defs><linearGradient id="or" x1="0" x2="1"><stop offset="0" stop-color="#E9C46A"/><stop offset="1" stop-color="#B8892B"/></linearGradient></defs>
+        <rect x="70" y="11" width="140" height="18" rx="9" fill="#0B2A66"/>
+        <rect x="70" y="11" width="140" height="6" rx="3" fill="#2C55A8" opacity=".6"/>
+        <rect x="160" y="10" width="8" height="20" rx="2" fill="url(#or)"/>
+        <rect x="64" y="12" width="10" height="16" rx="2" fill="url(#or)"/>
+        <path d="M66 14 L18 20 L66 26 Z" fill="url(#or)"/>
+        <path d="M18 20 L4 20" stroke="#5a3f12" stroke-width="2"/>
+        <path d="M40 20 L64 20" stroke="#7a5717" stroke-width="1.2"/>
+        <circle cx="46" cy="20" r="2" fill="#7a5717"/>
+      </svg>
+    </section>
+  </div></div>
+  <div class="actions"><a class="btn" href="fiche-memo.pdf" download target="_blank" rel="noopener">⤓ Télécharger la fiche (PDF)</a></div>
+</div>
+<script src="commun.js"></script>
+<script>
+const P = [
+ ["Le droit social","réunit le <b>droit du travail</b> (relations employeur et salarié) et le <b>droit de la protection sociale</b>. Il évolue avec les réformes, les conventions et les décisions des juges."],
+ ["Le Code du travail","fixe le <b>socle minimal</b> : contrats, salaires, durée du travail, santé et sécurité. Il compte <b>8 parties</b>, des relations individuelles au contrôle de la législation."],
+ ["Les sources","sont <span class='hl'>hiérarchisées</span> : Constitution, normes internationales et européennes, lois et ordonnances, décrets, conventions et accords collectifs, usages et règlement intérieur, contrat de travail."],
+ ["La convention collective","adapte et complète le Code pour un secteur : grilles de salaires, primes, durée du travail. Son intitulé figure sur le <b>bulletin de paie</b>, son texte sur Légifrance."],
+ ["Les acteurs","employeurs, salariés, syndicats et représentants du personnel. Le <b>CSE</b> est obligatoire <span class='hl'>dès 11 salariés</span> et remplace depuis 2017 les DP, le CE et le CHSCT."],
+ ["Le CDI","est la forme normale du contrat, sans date de fin. Période d'essai de 2 à 4 mois selon la catégorie. Fin par licenciement, démission ou rupture conventionnelle."],
+ ["Le CDD","sert une <b>tâche précise et temporaire</b> : remplacement, surcroît d'activité, saisonnier. 18 mois maximum en règle générale, indemnité de précarité de 10 %. L'intérim passe par une agence."],
+ ["L'employeur doit","déclarer l'embauche (DPAE), remettre contrat et bulletin, respecter le SMIC, l'égalité de salaire, les 35 h et les temps de repos, évaluer les risques et <b>fournir les équipements de protection</b>."],
+ ["Le salarié","a droit à la dignité, à la non-discrimination, à un salaire équitable, à la sécurité et à la formation. Il doit être loyal et <b>respecter les consignes</b> et le règlement intérieur (obligatoire dès 50 salariés)."],
+ ["La protection sociale","Sécurité sociale (maladie, retraite, famille, accidents du travail), assurance chômage versée par <b>France Travail</b>, régimes complémentaires. On la retrouve dans les cotisations du bulletin."]
+];
+P.forEach((p,k)=>{ const d=document.createElement('div'); d.className='art'; d.style.animationDelay=(0.15+k*0.12)+'s';
+  d.innerHTML=`<span class="num">Art. ${k+1}</span><p><b>${p[0]}</b> ${p[1]}</p>`; document.getElementById(k<5?'g':'d').appendChild(d); });
+</script>
+</body>
+</html>

@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Explique-le à Clara</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#dfe6f3 url(img/bureau.jpg) center/cover}
+#scene::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,42,102,.10),rgba(11,42,102,.55) 62%,rgba(11,42,102,.78))}
+.haut{position:absolute;left:28px;top:22px;display:flex;gap:12px;align-items:center;z-index:5}
+.pastille{background:var(--navy);color:#fff;font:700 13px/1 var(--f-display);padding:9px 14px;border-radius:999px}
+.pastille b{color:var(--lime)}
+.points{display:flex;gap:6px}
+.points i{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.75);border:2px solid var(--navy)}
+.points i.fait{background:var(--lime)}
+.points i.encours{background:var(--orange)}
+/* Clara */
+#clara{position:absolute;left:40px;bottom:-6px;height:640px;width:420px;z-index:3}
+#clara .pose{position:absolute;left:50%;bottom:0;height:100%;transform:translateX(-50%);transition:opacity .25s}
+#clara .pose img{height:100%;display:block}
+#clara .pose .clos{position:absolute;inset:0;opacity:0;pointer-events:none}
+#clara .respire{position:absolute;inset:0;transform-origin:50% 100%;animation:souffle 4.8s infinite}
+@keyframes souffle{0%{transform:scaleY(1)}38%{transform:scaleY(1.006)}100%{transform:scaleY(1)}}
+#clara .balance{position:absolute;inset:0;transform-origin:50% 100%;animation:balance 13s ease-in-out infinite alternate}
+@keyframes balance{from{transform:rotate(-.3deg)}to{transform:rotate(.32deg)}}
+#clara.hoche .balance{animation:hoche .9s ease-out, balance 13s ease-in-out infinite alternate}
+@keyframes hoche{0%{transform:translateY(0)}30%{transform:translateY(5px)}62%{transform:translateY(-2px)}100%{transform:translateY(0)}}
+/* bulle */
+#bulle{position:absolute;left:440px;top:78px;width:700px;background:#fff;border-radius:22px;padding:24px 28px;box-shadow:0 18px 40px rgba(11,42,102,.25);z-index:4}
+#bulle::before{content:"";position:absolute;left:-18px;top:46px;border:12px solid transparent;border-right:18px solid #fff;border-left:0}
+#bulle .qui{font:700 13px/1 var(--f-display);color:var(--violet);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+#bulle p{margin:0;font-size:21px;line-height:1.42;color:var(--navy)}
+#bulle p .hl{font-weight:600}
+/* choix */
+#choix{position:absolute;left:440px;top:300px;width:700px;display:grid;gap:12px;z-index:4}
+#choix .consigne{font:700 14px/1 var(--f-display);color:#fff;letter-spacing:.04em}
+.opt{display:flex;gap:14px;align-items:flex-start;text-align:left;background:rgba(255,255,255,.96);border:2px solid transparent;border-radius:16px;padding:14px 18px;color:var(--text);font-size:17px;line-height:1.38;box-shadow:0 6px 16px rgba(11,42,102,.18);transition:transform .15s,border-color .15s}
+.opt:hover{transform:translateX(4px);border-color:var(--lime)}
+.opt .moi{flex:none;width:30px;height:30px;border-radius:50%;background:var(--navy);color:var(--lime);font:800 13px/30px var(--f-display);text-align:center}
+.opt[disabled]{opacity:.55;cursor:default;transform:none;border-color:transparent;background:#E6EAF3}
+.opt[disabled] span:last-child{text-decoration:line-through;text-decoration-color:rgba(194,65,12,.6)}
+.opt.bon[disabled]{opacity:1;background:#fff;border-color:var(--lime)}
+.opt.bon[disabled] span:last-child{text-decoration:none}
+.suite{justify-self:end;margin-top:6px}
+.cache{display:none!important}
+.apparait{animation:apparait .45s cubic-bezier(.25,.46,.45,.94) both}
+@keyframes apparait{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+/* écran d'accueil */
+#accueil{position:absolute;inset:0;z-index:6;display:grid;place-items:center;background:rgba(11,42,102,.55)}
+#accueil .carte{width:640px;background:#fff;border-radius:24px;padding:34px 38px;box-shadow:0 24px 60px rgba(0,0,0,.3);margin-left:300px}
+#accueil h1{font:800 34px/1.1 var(--f-display);color:var(--navy);margin:14px 0 12px}
+#accueil p{margin:0 0 22px;font-size:18px}
+/* bilan */
+#bilan{position:absolute;inset:0;z-index:7;background:var(--bg);padding:30px 44px;display:grid;grid-template-columns:300px 1fr;gap:32px}
+#bilan .gauche{display:flex;flex-direction:column;gap:16px;justify-content:center}
+#bilan h2{font:800 26px/1.15 var(--f-display);color:var(--navy);margin:0}
+.jauge{position:relative;width:200px;height:200px}
+.jauge svg{transform:rotate(-90deg)}
+.jauge .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center;font:800 46px/1 var(--f-display);color:var(--navy)}
+.jauge .val small{display:block;font:600 14px/1.2 var(--f-body);color:var(--muted);margin-top:6px}
+#bilan .tete{width:110px;height:110px;border-radius:50%;background:#fff center/cover;border:4px solid var(--lime)}
+#lignes{display:grid;gap:10px;align-content:center}
+.ligne{display:grid;grid-template-columns:42px 1fr;gap:14px;background:#fff;border-radius:16px;padding:14px 18px;border-left:6px solid var(--ok);box-shadow:0 4px 12px rgba(11,42,102,.08)}
+.ligne.ko{border-left-color:var(--warn)}
+.ligne .ico{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 18px/1 var(--f-display);color:#fff;background:var(--ok)}
+.ligne.ko .ico{background:var(--warn)}
+.ligne h3{margin:0 0 4px;font:700 15px/1.25 var(--f-display);color:var(--navy)}
+.ligne p{margin:0;font-size:14.5px;line-height:1.38}
+.ligne .ta{color:var(--muted)}
+.ligne .src{display:inline-block;margin-top:5px;font:600 12px/1 var(--f-body);background:var(--soft);color:var(--navy);padding:5px 9px;border-radius:999px}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="haut"><span class="pastille">Immersion chez <b>XYZ Entreprise</b></span><span class="points" id="points"></span></div>
+
+  <div id="clara" aria-hidden="true"><div class="respire"><div class="balance" id="poses"></div></div></div>
+
+  <div id="bulle" class="cache" role="status" aria-live="polite"><div class="qui">Clara</div><p id="texte"></p></div>
+  <div id="choix" class="cache"></div>
+
+  <div id="accueil">
+    <div class="carte apparait">
+      <span class="eyebrow">Mission CSE · avant de commencer</span>
+      <h1>Explique-le à Clara</h1>
+      <p>Clara a quatre questions sur les situations du jour chez XYZ. À toi de lui expliquer avec tes mots, en choisissant la meilleure explication. Elle te dira ce qu'elle en a compris.</p>
+      <button class="btn" id="go" type="button">On commence →</button>
+    </div>
+  </div>
+
+  <div id="bilan" class="cache">
+    <div class="gauche">
+      <span class="eyebrow">Notre bilan</span>
+      <h2 id="bilanTitre">Merci pour ton aide !</h2>
+      <div class="jauge"><svg width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="84" fill="none" stroke="#DDE2EE" stroke-width="18"/><circle id="arc" cx="100" cy="100" r="84" fill="none" stroke="#C6EE0A" stroke-width="18" stroke-linecap="round" stroke-dasharray="527.8" stroke-dashoffset="527.8" style="transition:stroke-dashoffset 1.2s ease"/></svg><div class="val"><div><span id="score">0/4</span><small>explications justes<br>du premier coup</small></div></div></div>
+      <button class="btn sec" id="rejouer" type="button">Rejouer la conversation</button>
+    </div>
+    <div id="lignes"></div>
+  </div>
+</div>
+
+<script src="commun.js"></script>
+<script>
+const POSES = ['salut','explique','doute','ravie'];
+const ETAPES = [
+  { theme:"Conventions collectives",
+    q:"Un salarié de l'atelier B demande s'il a droit à une <span class='hl'>prime de fin d'année</span>. Le Code du travail n'en parle pas… Donc c'est non ?",
+    opts:[
+      {t:"Pas si vite : c'est la convention collective de notre branche qui peut la prévoir. Son intitulé est indiqué sur le bulletin de paie, on la retrouve sur Légifrance.", ok:true,
+       r:"Ah mais oui ! La convention complète le Code pour notre secteur. Je file vérifier sur Légifrance.", pose:'ravie'},
+      {t:"On regarde son contrat de travail, tout y est écrit.", ok:false,
+       r:"Son contrat n'en dit rien… Si on s'arrête là, on risque de lui refuser une prime à laquelle il a peut-être droit.", pose:'doute'},
+      {t:"Si le Code du travail n'en parle pas, l'employeur n'a rien à verser.", ok:false,
+       r:"Attends… le Code fixe un socle minimum. D'autres textes peuvent aller plus loin, non ?", pose:'doute'}
+    ],
+    juste:"C'est la convention collective de la branche qui peut prévoir la prime. Son intitulé figure sur le bulletin de paie.",
+    source:"Leçon 3 · Interpréter les conventions collectives"},
+  { theme:"Contrats de travail",
+    q:"Nadia doit remplacer Sofia, en <span class='hl'>congé maternité pendant six mois</span>. Je lui propose un CDI ?",
+    opts:[
+      {t:"Plutôt un CDD de remplacement : il sert justement à remplacer un salarié absent, et Sofia retrouvera son poste à son retour.", ok:true,
+       r:"Logique ! Un CDD pour une tâche précise et temporaire. Je le note pour Nadia.", pose:'ravie'},
+      {t:"Un CDI, comme ça on garde la personne après.", ok:false,
+       r:"Mais quand Sofia revient, on fait quoi ? Un CDI, c'est sans date de fin…", pose:'doute'},
+      {t:"Un contrat d'intérim, c'est toujours plus simple.", ok:false,
+       r:"L'intérim passe par une agence, plutôt pour des missions courtes. Pour six mois de remplacement, l'outil prévu, c'est autre chose, non ?", pose:'doute'}
+    ],
+    juste:"Un CDD de remplacement : il couvre l'absence d'un salarié, pour une tâche précise et temporaire.",
+    source:"Leçon 1 · Les contrats de travail"},
+  { theme:"Obligations employeur et salarié",
+    q:"À l'atelier A, Paul refuse de mettre ses <span class='hl'>lunettes de protection</span>. Mais on vient d'apprendre que l'entreprise n'en a pas fourni pendant deux semaines. Qui est en faute ?",
+    opts:[
+      {t:"Les deux ont des obligations : l'employeur doit fournir les équipements et informer sur les risques, et Paul doit respecter les consignes de sécurité.", ok:true,
+       r:"Je vois : l'obligation de sécurité de l'employeur, et l'obligation du salarié de suivre les consignes. Les deux vont ensemble.", pose:'ravie'},
+      {t:"Seulement Paul : il a refusé, il risque une sanction.", ok:false,
+       r:"Et les deux semaines sans lunettes ? L'employeur a une obligation de sécurité, lui aussi.", pose:'doute'},
+      {t:"Personne, tant qu'il n'y a pas eu d'accident.", ok:false,
+       r:"Je ne crois pas… L'obligation de sécurité existe avant l'accident. Sinon, à quoi servirait le document unique d'évaluation des risques ?", pose:'doute'}
+    ],
+    juste:"Les deux : l'employeur doit fournir les EPI et prévenir les risques, le salarié doit respecter les consignes de sécurité.",
+    source:"Leçons 4 et 5 · Obligations de l'employeur, droits et obligations des salariés"},
+  { theme:"Instances représentatives",
+    q:"Pour notre mission : la direction se demande si le <span class='hl'>CSE</span> est vraiment obligatoire chez XYZ. On est 150 salariés…",
+    opts:[
+      {t:"Oui : le CSE est obligatoire dès 11 salariés. À 150, XYZ doit organiser ses élections professionnelles.", ok:true,
+       r:"Parfait, on a notre réponse pour la direction. On peut lancer la préparation des élections !", pose:'ravie'},
+      {t:"Pas encore : il ne devient obligatoire qu'à partir de 300 salariés.", ok:false,
+       r:"300 ? J'avais noté un seuil beaucoup plus bas… On revérifie avant de répondre à la direction ?", pose:'doute'},
+      {t:"Ce sont les syndicats qui décident s'il en faut un.", ok:false,
+       r:"Les syndicats négocient, d'accord. Mais l'obligation vient de la loi, pas d'eux.", pose:'doute'}
+    ],
+    juste:"Le CSE est obligatoire dès 11 salariés : XYZ (150 salariés) doit l'élire.",
+    source:"Leçon 1 · Les acteurs du droit du travail"}
+];
+
+// --- poses et clignement ---
+const zone = document.getElementById('poses');
+POSES.forEach(p=>{
+  const d=document.createElement('div'); d.className='pose'; d.dataset.p=p; d.style.opacity=p==='salut'?1:0;
+  d.innerHTML=`<img src="img/clara-${p}.webp" alt=""><img class="clos" src="img/clara-${p}-clos.webp" alt="" onerror="this.remove()">`;
+  zone.appendChild(d);
+});
+let poseActive='salut';
+function pose(p){ poseActive=p; zone.querySelectorAll('.pose').forEach(d=>d.style.opacity=d.dataset.p===p?1:0);
+  const c=document.getElementById('clara'); c.classList.remove('hoche'); void c.offsetWidth; c.classList.add('hoche'); }
+clignement(()=>zone.querySelector(`.pose[data-p="${poseActive}"] .clos`));
+
+// --- déroulé ---
+const $=id=>document.getElementById(id);
+let i=0, premier=[], dejaRepondu=false;
+const pts=$('points'); ETAPES.forEach(()=>pts.appendChild(document.createElement('i')));
+function majPoints(){ [...pts.children].forEach((e,k)=>e.className=k<i?'fait':(k===i?'encours':'')); }
+function dit(html){ const b=$('bulle'); b.classList.remove('cache','apparait'); void b.offsetWidth; b.classList.add('apparait'); $('texte').innerHTML=html; }
+
+function question(){
+  majPoints(); dejaRepondu=false; const e=ETAPES[i]; pose('explique'); dit(e.q);
+  const c=$('choix'); c.innerHTML='<div class="consigne">Ce que tu lui expliques :</div>';
+  e.opts.map((o,k)=>({o,k})).sort(()=>Math.random()-.5).forEach(({o,k})=>{
+    const b=document.createElement('button'); b.type='button'; b.className='opt apparait'; b.dataset.k=k;
+    b.innerHTML=`<span class="moi">Moi</span><span>${o.t}</span>`; b.onclick=()=>repond(k,b); c.appendChild(b);
+  });
+  c.classList.remove('cache');
+}
+function repond(k,btn){
+  const e=ETAPES[i], o=e.opts[k];
+  if(!dejaRepondu){ premier[i]=k; dejaRepondu=true; }
+  pose(o.pose); dit(o.r);
+  const c=$('choix');
+  if(o.ok){
+    [...c.querySelectorAll('.opt')].forEach(b=>{ if(b!==btn) b.remove(); else { b.disabled=true; b.classList.add('bon'); } });
+    const s=document.createElement('button'); s.type='button'; s.className='btn suite apparait';
+    s.textContent = i<ETAPES.length-1 ? 'Situation suivante →' : 'Terminer la conversation →';
+    s.onclick=()=>{ i++; i<ETAPES.length ? question() : fin(); }; c.appendChild(s);
+  } else {
+    btn.disabled=true;
+    const cons=c.querySelector('.consigne'); cons.textContent='Clara n\'est pas convaincue. Réexplique-lui :';
+  }
+}
+function fin(){
+  majPoints(); $('choix').classList.add('cache');
+  const n=premier.filter((k,j)=>ETAPES[j].opts[k].ok).length;
+  if(n>=3){ pose('ravie'); dit("Merci pour ton aide ! Avec toi, je me sens prête pour la mission CSE. On regarde notre bilan ?"); }
+  else { pose('doute'); dit("Merci… mais je ne suis pas sûre qu'on soit tout à fait prêts. On revoit ensemble les points qui ont coincé ?"); }
+  const s=document.createElement('button'); s.type='button'; s.className='btn suite apparait'; s.textContent='Voir notre bilan →';
+  s.onclick=()=>bilan(n); const c=$('choix'); c.innerHTML=''; c.appendChild(s); c.classList.remove('cache');
+}
+function bilan(n){
+  $('bilan').classList.remove('cache');
+  $('bilanTitre').textContent = n>=3 ? 'Merci pour ton aide !' : 'On y est presque';
+  $('score').textContent=n+'/'+ETAPES.length;
+  requestAnimationFrame(()=>$('arc').style.strokeDashoffset = 527.8*(1-n/ETAPES.length));
+  $('lignes').innerHTML = ETAPES.map((e,j)=>{
+    const o=e.opts[premier[j]], ok=o.ok;
+    return `<div class="ligne ${ok?'':'ko'} apparait" style="animation-delay:${.12*j}s">
+      <div class="ico">${ok?'✓':'✗'}</div>
+      <div><h3>${e.theme}</h3>
+      <p class="ta">Ta première explication : « ${o.t} »</p>
+      ${ok?'':`<p><b>La bonne explication :</b> ${e.juste}</p>`}
+      <span class="src">${e.source}</span></div></div>`;
+  }).join('');
+}
+$('go').onclick=()=>{ $('accueil').remove(); question(); };
+$('rejouer').onclick=()=>{ i=0; premier=[]; $('bilan').classList.add('cache'); question(); };
+// accueil : Clara salue
+pose('salut');
+</script>
+</body>
+</html>

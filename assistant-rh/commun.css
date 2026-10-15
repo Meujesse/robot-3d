@@ -1,0 +1,23 @@
+/* Démo Assistant RH · charte reprise du site M2 Conseil (m2conseil.fr, sept. 2026) */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Figtree:wght@400;500;600;700&family=Caveat:wght@500;700&display=swap');
+:root{
+  --navy:#0B2A66; --navy-2:#0F3380; --blue:#0050FF; --lime:#C6EE0A; --lime-ink:#5E7700;
+  --violet:#6C3AFB; --orange:#FF5E36; --bg:#F7F8FC; --soft:#EEF2FD; --line:#DDE2EE;
+  --text:#26324F; --muted:#5B6685; --ok:#128A4A; --warn:#C2410C;
+  --f-display:"Poppins","Segoe UI",system-ui,sans-serif;
+  --f-body:"Figtree","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--navy);overflow:hidden}
+body{font:400 17px/1.45 var(--f-body);color:var(--text);-webkit-font-smoothing:antialiased}
+/* scène fixe 1200 x 675, mise à l'échelle de la fenêtre (iframe Genially) */
+#scene{position:absolute;left:50%;top:50%;width:1200px;height:675px;transform-origin:center;overflow:hidden;background:var(--bg)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+.btn{display:inline-flex;align-items:center;gap:10px;font:700 16px/1 var(--f-display);border:0;border-radius:999px;padding:14px 24px;background:var(--orange);color:#fff;transition:transform .15s,background .15s}
+.btn:hover{transform:translateY(-2px);background:#EE4A22}
+.btn.sec{background:#fff;color:var(--navy);border:2px solid var(--navy)}
+.hl{background:linear-gradient(transparent 60%,var(--lime) 60%,var(--lime) 92%,transparent 92%);padding-inline:2px}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font:700 12px/1 var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.eyebrow::before{content:"";width:26px;height:6px;background:var(--lime)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

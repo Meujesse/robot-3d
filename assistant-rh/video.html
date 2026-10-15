@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Clara se présente</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#000}
+video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#lancer{position:absolute;inset:0;display:grid;place-items:center;background:linear-gradient(180deg,rgba(11,42,102,0) 40%,rgba(11,42,102,.55));border:0;padding:0}
+#lancer .rond{width:116px;height:116px;border-radius:50%;background:var(--orange);display:grid;place-items:center;box-shadow:0 14px 40px rgba(0,0,0,.35);transition:transform .2s}
+#lancer:hover .rond{transform:scale(1.07)}
+#lancer .rond::before{content:"";margin-left:10px;border-left:38px solid #fff;border-top:24px solid transparent;border-bottom:24px solid transparent}
+#lancer .leg{position:absolute;left:0;right:0;bottom:46px;text-align:center;color:#fff;font:700 22px/1.2 var(--f-display)}
+#lancer .leg small{display:block;font:500 15px/1.3 var(--f-body);color:#C9D4EF;margin-top:6px}
+#rejouer{position:absolute;right:22px;bottom:22px}
+</style>
+</head>
+<body>
+<div id="scene">
+  <video id="v" src="video/clara-presentation.mp4" poster="video/clara-poster.jpg" playsinline preload="auto"></video>
+  <button id="lancer" type="button" aria-label="Lancer la vidéo de Clara"><span class="rond"></span><span class="leg">Clara se présente<small>28 secondes · sous-titrée</small></span></button>
+  <button id="rejouer" class="btn sec cache" type="button" style="display:none">↺ Revoir</button>
+</div>
+<script src="commun.js"></script>
+<script>
+const v=document.getElementById('v'), l=document.getElementById('lancer'), r=document.getElementById('rejouer');
+l.onclick=()=>{ l.style.display='none'; r.style.display='none'; v.currentTime=0; v.play(); };
+v.onclick=()=>{ v.paused?v.play():v.pause(); };
+v.onended=()=>{ r.style.display='inline-flex'; };
+r.onclick=()=>l.onclick();
+</script>
+</body>
+</html>
