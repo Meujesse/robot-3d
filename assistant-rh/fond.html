@@ -41,8 +41,8 @@
 const q=new URLSearchParams(location.search), mode=q.get('mode')||'glisser';
 document.body.classList.add(mode);
 const pose=q.get('pose')||'explique';
-document.getElementById('pose').src=`img/clara-${pose}.webp`;
-document.getElementById('clos').src=`img/clara-${pose}-clos.webp`;
+document.getElementById('pose').src=`img/clara-${pose}.webp?v=4`;
+document.getElementById('clos').src=`img/clara-${pose}-clos.webp?v=4`;
 clignement(()=>document.getElementById('clos'));
 const carte=document.getElementById('carte');
 if(mode==='glisser'){

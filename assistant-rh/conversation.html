@@ -158,7 +158,7 @@ const ETAPES = [
 const zone = document.getElementById('poses');
 POSES.forEach(p=>{
   const d=document.createElement('div'); d.className='pose'; d.dataset.p=p; d.style.opacity=p==='salut'?1:0;
-  d.innerHTML=`<img src="img/clara-${p}.webp" alt=""><img class="clos" src="img/clara-${p}-clos.webp" alt="" onerror="this.remove()">`;
+  d.innerHTML=`<img src="img/clara-${p}.webp?v=4" alt=""><img class="clos" src="img/clara-${p}-clos.webp?v=4" alt="" onerror="this.remove()">`;
   zone.appendChild(d);
 });
 let poseActive='salut';
