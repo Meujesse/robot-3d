@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Assistant RH · Module 1</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#dfe6f3 url(img/bureau.jpg) center/cover}
+#scene::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,42,102,.96) 0,rgba(11,42,102,.88) 46%,rgba(11,42,102,.25) 78%,rgba(11,42,102,.05))}
+.texte{position:absolute;left:96px;top:92px;width:600px;color:#fff;z-index:2}
+.texte .eyebrow{color:#C9D4EF}
+.texte h1{margin:18px 0 0;font:800 50px/1.06 var(--f-display);letter-spacing:-.01em}
+.texte h1 .hl{color:var(--navy);background:linear-gradient(transparent 8%,var(--lime) 8%,var(--lime) 92%,transparent 92%);padding:0 8px;border-radius:4px}
+.texte p{margin:18px 0 0;font-size:19px;line-height:1.5;color:#E3E9F7;max-width:520px}
+.texte p b{color:#fff}
+.etapes{position:absolute;left:96px;bottom:44px;display:flex;gap:10px;z-index:2}
+.etapes div{width:118px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:14px;padding:10px 12px;color:#fff;font:600 13px/1.25 var(--f-body)}
+.etapes b{display:block;font:800 18px/1 var(--f-display);color:var(--lime);margin-bottom:5px}
+#clara{position:absolute;right:120px;bottom:-10px;height:600px;z-index:3;animation:entre .9s cubic-bezier(.25,.46,.45,.94) both}
+#clara img{height:100%;display:block}
+#clara .clos{position:absolute;inset:0;opacity:0}
+@keyframes entre{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+.bulle{position:absolute;right:300px;top:96px;width:250px;background:#fff;border-radius:18px;padding:13px 17px;font-size:16px;line-height:1.38;color:var(--navy);box-shadow:0 12px 28px rgba(0,0,0,.25);z-index:4;animation:entre .6s .7s both}
+.bulle::after{content:"";position:absolute;right:-14px;top:26px;border:10px solid transparent;border-left:14px solid #fff;border-right:0}
+.marque{position:absolute;right:28px;top:24px;z-index:4;font:800 15px/1 var(--f-display);color:var(--navy);background:#fff;border-radius:999px;padding:9px 14px}
+.marque span{color:var(--blue)}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="marque">M2 <span>Conseil</span></div>
+  <div class="texte">
+    <span class="eyebrow">Formation Assistant RH · Module 1</span>
+    <h1>Les bases du <span class="hl">droit social</span> français</h1>
+    <p>Clara et toi êtes en formation, <b>en immersion chez XYZ Entreprise</b>, une PME industrielle de 150 salariés. Première mission : préparer les élections du CSE. Et pour y arriver, on s'entraide.</p>
+  </div>
+  <!-- le bouton « Commencer » est un bouton Genially posé par-dessus, à gauche sous le texte -->
+  <div class="etapes">
+    <div><b>1</b>Rencontre Clara</div><div><b>2</b>Explore la carte</div><div><b>3</b>Range les demandes</div><div><b>4</b>Explique à Clara</div><div><b>5</b>Repars avec ta fiche</div>
+  </div>
+  <div id="clara"><img src="img/clara-salut.webp" alt="Clara, assistante RH en formation, fait un signe de la main"><img id="clos" class="clos" src="img/clara-salut-clos.webp" alt=""></div>
+  <div class="bulle">Salut ! Moi, c'est Clara. On commence quand tu veux.</div>
+</div>
+<script src="commun.js"></script>
+<script>clignement(()=>document.getElementById('clos'));</script>
+</body>
+</html>
