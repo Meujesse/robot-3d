@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Activité Clara</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#dfe6f3 url(img/bureau.jpg) center/cover}
+#scene::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,42,102,.62),rgba(11,42,102,.35) 70%,rgba(11,42,102,.15))}
+.tete{position:absolute;left:100px;top:26px;display:flex;align-items:baseline;gap:14px;z-index:2}
+.tete .sur{font:700 12px/1 var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--lime)}
+.tete h1{margin:0;font:800 30px/1.1 var(--f-display);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.25)}
+.carte{position:absolute;left:100px;top:86px;width:720px;height:566px;background:#fff;border-radius:24px;box-shadow:0 22px 50px rgba(0,0,0,.28);z-index:2}
+.carte::before{content:"";position:absolute;left:0;top:0;bottom:0;width:10px;border-radius:24px 0 0 24px;background:var(--lime)}
+.consigne{position:absolute;left:46px;top:28px;right:30px;font:700 21px/1.25 var(--f-display);color:var(--navy)}
+.lab{position:absolute;left:46px;width:320px;height:65px;display:flex;align-items:center;gap:14px}
+.lab .pic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:24px;background:var(--soft);flex:none}
+.lab b{font:700 18px/1.15 var(--f-display);color:var(--navy)}
+.lab small{display:block;font:500 13px/1.2 var(--f-body);color:var(--muted)}
+.lab::after{content:"";position:absolute;right:-6px;top:50%;width:22px;border-top:3px dotted var(--navy);opacity:.4}
+.reserve{position:absolute;left:36px;right:36px;bottom:20px;height:150px;border:2px dashed #C9D4EF;border-radius:18px;background:#F4F6FC}
+.reserve span{position:absolute;right:18px;top:-11px;background:#fff;padding:0 10px;font:700 11px/22px var(--f-display);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#clara{position:absolute;right:40px;bottom:-8px;height:520px;z-index:3}
+#clara img{height:100%;display:block}
+#clara .clos{position:absolute;inset:0;opacity:0}
+.bulle{position:absolute;right:24px;top:22px;width:330px;background:#fff;border-radius:18px;padding:14px 18px;font-size:16px;line-height:1.38;color:var(--navy);box-shadow:0 12px 28px rgba(0,0,0,.25);z-index:4}
+.bulle::after{content:"";position:absolute;left:150px;bottom:-14px;border:12px solid transparent;border-top:14px solid #fff;border-bottom:0}
+.bulle b{color:var(--violet)}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="tete"><span class="sur" id="sur"></span><h1 id="titre"></h1></div>
+  <div class="carte" id="carte"></div>
+  <div id="clara"><img id="pose" alt=""><img id="clos" class="clos" alt=""></div>
+  <div class="bulle" id="bulle"></div>
+</div>
+<script src="commun.js"></script>
+<script>
+const q=new URLSearchParams(location.search), mode=q.get('mode')||'glisser';
+document.body.classList.add(mode);
+const pose=q.get('pose')||'explique';
+document.getElementById('pose').src=`img/clara-${pose}.webp`;
+document.getElementById('clos').src=`img/clara-${pose}-clos.webp`;
+clignement(()=>document.getElementById('clos'));
+const carte=document.getElementById('carte');
+if(mode==='glisser'){
+  document.getElementById('sur').textContent='Le courrier du lundi';
+  document.getElementById('titre').textContent='Où chercher la réponse ?';
+  document.getElementById('bulle').innerHTML="Nadia nous a laissé quatre demandes. <b>Range chacune</b> en face du texte où l'on trouve la réponse. On vérifie ensemble ?";
+  carte.innerHTML='<div class="consigne">Glisse chaque situation devant la bonne source</div>'+
+   [['📘','Code du travail','le socle minimal pour tous'],['🏭','Convention collective','les règles de la branche'],['📝','Contrat de travail','ce qui est convenu avec le salarié'],['📋','Règlement intérieur','discipline, hygiène, sécurité']]
+   .map((l,k)=>`<div class="lab" style="top:${[66,146,227,307][k]}px"><span class="pic">${l[0]}</span><span><b>${l[1]}</b><small>${l[2]}</small></span></div>`).join('')+
+   '<div class="reserve"><span>Situations à ranger</span></div>';
+} else {
+  document.getElementById('sur').textContent='Avant la mission CSE';
+  document.getElementById('titre').textContent='Le bon document';
+  document.getElementById('bulle').innerHTML="Le responsable de l'atelier A me demande quel document tenir à jour pour les risques. <b>Tu me montres ?</b>";
+  carte.innerHTML='';
+}
+</script>
+</body>
+</html>
