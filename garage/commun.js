@@ -42,6 +42,6 @@ function boutonVoix(fichier, style){
   const b = document.createElement('button'); b.className = 'voix'; b.setAttribute('aria-label', 'Écouter Inès'); b.title = 'Écouter Inès'; b.style.cssText = style;
   b.innerHTML = '<svg viewBox="0 0 28 28" aria-hidden="true"><path d="M4 11h5l6-5v16l-6-5H4z" fill="#fff"/><path d="M18.5 10a5.5 5.5 0 0 1 0 8M21 6.5a10 10 0 0 1 0 15" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>';
   let a = null;
-  b.onclick = () => { if (!a) { a = new Audio('audio/' + fichier + '.mp3?v=1'); a.onended = a.onpause = () => b.classList.remove('joue'); a.onplay = () => b.classList.add('joue'); } if (a.paused) { a.currentTime = 0; a.play().catch(() => {}); } else a.pause(); };
+  b.onclick = () => { if (!a) { a = new Audio('audio/' + fichier + '.mp3?v=2'); a.onended = a.onpause = () => b.classList.remove('joue'); a.onplay = () => b.classList.add('joue'); } if (a.paused) { a.currentTime = 0; a.play().catch(() => {}); } else a.pause(); };
   document.getElementById('scene').appendChild(b); return b;
 }

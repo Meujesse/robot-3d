@@ -85,7 +85,7 @@ const CONV = {
        ['Bonjour. On regarde ça quand on a le temps.', 'Euh… il me la faut pour 19 h, je bosse demain à 6 h.', 'Un client inquiet a besoin d’un cadre : quand, quoi, combien.', 'ko', 'brief-a3']],
       [['On la monte sur le pont tout de suite. Diagnostic d’ici une heure, et je vous appelle avant toute réparation.', 'Parfait, merci. J’attends votre appel 🙏', 'Parfait : un délai, un diagnostic, un appel avant de réparer.', 'ok', 'brief-b1'],
        ['Pas de souci, ce sera prêt à 19 h.', 'Super. Vous me direz combien ?', 'Prudence : tu promets sans savoir ce qu’il y a.', 'bof', 'brief-b2'],
-       ['19 h, c’est impossible.', 'Bon… tenez-moi au courant alors.', 'Avant de refuser, diagnostique : tu sauras si c’est faisable.', 'ko', 'brief-b3']],
+       ['19 h, c’est impossible.', 'Bon… tenez-moi au courant alors.', 'Avant de refuser, fais le diagnostic : tu sauras si c’est faisable.', 'ko', 'brief-b3']],
     ],
     fin: 'Conversation terminée. Quand tu es prêt, clique sur « Accepter la mission ».',
   },
@@ -112,7 +112,7 @@ const attends = ms => new Promise(r => setTimeout(r, Q.has('vite') ? 30 : ms));
 const bas = () => { fil.scrollTop = fil.scrollHeight; };
 // La voix d'Inès : bouton d'écoute pour la consigne, puis elle réagit à voix haute à chaque choix (jamais sans clic, et jamais avec ?muet)
 let piste = null; const bv = boutonVoix(C.voix0, '');
-function dis(fichier){ if (MUET) return; try { if (piste) piste.pause(); piste = new Audio('audio/' + fichier + '.mp3?v=1'); piste.play().catch(() => {}); } catch (e) {} }
+function dis(fichier){ if (MUET) return; try { if (piste) piste.pause(); piste = new Audio('audio/' + fichier + '.mp3?v=2'); piste.play().catch(() => {}); } catch (e) {} }
 async function client(texte){
   const m = document.createElement('div'); m.className = 'msg eux'; m.innerHTML = '<span class="points"><b></b><b></b><b></b></span>'; fil.appendChild(m); bas();
   await attends(700 + Math.min(1300, texte.length * 14)); m.textContent = texte; bas(); await attends(500);
