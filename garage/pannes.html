@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Néon Garage · Les pannes qui changent la conduite</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#1E1245 url(img/atelier-sombre.jpg) center/cover}
+h1{position:absolute;left:34px;top:58px;margin:0;font:400 40px/1 var(--f-titre);text-transform:uppercase;letter-spacing:.02em;color:#fff;text-shadow:0 4px 0 rgba(60,10,90,.6);z-index:5}
+h1 em{font-style:normal;background:var(--degrade);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sous{position:absolute;left:36px;top:106px;width:430px;font-size:15.5px;line-height:1.4;color:#EDE7FF;z-index:5}
+.sous b{color:var(--peche)}
+/* liste des pannes */
+.liste{position:absolute;left:34px;top:160px;width:430px;display:grid;gap:8px;z-index:5}
+.panne{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:2px solid rgba(255,255,255,.14);background:rgba(20,11,46,.75);color:#fff;border-radius:10px;padding:9px 12px;font:500 15px/1.25 var(--f-texte);transition:.15s}
+.panne:hover{border-color:var(--rose);background:rgba(255,45,138,.14)}
+.panne.on{border-color:var(--cyan);background:rgba(77,227,255,.12);box-shadow:0 0 16px rgba(77,227,255,.25)}
+.panne b{flex:none;width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--rose),var(--violet));display:grid;place-items:center;font:400 17px/1 var(--f-titre)}
+.panne span small{display:block;font-size:12.5px;color:var(--gris);margin-top:2px}
+/* piste vue de dessus */
+.piste{position:absolute;left:490px;top:100px;width:676px;height:400px;border-radius:14px;overflow:hidden;background:#231A45;border:1px solid rgba(255,255,255,.14);box-shadow:0 20px 50px rgba(0,0,0,.45);z-index:4}
+.piste .bord{position:absolute;left:0;right:0;height:11px;background:repeating-linear-gradient(90deg,#FF5FA2 0 34px,#fff 34px 68px);animation:bord .55s linear infinite}
+.piste .bord.h{top:62px}.piste .bord.b{bottom:62px}
+.piste .herbe{position:absolute;left:0;right:0;height:62px;background:#1a1240}
+.piste .herbe.h{top:0}.piste .herbe.b{bottom:0}
+@keyframes bord{to{background-position:-68px 0}}
+.piste .lignes{position:absolute;left:0;right:0;top:50%;height:5px;margin-top:-2px;background:repeating-linear-gradient(90deg,#FFD36E 0 56px,transparent 56px 112px);animation:lignes .5s linear infinite}
+@keyframes lignes{to{background-position:-112px 0}}
+.piste.stop .bord,.piste.stop .lignes{animation-play-state:paused}
+.piste .auto{position:absolute;left:150px;top:50%;width:200px;margin-top:-48px;transition:transform .3s}
+.piste .auto svg{width:200px;height:96px;display:block}
+.piste .flaque{position:absolute;left:380px;top:95px;width:230px;height:210px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(77,227,255,.35),rgba(77,227,255,.12) 60%,transparent 72%);opacity:0;transition:opacity .4s}
+.piste .repere{position:absolute;left:560px;top:62px;bottom:62px;width:4px;background:#fff;opacity:0;transition:opacity .4s}
+.piste .repere::after{content:"STOP";position:absolute;left:8px;top:8px;font:600 12px/1 var(--f-hud);letter-spacing:.14em;color:#fff}
+.piste .vit{position:absolute;right:16px;top:12px;font:400 30px/1 var(--f-titre);color:#fff;z-index:3}
+.piste .vit small{font:600 12px/1 var(--f-hud);letter-spacing:.1em;color:var(--gris);margin-left:5px}
+.piste .nom{position:absolute;left:16px;top:14px;font:600 13px/1 var(--f-hud);letter-spacing:.16em;text-transform:uppercase;color:#fff;z-index:3}
+.piste .attente{position:absolute;inset:0;display:grid;place-items:center;font:600 15px/1 var(--f-hud);letter-spacing:.18em;text-transform:uppercase;color:#fff;background:rgba(10,6,28,.55);z-index:4;transition:opacity .4s}
+.piste .attente.off{opacity:0;pointer-events:none}
+/* animations des pannes */
+.auto.p-tire{animation:tire 4.2s ease-in forwards}
+@keyframes tire{0%{transform:translate(0,0) rotate(0)}35%{transform:translate(50px,10px) rotate(2deg)}70%{transform:translate(170px,70px) rotate(5deg)}100%{transform:translate(330px,135px) rotate(8deg)}}
+.auto.p-vibre{animation:avance 4.2s ease-in forwards}
+.auto.p-vibre svg{animation:vib .07s linear infinite 1.8s}
+@keyframes vib{0%{transform:translate(0,0)}25%{transform:translate(2px,-2px)}50%{transform:translate(-2px,2px)}75%{transform:translate(2px,2px)}100%{transform:translate(-2px,-2px)}}
+@keyframes avance{0%{transform:translate(0,0)}100%{transform:translate(260px,0)}}
+.auto.p-zigzag{animation:zigzag 4.2s ease-in-out forwards}
+@keyframes zigzag{0%{transform:translate(0,0) rotate(0)}20%{transform:translate(60px,22px) rotate(4deg)}40%{transform:translate(120px,-6px) rotate(-5deg)}60%{transform:translate(180px,28px) rotate(5deg)}80%{transform:translate(240px,-4px) rotate(-4deg)}100%{transform:translate(300px,30px) rotate(5deg)}}
+.auto.p-rebond{animation:avance 4.2s ease-in forwards}
+.auto.p-rebond svg{animation:rebond .45s ease-in-out infinite 1.2s}
+@keyframes rebond{0%,100%{transform:scale(1) translateY(0)}50%{transform:scale(1.07) translateY(-6px)}}
+.auto.p-freine{animation:freine 4.2s ease-out forwards}
+@keyframes freine{0%{transform:translate(0,0) rotate(0)}40%{transform:translate(170px,0) rotate(0)}70%{transform:translate(290px,-28px) rotate(-8deg)}100%{transform:translate(340px,-52px) rotate(-14deg)}}
+.auto.p-glisse{animation:glisse 4.2s linear forwards}
+@keyframes glisse{0%{transform:translate(0,0) rotate(0)}40%{transform:translate(230px,0) rotate(0)}100%{transform:translate(520px,-14px) rotate(-6deg)}}
+/* fiche explicative */
+.fiche{position:absolute;left:490px;top:514px;width:676px;height:130px;padding:14px 18px;z-index:5;display:grid;grid-template-columns:1fr 1fr;gap:16px;opacity:0;transition:opacity .4s}
+.fiche.on{opacity:1}
+.fiche .k{font:600 12px/1 var(--f-hud);letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin-bottom:6px}
+.fiche p{margin:0;font-size:14.5px;line-height:1.35;color:#EDE7FF}
+.fiche p b{color:#fff}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="bandeau"><span class="hud"><b>Néon Garage</b> · Mission 1</span><span class="hud">Réputation <span class="etoiles"><i class="on">★</i><i>★</i><i>★</i><i>★</i><i>★</i></span></span></div>
+  <h1>Ce que la panne <em>fait à la route</em></h1>
+  <div class="sous">Chaque panne se sent au volant avant de se voir au garage. <b>Clique sur une panne</b> pour voir comment la voiture roule.</div>
+  <div class="liste" id="liste"></div>
+  <div class="piste" id="piste">
+    <div class="herbe h"></div><div class="herbe b"></div>
+    <div class="bord h"></div><div class="lignes"></div><div class="bord b"></div>
+    <div class="flaque" id="flaque"></div><div class="repere" id="repere"></div>
+    <div class="nom" id="nom">Rocade · essai</div>
+    <div class="vit" id="vit">90<small>km/h</small></div>
+    <div class="auto" id="auto"></div>
+    <div class="attente" id="attente">Choisis une panne à gauche</div>
+  </div>
+  <div class="fiche carte" id="fiche"></div>
+</div>
+<script src="commun.js"></script>
+<script>
+const PANNES = [
+  { id: 'tire', nom: 'Pneu avant sous-gonflé d’un côté', sous: 'La voiture tire du côté du pneu mou', cls: 'p-tire', vit: 90, volant: 'La voiture <b>tire d’un côté</b> dès qu’on lâche le volant, surtout sur route plate. Il faut la retenir en permanence.', cause: 'Le pneu mou a plus de résistance au roulement et s’écrase : la voiture tourne vers lui. Même cause possible : <b>parallélisme déréglé</b> après un trou ou un trottoir.' },
+  { id: 'vibre', nom: 'Roue mal équilibrée', sous: 'Le volant vibre à partir de 80-90 km/h', cls: 'p-vibre', vit: 95, volant: 'Le volant <b>tremble à une vitesse précise</b>, souvent entre 80 et 110 km/h, puis ça se calme plus vite ou moins vite.', cause: 'Une <b>masse d’équilibrage perdue</b> ou un pneu usé en facettes : la roue n’a plus la même masse partout, elle oscille à chaque tour.' },
+  { id: 'zigzag', nom: 'Parallélisme déréglé', sous: 'Direction floue, on corrige sans arrêt', cls: 'p-zigzag', vit: 80, volant: 'La voiture <b>ne tient pas le cap</b> : on corrige sans cesse, le volant n’est plus centré en ligne droite.', cause: 'Les roues avant ne sont plus parallèles (pincement ou ouverture). Elles <b>tirent chacune de leur côté</b>, et les pneus s’usent vite sur un bord.' },
+  { id: 'rebond', nom: 'Amortisseur hors service', sous: 'La voiture rebondit après chaque bosse', cls: 'p-rebond', vit: 70, volant: 'Après une bosse, la caisse <b>continue de rebondir</b>, l’avant plonge au freinage, la tenue de route devient flottante.', cause: 'L’amortisseur ne freine plus le ressort. Test simple : on appuie fort sur l’aile, elle doit <b>remonter une seule fois</b>.' },
+  { id: 'freine', nom: 'Étrier de frein grippé', sous: 'Au freinage, la voiture part de travers', cls: 'p-freine', vit: 90, volant: 'Au freinage, la voiture <b>se déporte brusquement</b> d’un côté. Odeur de chaud et jante brûlante après un trajet.', cause: 'Un étrier ne libère plus la plaquette : une roue freine plus que l’autre, parfois en permanence. Risque d’<b>échauffement du disque</b>.' },
+  { id: 'glisse', nom: 'Pneus lisses sur sol mouillé', sous: 'Le freinage n’en finit plus', cls: 'p-glisse', vit: 90, volant: 'Sur chaussée mouillée, la voiture <b>flotte</b> : le freinage s’allonge, la direction devient légère, l’ABS s’active.', cause: 'Sous 1,6 mm de sculpture, le pneu n’évacue plus l’eau : <b>aquaplaning</b>. Un pneu neuf freine jusqu’à deux fois plus court sur sol mouillé.' },
+];
+function autoTopSVG(){
+  return `<svg viewBox="0 0 260 124" aria-hidden="true"><defs><linearGradient id="t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF2D8A"/><stop offset="1" stop-color="#B14CFF"/></linearGradient></defs>
+  <rect x="38" y="4" width="26" height="22" rx="5" fill="#1A0A33"/><rect x="38" y="98" width="26" height="22" rx="5" fill="#1A0A33"/><rect x="178" y="4" width="26" height="22" rx="5" fill="#1A0A33"/><rect x="178" y="98" width="26" height="22" rx="5" fill="#1A0A33"/>
+  <rect x="14" y="14" width="232" height="96" rx="30" fill="url(#t)" stroke="#1A0A33" stroke-width="3"/>
+  <path d="M86 22 L160 22 Q176 26 176 40 L176 84 Q176 98 160 102 L86 102 Q74 98 74 84 L74 40 Q74 26 86 22 Z" fill="#2A1A5E" stroke="#1A0A33" stroke-width="2.5"/>
+  <rect x="90" y="30" width="60" height="64" rx="8" fill="#7FD9FF" opacity=".35"/>
+  <rect x="228" y="30" width="12" height="18" rx="3" fill="#FFF3C4"/><rect x="228" y="76" width="12" height="18" rx="3" fill="#FFF3C4"/>
+  <rect x="20" y="30" width="10" height="18" rx="3" fill="#FF4D6D"/><rect x="20" y="76" width="10" height="18" rx="3" fill="#FF4D6D"/></svg>`;
+}
+const liste = document.getElementById('liste'), auto = document.getElementById('auto'), piste = document.getElementById('piste'), fiche = document.getElementById('fiche'), vit = document.getElementById('vit');
+auto.innerHTML = autoTopSVG();
+let timer = null;
+PANNES.forEach((p, i) => {
+  const b = document.createElement('button'); b.className = 'panne'; b.innerHTML = `<b>${i + 1}</b><span>${p.nom}<small>${p.sous}</small></span>`;
+  b.onclick = () => joue(p, b); liste.appendChild(b);
+});
+function joue(p, b){
+  document.querySelectorAll('.panne.on').forEach(x => x.classList.remove('on')); b.classList.add('on');
+  document.getElementById('attente').classList.add('off');
+  document.getElementById('flaque').style.opacity = p.id === 'glisse' ? 1 : 0;
+  document.getElementById('repere').style.opacity = (p.id === 'glisse' || p.id === 'freine') ? 1 : 0;
+  document.getElementById('nom').textContent = 'Rocade · ' + p.nom;
+  piste.classList.remove('stop');
+  // relance l'animation : on remplace l'élément
+  const neo = auto.cloneNode(true); neo.className = 'auto'; auto.replaceWith(neo); neo.id = 'auto';
+  void neo.offsetWidth; neo.classList.add(p.cls);
+  const a = document.getElementById('auto');
+  clearTimeout(timer);
+  let v = p.vit; vit.innerHTML = v + '<small>km/h</small>';
+  if (p.id === 'freine' || p.id === 'glisse') { let t = 0; const iv = setInterval(() => { t += .1; if (t > 1.6) v = Math.max(0, v - (p.id === 'glisse' ? 4 : 7)); vit.innerHTML = Math.round(v) + '<small>km/h</small>'; if (t > 4.2) { clearInterval(iv); piste.classList.add('stop'); } }, 100); }
+  fiche.classList.remove('on');
+  fiche.innerHTML = `<div><div class="k">Ce que tu sens au volant</div><p>${p.volant}</p></div><div><div class="k">La cause, côté atelier</div><p>${p.cause}</p></div>`;
+  timer = setTimeout(() => fiche.classList.add('on'), 500);
+}
+</script>
+</body>
+</html>
