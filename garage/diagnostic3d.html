@@ -34,9 +34,10 @@ model-viewer:active{cursor:grabbing}
 .hs.vu .dot{box-shadow:0 0 0 3px var(--ok),0 0 14px var(--ok)}
 .hs .lead{position:absolute;top:0;left:0;height:2px;background:var(--cyan);box-shadow:0 0 6px var(--cyan);width:0;transform-origin:0 0;transition:width .35s cubic-bezier(.2,.8,.2,1);z-index:1}
 .hs.open .lead{width:var(--len,120px)}
-.hs .label{position:absolute;top:0;left:var(--len,120px);transform:translateY(-50%);width:250px;color:#fff;background:rgba(20,11,46,.9);border:1px solid var(--cyan);border-left:4px solid var(--cyan);padding:10px 12px;box-shadow:0 0 18px rgba(77,227,255,.25);opacity:0;clip-path:inset(0 100% 0 0);transition:opacity .25s .3s,clip-path .45s .3s cubic-bezier(.2,.8,.2,1);pointer-events:none;z-index:3;font:500 13.5px/1.35 var(--f-texte)}
+.hs .label{position:absolute;top:0;left:var(--len,120px);transform:translateY(-50%);width:290px;color:#fff;background:rgba(20,11,46,.9);border:1px solid var(--cyan);border-left:4px solid var(--cyan);padding:10px 12px;box-shadow:0 0 18px rgba(77,227,255,.25);opacity:0;clip-path:inset(0 100% 0 0);transition:opacity .25s .3s,clip-path .45s .3s cubic-bezier(.2,.8,.2,1);pointer-events:none;z-index:3;font:500 13.5px/1.35 var(--f-texte)}
 .hs.open .label{opacity:1;clip-path:inset(0 0 0 0)}
-.hs .label b{display:block;color:var(--cyan);font:600 12px/1 var(--f-hud);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.hs .label > b{display:block;color:var(--cyan);font:600 12px/1 var(--f-hud);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px}
+.hs .label li b{display:inline;color:#fff;font:600 13.5px/1.35 var(--f-texte);letter-spacing:0;text-transform:none;margin:0}
 .hs .label ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
 .hs .label li{display:flex;gap:7px}
 .hs .label li::before{content:"";flex:none;width:7px;height:7px;margin-top:6px;border-radius:50%;background:var(--ok)}
@@ -106,7 +107,7 @@ model-viewer:active{cursor:grabbing}
     <div class="ombre"></div>
     <model-viewer id="mv" src="voiture2.glb?v=1" alt="La citadine du client, en 3D, sur le pont"
       camera-controls disable-zoom disable-pan interaction-prompt="none" auto-rotate auto-rotate-delay="2500" rotation-per-second="6deg"
-      camera-orbit="150deg 78deg 2.7m" min-camera-orbit="auto 60deg auto" max-camera-orbit="auto 95deg auto" field-of-view="28deg"
+      camera-orbit="250deg 78deg 2.7m" min-camera-orbit="auto 60deg auto" max-camera-orbit="auto 95deg auto" field-of-view="28deg"
       environment-image="neutral" exposure="1.0" shadow-intensity="0" loading="eager" reveal="auto">
       <div class="badge" slot="hotspot-badge" data-position="-0.86 -0.03 0" data-normal="-1 0 0" data-visibility-attribute="visible"><img src="img/ui/badge-mjl.png?v=1" alt="Badge MJL"></div>
     </model-viewer>
