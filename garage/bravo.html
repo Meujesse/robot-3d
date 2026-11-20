@@ -65,6 +65,7 @@
 document.getElementById('auto').innerHTML = voitureSVG('v2', { w: 300 });
 const sc = document.getElementById('scene'), C = ['#FF2D8A', '#FF7A3D', '#FFB36B', '#B14CFF', '#4DE3FF', '#FFFFFF'];
 for (let i = 0; i < 90; i++) { const d = document.createElement('i'); d.className = 'conf'; d.style.left = Math.random() * 1200 + 'px'; d.style.background = C[i % C.length]; d.style.animationDuration = (2.2 + Math.random() * 2.2) + 's'; d.style.animationDelay = (0.3 + Math.random() * 1.6) + 's'; d.style.transform = 'rotate(' + Math.random() * 360 + 'deg)'; sc.appendChild(d); }
+boutonVoix('bravo', 'left:196px;top:300px');
 </script>
 </body>
 </html>
