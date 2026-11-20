@@ -23,14 +23,15 @@
 @keyframes phare{50%{opacity:.6}}
 .faisceau{position:absolute;left:390px;top:68px;width:420px;height:60px;background:linear-gradient(90deg,rgba(255,240,200,.45),rgba(255,240,200,0));clip-path:polygon(0 35%,100% 0,100% 100%,0 65%);filter:blur(2px);animation:phare 2.6s ease-in-out infinite}
 /* titre et carton */
-.bloc{position:absolute;left:70px;top:70px;z-index:4;width:720px}
+.bloc{position:absolute;left:70px;top:56px;z-index:4;width:720px}
 .bloc .sur{display:inline-flex;align-items:center;gap:12px;font:600 16px/1 var(--f-hud);letter-spacing:.2em;text-transform:uppercase;color:#fff;margin-bottom:14px;animation:monte .7s .2s both}
 .bloc .sur::before{content:"";width:34px;height:3px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
-.bloc h1{margin:0;font-size:124px;animation:monte .8s .35s both}
+.bloc h1{margin:0 0 0 -14px;animation:monte .8s .35s both}
+.bloc h1 img{display:block;height:270px}
 .bloc h1 .mot2{display:block;font-size:.62em;letter-spacing:.08em;margin-top:-6px;-webkit-text-stroke:0;color:#fff;background:none;filter:drop-shadow(0 5px 0 rgba(60,10,90,.6))}
-.bloc .mission{margin:22px 0 0;max-width:560px;font:600 25px/1.25 var(--f-hud);letter-spacing:.02em;text-transform:uppercase;color:#fff;animation:monte .8s .6s both}
+.bloc .mission{margin:10px 0 0;max-width:560px;font:600 25px/1.25 var(--f-hud);letter-spacing:.02em;text-transform:uppercase;color:#fff;animation:monte .8s .6s both}
 .bloc .mission b{color:var(--peche)}
-.bloc p{margin:14px 0 0;max-width:560px;font-size:18px;line-height:1.45;color:#EDE7FF;animation:monte .8s .75s both}
+.bloc p{margin:10px 0 0;max-width:500px;font-size:18px;line-height:1.45;color:#EDE7FF;animation:monte .8s .75s both}
 @keyframes monte{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 /* carte mini HUD en bas à droite */
 .mini{position:absolute;right:34px;bottom:30px;width:200px;height:120px;border-radius:12px;background:#1a1240 url(img/carte.jpg) center/cover;border:2px solid rgba(255,255,255,.25);box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:4;overflow:hidden;animation:monte .8s 1s both}
@@ -49,7 +50,7 @@
   <div class="lueur"></div>
   <div class="bloc">
     <span class="sur">Formation mécanique et carrosserie</span>
-    <h1><span class="titre">Néon</span><span class="mot2">Garage</span></h1>
+    <h1><img src="img/ui/titre-neon-garage.png?v=2" alt="Néon Garage"></h1>
     <div class="mission">Mission 1 · <b>La citadine qui tire à droite</b></div>
     <p>Le client est au comptoir, la voiture est sur le pont. Diagnostic, bonne doc, bon geste : à toi de jouer.</p>
   </div>

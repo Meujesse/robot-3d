@@ -12,7 +12,8 @@
 @keyframes flash{0%{opacity:0}10%{opacity:.9}100%{opacity:0}}
 .titre-bloc{position:absolute;left:0;right:0;top:64px;text-align:center;z-index:5}
 .titre-bloc .sur{font:600 17px/1 var(--f-hud);letter-spacing:.3em;text-transform:uppercase;color:#fff;animation:monte .6s .5s both}
-.titre-bloc h1{margin:8px 0 0;font-size:112px;line-height:.92;animation:zoom .7s .7s cubic-bezier(.2,1.4,.4,1) both}
+.titre-bloc h1{margin:4px 0 0;animation:zoom .7s .7s cubic-bezier(.2,1.4,.4,1) both}
+.titre-bloc h1 img{height:215px}
 .titre-bloc h1 .l2{display:block;font-size:.72em;color:#fff;background:none;-webkit-text-fill-color:#fff;filter:drop-shadow(0 5px 0 rgba(60,10,90,.6))}
 @keyframes zoom{from{opacity:0;transform:scale(1.6)}to{opacity:1;transform:none}}
 @keyframes monte{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
@@ -46,7 +47,7 @@
 <body>
 <div id="scene">
   <div class="flash"></div>
-  <div class="titre-bloc"><div class="sur">Ordre de réparation n° 0421 · clôturé</div><h1><span class="titre">Mission</span><span class="l2 titre">accomplie</span></h1></div>
+  <div class="titre-bloc"><div class="sur">Ordre de réparation n° 0421 · clôturé</div><h1><img src="img/ui/titre-mission-accomplie.png?v=2" alt="Mission accomplie"></h1></div>
   <div class="stats">
     <div class="stat carte"><div class="k">Réputation</div><div class="etoiles"><i class="on">★</i><i class="on">★</i><i>★</i><i>★</i><i>★</i></div><div class="s">+1 étoile : le client repart à l’heure, volant stable.</div></div>
     <div class="stat carte"><div class="k">Geste validé</div><div class="v deg">Roue</div><div class="s">Remplacer une roue en sécurité, au couple du constructeur.</div></div>
