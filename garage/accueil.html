@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Néon Garage · Accueil</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#1E1245 url(img/ville.jpg) center/cover}
+#scene::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,11,46,.15),rgba(20,11,46,0) 35%,rgba(20,11,46,.55) 100%);pointer-events:none}
+/* soleil qui pulse doucement, néons de la ville */
+.lueur{position:absolute;left:0;right:0;bottom:0;height:260px;background:radial-gradient(60% 90% at 70% 100%,rgba(255,45,138,.35),transparent 70%);mix-blend-mode:screen;animation:pulse 4s ease-in-out infinite;pointer-events:none}
+@keyframes pulse{50%{opacity:.55}}
+/* la route : marquage qui défile vers la gauche, la voiture avance */
+.route{position:absolute;left:0;right:0;bottom:0;height:150px;overflow:hidden;pointer-events:none}
+.ligne{position:absolute;left:-200px;right:-200px;top:78px;height:5px;background:repeating-linear-gradient(90deg,#FFD36E 0 60px,transparent 60px 120px);opacity:.75;transform:translateX(0);animation:defile 1.1s linear infinite}
+@keyframes defile{to{transform:translateX(-120px)}}
+.auto{position:absolute;left:-520px;bottom:28px;z-index:3;animation:arrive 3.2s cubic-bezier(.2,.75,.25,1) .4s both}
+@keyframes arrive{0%{left:-520px}100%{left:150px}}
+.auto .roue .jante{transform-origin:center;animation:tourne .42s linear infinite}
+@keyframes tourne{to{transform:rotate(360deg)}}
+.auto .phare{animation:phare 2.6s ease-in-out infinite}
+@keyframes phare{50%{opacity:.6}}
+.faisceau{position:absolute;left:390px;top:68px;width:420px;height:60px;background:linear-gradient(90deg,rgba(255,240,200,.45),rgba(255,240,200,0));clip-path:polygon(0 35%,100% 0,100% 100%,0 65%);filter:blur(2px);animation:phare 2.6s ease-in-out infinite}
+/* titre et carton */
+.bloc{position:absolute;left:70px;top:70px;z-index:4;width:720px}
+.bloc .sur{display:inline-flex;align-items:center;gap:12px;font:600 16px/1 var(--f-hud);letter-spacing:.2em;text-transform:uppercase;color:#fff;margin-bottom:14px;animation:monte .7s .2s both}
+.bloc .sur::before{content:"";width:34px;height:3px;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.bloc h1{margin:0;font-size:124px;animation:monte .8s .35s both}
+.bloc h1 .mot2{display:block;font-size:.62em;letter-spacing:.08em;margin-top:-6px;-webkit-text-stroke:0;color:#fff;background:none;filter:drop-shadow(0 5px 0 rgba(60,10,90,.6))}
+.bloc .mission{margin:22px 0 0;max-width:560px;font:600 25px/1.25 var(--f-hud);letter-spacing:.02em;text-transform:uppercase;color:#fff;animation:monte .8s .6s both}
+.bloc .mission b{color:var(--peche)}
+.bloc p{margin:14px 0 0;max-width:560px;font-size:18px;line-height:1.45;color:#EDE7FF;animation:monte .8s .75s both}
+@keyframes monte{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+/* carte mini HUD en bas à droite */
+.mini{position:absolute;right:34px;bottom:30px;width:200px;height:120px;border-radius:12px;background:#1a1240 url(img/carte.jpg) center/cover;border:2px solid rgba(255,255,255,.25);box-shadow:0 10px 30px rgba(0,0,0,.4);z-index:4;overflow:hidden;animation:monte .8s 1s both}
+.mini::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 4px rgba(255,45,138,.35),0 0 14px var(--rose);animation:ping 1.4s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,45,138,.6)}100%{box-shadow:0 0 0 16px rgba(255,45,138,0)}}
+.mini span{position:absolute;left:10px;top:8px;font:700 12px/1 var(--f-hud);letter-spacing:.14em;text-transform:uppercase;color:#fff;text-shadow:0 1px 4px #000}
+.start{position:absolute;right:270px;bottom:46px;z-index:4;font:600 17px/1 var(--f-hud);letter-spacing:.2em;text-transform:uppercase;color:#fff;animation:clignote 1.6s steps(2) infinite}
+@keyframes clignote{50%{opacity:.25}}
+.perso{position:absolute;right:120px;bottom:-14px;height:520px;z-index:3;animation:entre 1s .9s cubic-bezier(.25,.46,.45,.94) both}
+.perso img{height:100%;display:block;filter:drop-shadow(0 20px 30px rgba(0,0,0,.5))}
+@keyframes entre{from{opacity:0;transform:translateX(50px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="lueur"></div>
+  <div class="bloc">
+    <span class="sur">Formation mécanique et carrosserie</span>
+    <h1><span class="titre">Néon</span><span class="mot2">Garage</span></h1>
+    <div class="mission">Mission 1 · <b>La citadine qui tire à droite</b></div>
+    <p>Le client est au comptoir, la voiture est sur le pont. Diagnostic, bonne doc, bon geste : à toi de jouer.</p>
+  </div>
+  <div class="route"><div class="ligne"></div><div class="auto" id="auto"></div></div>
+  <div class="perso"><img src="img/ines.webp?v=1" alt="Inès, cheffe d'atelier, clé dynamométrique à la main"></div>
+  <div class="mini"><span>Néon City</span></div>
+</div>
+<script src="commun.js"></script>
+<script>
+document.getElementById('auto').innerHTML = voitureSVG('v1', { w: 400 }) + '<div class="faisceau"></div>';
+</script>
+</body>
+</html>

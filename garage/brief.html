@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Néon Garage · Brief de mission</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+/* page entière transparente côté Genially : seule la zone du téléphone est dessinée (fond de page posé dans Genially) */
+html,body{background:transparent}
+#scene{background:transparent}
+.tel{position:absolute;left:400px;top:30px;width:400px;height:640px;border-radius:44px;background:#0B0820;border:6px solid #2A1A5E;box-shadow:0 30px 60px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.08);overflow:hidden;animation:monte .8s both}
+@keyframes monte{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.encoche{position:absolute;left:50%;top:12px;width:120px;height:26px;margin-left:-60px;border-radius:14px;background:#000;z-index:3}
+.haut{position:absolute;left:0;right:0;top:0;height:112px;background:linear-gradient(180deg,#2A1A5E,#1E1245);border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:flex-end;padding:0 22px 14px;gap:14px;z-index:2}
+.haut .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--violet));display:grid;place-items:center;font:400 22px/1 var(--f-titre);color:#fff}
+.haut b{display:block;font:700 19px/1.1 var(--f-hud);letter-spacing:.04em}
+.haut small{display:block;font:500 13px/1.2 var(--f-texte);color:var(--ok)}
+.heure{position:absolute;right:22px;top:14px;font:600 13px/1 var(--f-hud);letter-spacing:.06em;color:#fff;z-index:4}
+.fil{position:absolute;left:0;right:0;top:112px;bottom:70px;padding:18px 16px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.msg{max-width:84%;padding:11px 14px;border-radius:18px;font-size:16px;line-height:1.35;opacity:0;transform:translateY(12px);animation:pop .4s forwards}
+.msg.eux{align-self:flex-start;background:#2A1A5E;border-bottom-left-radius:6px;color:#fff}
+.msg.moi{align-self:flex-end;background:linear-gradient(135deg,var(--rose),var(--violet));border-bottom-right-radius:6px;color:#fff}
+.msg.photo{padding:6px;background:#2A1A5E}
+.msg.photo img{display:block;width:230px;border-radius:12px}
+.msg .cap{display:block;font-size:12.5px;color:var(--gris);margin:6px 4px 2px}
+@keyframes pop{to{opacity:1;transform:none}}
+.saisie{position:absolute;left:0;right:0;bottom:0;height:70px;background:#120C2E;border-top:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px;padding:0 16px}
+.saisie span{flex:1;height:40px;border-radius:20px;background:#1E1245;display:flex;align-items:center;padding:0 16px;color:#6F63A0;font-size:15px}
+.saisie i{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--rose),var(--violet));display:grid;place-items:center;color:#fff;font-style:normal;font-weight:700}
+.points{display:inline-flex;gap:4px;align-items:center;height:16px}
+.points b{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.4;animation:tape 1s infinite}
+.points b:nth-child(2){animation-delay:.2s}.points b:nth-child(3){animation-delay:.4s}
+@keyframes tape{50%{opacity:1;transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="tel">
+    <div class="encoche"></div><div class="heure">17:42</div>
+    <div class="haut"><div class="avatar">M</div><div><b>M. Haddad · client</b><small>en ligne</small></div></div>
+    <div class="fil" id="fil"></div>
+    <div class="saisie"><span>Message…</span><i>›</i></div>
+  </div>
+</div>
+<script src="commun.js"></script>
+<script>
+const SEQ = [
+  ['eux', 'Bonjour, c’est pour la citadine grise que j’ai déposée ce matin 👋'],
+  ['eux', 'Depuis une semaine elle tire à droite sur la rocade. Et le volant vibre passé 90.'],
+  ['photo', 'img/voiture.webp', 'Photo envoyée par le client'],
+  ['moi', 'Bonjour M. Haddad. On la monte sur le pont et on regarde tout de suite.'],
+  ['eux', 'Super. Il me la faut pour 19 h, je bosse demain à 6 h.'],
+  ['moi', 'Je vous tiens au courant dès le diagnostic 👍'],
+  ['eux', 'Merci !'],
+];
+const fil = document.getElementById('fil');
+let i = 0;
+function suivant(){
+  if (i >= SEQ.length) return;
+  const [qui, texte, cap] = SEQ[i++];
+  if (qui === 'eux' || qui === 'photo') {
+    const t = document.createElement('div'); t.className = 'msg eux'; t.innerHTML = '<span class="points"><b></b><b></b><b></b></span>'; fil.appendChild(t);
+    setTimeout(() => {
+      if (qui === 'photo') { t.className = 'msg eux photo'; t.innerHTML = `<img src="${texte}" alt="La citadine du client"><span class="cap">${cap}</span>`; }
+      else t.textContent = texte;
+      setTimeout(suivant, 1100);
+    }, 900 + Math.min(1400, texte.length * 14));
+  } else {
+    const t = document.createElement('div'); t.className = 'msg moi'; t.textContent = texte; fil.appendChild(t);
+    setTimeout(suivant, 1300);
+  }
+  fil.scrollTop = fil.scrollHeight;
+}
+setTimeout(suivant, 700);
+</script>
+</body>
+</html>

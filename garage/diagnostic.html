@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Néon Garage · Diagnostic</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#1E1245 url(img/atelier.jpg) center/cover}
+#scene::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(20,11,46,.55),rgba(20,11,46,.15) 45%,rgba(20,11,46,.7));pointer-events:none}
+.bandeau .hud{font-size:14px}
+h1{position:absolute;left:34px;top:62px;margin:0;font:400 46px/1 var(--f-titre);text-transform:uppercase;letter-spacing:.02em;color:#fff;text-shadow:0 4px 0 rgba(60,10,90,.6);z-index:5}
+h1 em{font-style:normal;background:var(--degrade);-webkit-background-clip:text;background-clip:text;color:transparent}
+.consigne{position:absolute;left:34px;top:118px;width:420px;font-size:17px;line-height:1.4;color:#EDE7FF;z-index:5}
+.consigne b{color:var(--peche)}
+/* la voiture sur le pont */
+.auto{position:absolute;left:280px;top:226px;width:640px;z-index:2;animation:monte .9s both}
+.auto img{width:100%;display:block;filter:drop-shadow(0 30px 30px rgba(0,0,0,.6))}
+@keyframes monte{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+.pt{position:absolute;width:44px;height:44px;margin:-22px;border-radius:50%;border:0;background:rgba(20,11,46,.85);color:#fff;font:400 20px/1 var(--f-titre);box-shadow:0 0 0 3px var(--rose),0 0 18px var(--rose);z-index:4;transition:transform .15s}
+.pt::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:3px solid var(--rose);animation:ping 1.6s ease-out infinite}
+.pt:hover{transform:scale(1.12)}
+.pt.vu{box-shadow:0 0 0 3px var(--ok),0 0 14px var(--ok)}
+.pt.vu::after{animation:none;border-color:var(--ok)}
+@keyframes ping{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+/* fiche de relevé */
+.fiche{position:absolute;right:34px;top:150px;width:330px;padding:18px 20px;z-index:6;opacity:0;transform:translateX(20px);transition:.35s;pointer-events:none}
+.fiche.on{opacity:1;transform:none;pointer-events:auto}
+.fiche .k{font:700 13px/1 var(--f-hud);letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+.fiche h2{margin:6px 0 10px;font:600 24px/1.1 var(--f-hud);letter-spacing:.02em;text-transform:uppercase}
+.fiche ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.fiche li{display:flex;gap:10px;font-size:15.5px;line-height:1.3;color:#EDE7FF}
+.fiche li::before{content:"";flex:none;width:9px;height:9px;margin-top:7px;border-radius:50%;background:var(--ok)}
+.fiche li.ko::before{background:var(--ko);box-shadow:0 0 8px var(--ko)}
+.fiche li b{color:#fff}
+.fiche .ver{margin-top:12px;font:700 14px/1 var(--f-hud);letter-spacing:.1em;text-transform:uppercase;color:var(--gris)}
+.fiche .ver.ko{color:var(--ko)}
+/* compteur et bouton diagnostic */
+.jauge{position:absolute;left:34px;bottom:34px;z-index:6;display:flex;align-items:center;gap:14px;font:600 15px/1 var(--f-hud);letter-spacing:.14em;text-transform:uppercase;color:var(--gris)}
+.jauge .pts{display:flex;gap:6px}
+.jauge .pts i{width:14px;height:14px;border-radius:50%;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.3)}
+.jauge .pts i.on{background:var(--ok);border-color:var(--ok);box-shadow:0 0 10px var(--ok)}
+.btn-diag{position:absolute;right:34px;bottom:34px;z-index:6;opacity:.35;pointer-events:none;transition:.3s}
+.btn-diag.on{opacity:1;pointer-events:auto}
+/* choix du diagnostic */
+.voile{position:absolute;inset:0;background:rgba(10,6,28,.72);backdrop-filter:blur(3px);z-index:20;display:none}
+.voile.on{display:block}
+.choix{position:absolute;left:50%;top:50%;width:760px;transform:translate(-50%,-50%);padding:26px 30px 28px;z-index:21;display:none}
+.choix.on{display:block;animation:monte .4s both}
+.choix h2{margin:0 0 4px;font:400 34px/1 var(--f-titre);text-transform:uppercase;letter-spacing:.02em}
+.choix h2 em{font-style:normal;background:var(--degrade);-webkit-background-clip:text;background-clip:text;color:transparent}
+.choix p{margin:0 0 16px;color:var(--gris);font-size:16px}
+.choix .op{display:flex;gap:14px;align-items:center;width:100%;text-align:left;border:2px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:#fff;border-radius:10px;padding:12px 16px;margin-top:9px;font:500 16.5px/1.3 var(--f-texte);transition:.15s}
+.choix .op:hover{border-color:var(--rose);background:rgba(255,45,138,.12)}
+.choix .op b{flex:none;width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--rose),var(--violet));display:grid;place-items:center;font:400 18px/1 var(--f-titre)}
+/* essai routier (vue de dessus) */
+.essai{position:absolute;inset:0;z-index:30;display:none;background:#0B0820;overflow:hidden}
+.essai.on{display:block}
+.essai .route{position:absolute;left:0;right:0;top:0;bottom:0;background:#231A45}
+.essai .bord{position:absolute;left:0;right:0;height:14px;background:repeating-linear-gradient(90deg,#FF5FA2 0 40px,#fff 40px 80px);animation:bord .5s linear infinite}
+.essai .bord.h{top:118px}.essai .bord.b{bottom:118px}
+@keyframes bord{to{background-position:-80px 0}}
+.essai .lignes{position:absolute;left:0;right:0;top:50%;height:6px;margin-top:-3px;background:repeating-linear-gradient(90deg,#FFD36E 0 70px,transparent 70px 140px);animation:lignes .45s linear infinite}
+@keyframes lignes{to{background-position:-140px 0}}
+.essai .palm{position:absolute;top:0;bottom:0;left:0;right:0;pointer-events:none}
+.essai .auto-top{position:absolute;left:380px;top:50%;width:260px;margin-top:-62px;transition:transform .2s}
+.essai .auto-top.tire{animation:tire 4.5s ease-in forwards}
+.essai .auto-top.droit{animation:droit 4.5s ease-in-out forwards}
+@keyframes tire{0%{transform:translate(0,0) rotate(0)}30%{transform:translate(40px,8px) rotate(1.5deg)}60%{transform:translate(120px,54px) rotate(4deg)}100%{transform:translate(260px,150px) rotate(7deg)}}
+@keyframes droit{0%{transform:translate(0,0)}50%{transform:translate(60px,0)}100%{transform:translate(90px,0)}}
+.essai .vib{animation:vib .08s linear infinite}
+@keyframes vib{0%{margin-left:0}50%{margin-left:3px}100%{margin-left:-2px}}
+.essai .verdict{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:640px;padding:24px 28px;text-align:center;opacity:0;z-index:3;transition:.4s}
+.essai .verdict.on{opacity:1}
+.essai .verdict h2{margin:0;font:400 44px/1 var(--f-titre);text-transform:uppercase}
+.essai .verdict h2.ok{background:var(--degrade);-webkit-background-clip:text;background-clip:text;color:transparent}
+.essai .verdict h2.ko{color:var(--ko)}
+.essai .verdict p{margin:10px 0 16px;font-size:18px;color:#EDE7FF}
+.essai .hud-top{position:absolute;left:34px;top:22px;font:600 15px/1 var(--f-hud);letter-spacing:.16em;text-transform:uppercase;color:#fff}
+.essai .vitesse{position:absolute;right:34px;top:22px;font:400 40px/1 var(--f-titre);color:#fff}
+.essai .vitesse small{font:600 14px/1 var(--f-hud);letter-spacing:.1em;color:var(--gris);margin-left:6px}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="bandeau"><span class="hud"><b>Néon Garage</b> · Mission 1</span><span class="hud">Réputation <span class="etoiles"><i class="on">★</i><i>★</i><i>★</i><i>★</i><i>★</i></span></span></div>
+  <h1>Sur le <em>pont</em></h1>
+  <div class="consigne">La voiture <b>tire à droite</b> et le volant <b>vibre au-delà de 90</b>. Clique sur les 4 points de contrôle, lis les relevés, puis pose ton diagnostic.</div>
+  <div class="auto" id="auto"><img src="img/voiture.webp?v=1" alt="La citadine du client sur le pont élévateur"></div>
+  <div class="fiche carte" id="fiche"></div>
+  <div class="jauge">Points contrôlés <span class="pts" id="pts"><i></i><i></i><i></i><i></i></span></div>
+  <button class="btn btn-diag" id="btn-diag">Poser le diagnostic</button>
+  <div class="voile" id="voile"></div>
+  <div class="choix carte" id="choix">
+    <h2>Ton <em>diagnostic</em></h2>
+    <p>Quelle cause explique les deux symptômes, et que fais-tu ?</p>
+    <div id="ops"></div>
+  </div>
+  <div class="essai" id="essai">
+    <div class="route"><div class="bord h"></div><div class="lignes"></div><div class="bord b"></div></div>
+    <div class="hud-top">Essai routier · rocade</div>
+    <div class="vitesse" id="vit">0<small>km/h</small></div>
+    <div class="auto-top" id="autotop"></div>
+    <div class="verdict carte" id="verdict"></div>
+  </div>
+</div>
+<script src="commun.js"></script>
+<script>
+const POINTS = [
+  { x: .255, y: .905, nom: 'Pneu avant droit', k: 'Point 1', lignes: [['ko', '<b>Pression : 1,6 bar</b> (préconisé 2,3 bar)'], ['ko', 'Usure marquée sur le <b>bord extérieur</b>'], ['ko', 'Une <b>masse d’équilibrage</b> manque sur la jante']], ver: ['ko', 'Anomalies relevées'] },
+  { x: .77, y: .80, nom: 'Roue arrière droite', k: 'Point 2', lignes: [['ok', 'Pression : 2,3 bar'], ['ok', 'Usure régulière, sculptures à 5 mm'], ['ok', 'Jante saine, pas de choc']], ver: ['ok', 'Rien à signaler'] },
+  { x: .55, y: .84, nom: 'Train avant et direction', k: 'Point 3', lignes: [['ok', 'Jeu dans la direction : aucun'], ['ok', 'Rotules et triangles : pas de jeu'], ['ok', 'Parallélisme : <b>à contrôler après</b> le changement de pneu']], ver: ['ok', 'Rien d’anormal au levier'] },
+  { x: .355, y: .79, nom: 'Freins avant', k: 'Point 4', lignes: [['ok', 'Disque : aucun voile'], ['ok', 'Plaquettes à 60 %'], ['ok', 'Étrier libre, pas de point chaud']], ver: ['ok', 'Rien à signaler'] },
+];
+const OPTIONS = [
+  { t: 'Plaquettes de frein usées : je remplace les plaquettes avant.', ok: false },
+  { t: 'Pneu avant droit sous-gonflé, usé et mal équilibré : je remplace la roue, j’équilibre et je contrôle le parallélisme.', ok: true },
+  { t: 'Jante arrière voilée : je remplace la jante arrière droite.', ok: false },
+  { t: 'Rien d’anormal : je regonfle et je rends la voiture.', ok: false },
+];
+const auto = document.getElementById('auto'), fiche = document.getElementById('fiche'), pts = document.getElementById('pts').children;
+const vus = new Set();
+POINTS.forEach((p, i) => {
+  const b = document.createElement('button'); b.className = 'pt'; b.textContent = i + 1; b.style.left = (p.x * 100) + '%'; b.style.top = (p.y * 100) + '%';
+  b.setAttribute('aria-label', p.nom);
+  b.onclick = () => {
+    fiche.innerHTML = `<div class="k">${p.k} · relevé</div><h2>${p.nom}</h2><ul>${p.lignes.map(l => `<li class="${l[0]}">${l[1]}</li>`).join('')}</ul><div class="ver ${p.ver[0]}">${p.ver[1]}</div>`;
+    fiche.classList.add('on'); b.classList.add('vu'); vus.add(i); pts[vus.size - 1].classList.add('on');
+    if (vus.size >= 4) document.getElementById('btn-diag').classList.add('on');
+  };
+  auto.appendChild(b);
+});
+document.getElementById('btn-diag').onclick = () => { document.getElementById('voile').classList.add('on'); document.getElementById('choix').classList.add('on'); fiche.classList.remove('on'); };
+const ops = document.getElementById('ops');
+OPTIONS.forEach((o, i) => { const b = document.createElement('button'); b.className = 'op'; b.innerHTML = `<b>${'ABCD'[i]}</b><span>${o.t}</span>`; b.onclick = () => essai(o.ok); ops.appendChild(b); });
+// essai routier : la voiture réagit selon la réparation choisie
+function autoTopSVG(){
+  return `<svg viewBox="0 0 260 124" width="260" height="124" aria-hidden="true"><defs><linearGradient id="t" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF2D8A"/><stop offset="1" stop-color="#B14CFF"/></linearGradient></defs>
+  <rect x="38" y="4" width="26" height="22" rx="5" fill="#1A0A33"/><rect x="38" y="98" width="26" height="22" rx="5" fill="#1A0A33"/><rect x="178" y="4" width="26" height="22" rx="5" fill="#1A0A33"/><rect x="178" y="98" width="26" height="22" rx="5" fill="#1A0A33"/>
+  <rect x="14" y="14" width="232" height="96" rx="30" fill="url(#t)" stroke="#1A0A33" stroke-width="3"/>
+  <path d="M86 22 L160 22 Q176 26 176 40 L176 84 Q176 98 160 102 L86 102 Q74 98 74 84 L74 40 Q74 26 86 22 Z" fill="#2A1A5E" stroke="#1A0A33" stroke-width="2.5"/>
+  <rect x="90" y="30" width="60" height="64" rx="8" fill="#7FD9FF" opacity=".35"/>
+  <rect x="228" y="30" width="12" height="18" rx="3" fill="#FFF3C4"/><rect x="228" y="76" width="12" height="18" rx="3" fill="#FFF3C4"/>
+  <rect x="20" y="30" width="10" height="18" rx="3" fill="#FF4D6D"/><rect x="20" y="76" width="10" height="18" rx="3" fill="#FF4D6D"/>
+  <path d="M240 34 L300 20 L300 104 L240 90 Z" fill="#FFF3C4" opacity=".18"/></svg>`;
+}
+function essai(ok){
+  document.getElementById('choix').classList.remove('on'); document.getElementById('voile').classList.remove('on');
+  const e = document.getElementById('essai'), a = document.getElementById('autotop'), v = document.getElementById('verdict'), vit = document.getElementById('vit');
+  e.classList.add('on'); a.innerHTML = autoTopSVG(); a.className = 'auto-top'; v.className = 'verdict carte'; v.innerHTML = '';
+  let k = 0; const t0 = performance.now();
+  (function tick(){ const t = (performance.now() - t0) / 1000; k = Math.min(110, Math.round(t * 32)); vit.innerHTML = k + '<small>km/h</small>'; if (!ok && k > 90) a.classList.add('vib'); if (t < 4.6) requestAnimationFrame(tick); })();
+  setTimeout(() => a.classList.add(ok ? 'droit' : 'tire'), 400);
+  setTimeout(() => {
+    v.innerHTML = ok
+      ? `<h2 class="ok">Elle file droit</h2><p>Volant stable, plus de vibration. Diagnostic validé : <b>roue avant droite à remplacer</b>, équilibrage et parallélisme à contrôler. Avant de démonter, une question : <b>quelle doc tu consultes ?</b></p><button class="btn sec" onclick="reset()">Revoir les relevés</button>`
+      : `<h2 class="ko">Toujours pareil</h2><p>Elle tire encore à droite et le volant vibre : la cause n’est pas là. Relis le relevé du <b>point 1</b> et retente ton diagnostic.</p><button class="btn" onclick="retente()">Retenter le diagnostic</button>`;
+    v.classList.add('on');
+  }, 4600);
+}
+function retente(){ document.getElementById('essai').classList.remove('on'); document.getElementById('voile').classList.add('on'); document.getElementById('choix').classList.add('on'); }
+function reset(){ document.getElementById('essai').classList.remove('on'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Néon Garage · Mission accomplie</title>
+<link rel="stylesheet" href="commun.css">
+<style>
+#scene{background:#1E1245 url(img/ville.jpg) center/cover}
+#scene::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,11,46,.55),rgba(20,11,46,.75));pointer-events:none}
+.flash{position:absolute;inset:0;background:#fff;opacity:0;animation:flash 1.2s .2s both;pointer-events:none;z-index:9}
+@keyframes flash{0%{opacity:0}10%{opacity:.9}100%{opacity:0}}
+.titre-bloc{position:absolute;left:0;right:0;top:64px;text-align:center;z-index:5}
+.titre-bloc .sur{font:600 17px/1 var(--f-hud);letter-spacing:.3em;text-transform:uppercase;color:#fff;animation:monte .6s .5s both}
+.titre-bloc h1{margin:8px 0 0;font-size:112px;line-height:.92;animation:zoom .7s .7s cubic-bezier(.2,1.4,.4,1) both}
+.titre-bloc h1 .l2{display:block;font-size:.72em;color:#fff;background:none;-webkit-text-fill-color:#fff;filter:drop-shadow(0 5px 0 rgba(60,10,90,.6))}
+@keyframes zoom{from{opacity:0;transform:scale(1.6)}to{opacity:1;transform:none}}
+@keyframes monte{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.stats{position:absolute;left:50%;top:340px;transform:translateX(-50%);width:820px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;z-index:5}
+.stat{padding:16px 18px 14px;text-align:center;opacity:0;animation:monte .6s both}
+.stat:nth-child(1){animation-delay:1.5s}.stat:nth-child(2){animation-delay:1.8s}.stat:nth-child(3){animation-delay:2.1s}
+.stat .k{font:600 13px/1 var(--f-hud);letter-spacing:.18em;text-transform:uppercase;color:var(--gris)}
+.stat .v{margin-top:8px;font:400 40px/1 var(--f-titre);color:#fff}
+.stat .v.deg{background:var(--degrade);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat .s{margin-top:6px;font-size:14.5px;line-height:1.3;color:#EDE7FF}
+.stat .etoiles{font-size:26px;justify-content:center;margin-top:6px}
+.barre{position:absolute;left:50%;bottom:72px;transform:translateX(-50%);width:820px;z-index:5;opacity:0;animation:monte .6s 2.5s both}
+.barre .k{display:flex;justify-content:space-between;font:600 14px/1 var(--f-hud);letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-bottom:8px}
+.barre .k b{color:var(--peche)}
+.barre .fond{height:14px;border-radius:7px;background:rgba(255,255,255,.14);overflow:hidden;border:1px solid rgba(255,255,255,.2)}
+.barre .fond i{display:block;height:100%;width:0;background:var(--degrade);border-radius:7px;animation:remplit 1.6s 2.8s cubic-bezier(.2,.8,.3,1) both}
+@keyframes remplit{to{width:12.5%}}
+.suite{position:absolute;left:0;right:0;bottom:30px;text-align:center;font:600 15px/1 var(--f-hud);letter-spacing:.16em;text-transform:uppercase;color:#EDE7FF;z-index:5;opacity:0;animation:monte .6s 3.2s both}
+.suite b{color:var(--cyan);text-shadow:0 0 10px rgba(77,227,255,.7)}
+/* confettis néon */
+.conf{position:absolute;top:-20px;width:10px;height:16px;border-radius:2px;z-index:8;animation:tombe linear forwards;pointer-events:none}
+@keyframes tombe{to{transform:translateY(720px) rotate(720deg);opacity:.2}}
+/* voiture qui repart, en bas */
+.route{position:absolute;left:0;right:0;bottom:0;height:60px;z-index:4;pointer-events:none;opacity:.9}
+.auto{position:absolute;left:-480px;bottom:-26px;animation:passe 3.2s 1.2s ease-in both}
+@keyframes passe{to{left:1300px}}
+.auto .roue .jante{transform-origin:center;animation:tourne .35s linear infinite}
+@keyframes tourne{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="flash"></div>
+  <div class="titre-bloc"><div class="sur">Ordre de réparation n° 0421 · clôturé</div><h1><span class="titre">Mission</span><span class="l2 titre">accomplie</span></h1></div>
+  <div class="stats">
+    <div class="stat carte"><div class="k">Réputation</div><div class="etoiles"><i class="on">★</i><i class="on">★</i><i>★</i><i>★</i><i>★</i></div><div class="s">+1 étoile : le client repart à l’heure, volant stable.</div></div>
+    <div class="stat carte"><div class="k">Geste validé</div><div class="v deg">Roue</div><div class="s">Remplacer une roue en sécurité, au couple du constructeur.</div></div>
+    <div class="stat carte"><div class="k">Réflexe du pro</div><div class="v">Doc</div><div class="s">Point de levage, couple, ordre de serrage : vérifiés dans la doc constructeur.</div></div>
+  </div>
+  <div class="barre"><div class="k"><span>Vers le diplôme · bloc 1 « Entretien et roues »</span><b>1 mission sur 8</b></div><div class="fond"><i></i></div></div>
+  <div class="suite">Prochaine mission · <b>le pare-brise fissuré</b></div>
+  <div class="route"><div class="auto" id="auto"></div></div>
+</div>
+<script src="commun.js"></script>
+<script>
+document.getElementById('auto').innerHTML = voitureSVG('v2', { w: 300 });
+const sc = document.getElementById('scene'), C = ['#FF2D8A', '#FF7A3D', '#FFB36B', '#B14CFF', '#4DE3FF', '#FFFFFF'];
+for (let i = 0; i < 90; i++) { const d = document.createElement('i'); d.className = 'conf'; d.style.left = Math.random() * 1200 + 'px'; d.style.background = C[i % C.length]; d.style.animationDuration = (2.2 + Math.random() * 2.2) + 's'; d.style.animationDelay = (0.3 + Math.random() * 1.6) + 's'; d.style.transform = 'rotate(' + Math.random() * 360 + 'deg)'; sc.appendChild(d); }
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+/* Démo Néon Garage · ambiance inspirée des jeux en monde ouvert (coucher de soleil rose-orange-violet, néons, palmiers) */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap');
+:root{
+  --rose:#FF2D8A; --rose-2:#FF5FA2; --orange:#FF7A3D; --peche:#FFB36B; --violet:#8A3FFF; --violet-2:#B14CFF;
+  --cyan:#4DE3FF; --nuit:#140B2E; --nuit-2:#1E1245; --nuit-3:#2A1A5E; --blanc:#FFFFFF; --gris:#C9BFE6; --ok:#2EE6A6; --ko:#FF4D6D;
+  --f-titre:"Anton","Impact","Arial Narrow",sans-serif;
+  --f-hud:"Barlow Condensed","Arial Narrow",sans-serif;
+  --f-texte:"Barlow","Segoe UI",system-ui,sans-serif;
+  --degrade:linear-gradient(92deg,#FFB36B 0%,#FF5FA2 48%,#B14CFF 100%);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--nuit);overflow:hidden}
+body{font:500 17px/1.45 var(--f-texte);color:#fff;-webkit-font-smoothing:antialiased}
+#scene{position:absolute;left:50%;top:50%;width:1200px;height:675px;transform-origin:center;overflow:hidden;background:var(--nuit)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+/* titre façon jaquette : lettres hautes, dégradé coucher de soleil, légère inclinaison */
+.titre{font:400 1em/0.95 var(--f-titre);letter-spacing:.01em;text-transform:uppercase;background:var(--degrade);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 0 rgba(60,10,90,.55)) drop-shadow(0 0 22px rgba(255,95,162,.45))}
+.hud{font:600 15px/1 var(--f-hud);letter-spacing:.14em;text-transform:uppercase;color:var(--gris)}
+.hud b{color:#fff}
+.bandeau{position:absolute;left:0;right:0;top:0;height:54px;display:flex;align-items:center;justify-content:space-between;padding:0 34px;z-index:5;background:linear-gradient(180deg,rgba(20,11,46,.85),rgba(20,11,46,0))}
+.etoiles{display:inline-flex;gap:3px;font-size:16px;letter-spacing:0}
+.etoiles i{font-style:normal;color:rgba(255,255,255,.28)}
+.etoiles i.on{color:var(--peche);text-shadow:0 0 10px rgba(255,179,107,.8)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;font:700 20px/1 var(--f-hud);letter-spacing:.12em;text-transform:uppercase;border:0;border-radius:6px;padding:16px 28px;color:#fff;background:linear-gradient(92deg,var(--rose),var(--violet));box-shadow:0 0 0 2px rgba(255,255,255,.14) inset,0 10px 30px rgba(255,45,138,.35);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 0 2px rgba(255,255,255,.3) inset,0 14px 34px rgba(255,45,138,.5)}
+.btn.sec{background:rgba(255,255,255,.08);box-shadow:0 0 0 2px rgba(255,255,255,.35) inset}
+.carte{background:rgba(20,11,46,.82);border:1px solid rgba(255,255,255,.14);border-radius:14px;backdrop-filter:blur(6px);box-shadow:0 20px 50px rgba(0,0,0,.45)}
+.neon{color:var(--cyan);text-shadow:0 0 8px rgba(77,227,255,.9),0 0 22px rgba(77,227,255,.5)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
