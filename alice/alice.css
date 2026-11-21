@@ -9,10 +9,10 @@ body{font:400 17px/1.45 var(--f-texte);color:var(--violet);-webkit-font-smoothin
 button{font:inherit;cursor:pointer}
 :focus-visible{outline:3px solid var(--lilas);outline-offset:3px}
 /* zone de contenu : la colonne de gauche (Alice et sa bulle) et le bouton « Continuer » en haut à droite sont posés dans Genially */
-.zone{position:absolute;left:350px;top:22px;right:24px;bottom:20px}
-h1{margin:0;font:800 34px/1.1 var(--f-titre);color:var(--violet);letter-spacing:-.01em}
+.zone{position:absolute;left:274px;top:22px;right:24px;bottom:20px}
+h1{margin:0 0 0 322px;max-width:350px;font:800 27px/1.12 var(--f-titre);color:var(--violet);letter-spacing:-.01em}
 h1 em{font-style:normal;color:var(--corail)}
-.sous{margin:6px 0 0;max-width:560px;font-size:16.5px;color:var(--gris)}
+.sous{margin:5px 0 0 322px;max-width:340px;font-size:14.5px;line-height:1.35;color:var(--gris)}
 .carte{background:var(--carte);border-radius:18px;box-shadow:0 10px 30px rgba(58,0,87,.10);border:1px solid rgba(58,0,87,.07)}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:12px;padding:13px 22px;font:700 17px/1 var(--f-titre);color:#fff;background:var(--lilas);box-shadow:0 8px 18px rgba(161,116,238,.35);transition:transform .15s,box-shadow .15s}
 .btn:hover{transform:translateY(-2px);box-shadow:0 12px 22px rgba(161,116,238,.45)}

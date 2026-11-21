@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Alice · Mes frais bancaires</title>
-<link rel="stylesheet" href="alice.css?v=1">
+<link rel="stylesheet" href="alice.css?v=2">
 <style>
-.releve{position:absolute;left:0;top:92px;width:500px;bottom:0;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.releve{position:absolute;left:0;top:126px;width:540px;bottom:0;padding:0;overflow:hidden;display:flex;flex-direction:column}
 .releve .tete{padding:14px 20px 12px;background:var(--violet);color:#fff}
 .releve .tete b{display:block;font:800 16px/1.1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase}
 .releve .tete small{font-size:13px;opacity:.8}
@@ -23,14 +23,14 @@
 .ligne em{font-style:normal}
 .releve .pied{padding:10px 20px 12px;border-top:1px dashed rgba(58,0,87,.2);display:flex;justify-content:space-between;align-items:baseline;font:700 13px/1 var(--f-titre);letter-spacing:.05em;text-transform:uppercase;color:var(--gris)}
 .releve .pied span{font:700 22px/1 var(--f-chiffre);color:var(--violet)}
-.fiche{position:absolute;left:520px;right:0;top:92px;height:262px;padding:18px 20px}
+.fiche{position:absolute;left:560px;right:0;top:126px;height:240px;padding:18px 20px}
 .fiche h2{margin:8px 0 6px;font:800 19px/1.2 var(--f-titre)}
 .fiche p{margin:0 0 8px;font-size:15.5px;line-height:1.42;color:var(--gris)}
 .fiche .geste{font-weight:700;color:var(--violet)}
 .fiche.pop{animation:pop .3s}
-.compteur{position:absolute;left:520px;right:0;top:370px;bottom:0;padding:16px 20px;text-align:center;background:var(--violet);color:#fff;border:0}
+.compteur{position:absolute;left:560px;right:0;top:382px;bottom:0;padding:16px 20px;text-align:center;background:var(--violet);color:#fff;border:0}
 .compteur .k{font:800 13px/1.2 var(--f-titre);letter-spacing:.08em;text-transform:uppercase;opacity:.8}
-.compteur .v{font:700 68px/1 var(--f-chiffre);margin:6px 0 0;color:#fff}
+.compteur .v{font:700 62px/1 var(--f-chiffre);margin:4px 0 0;color:#fff}
 .compteur .s{font-size:15px;opacity:.9}
 .compteur .jauge{height:10px;border-radius:5px;background:rgba(255,255,255,.2);margin:12px 0 10px;overflow:hidden}
 .compteur .jauge b{display:block;height:100%;width:0;background:var(--corail);border-radius:5px;transition:width .6s cubic-bezier(.2,.8,.3,1)}
@@ -42,7 +42,7 @@
 <div id="scene">
   <div class="zone">
     <h1>Mes frais <em>bancaires</em></h1>
-    <p class="sous">Clique sur chaque ligne du contrat d'Alice : utile, ou à supprimer ?</p>
+    <p class="sous">Clique sur chaque ligne : utile, ou à supprimer ?</p>
     <div class="releve carte">
       <div class="tete"><b>Contrat bancaire</b><small>Compte courant · tarifs annuels</small></div>
       <ul id="lignes"></ul>
@@ -52,7 +52,7 @@
     <div class="compteur carte" id="compteur"><div class="k">Frais inutiles repérés</div><div class="v" id="v">0 €</div><div class="jauge"><b id="j"></b></div><div class="s" id="s">par an · 0 ligne vérifiée sur 6</div></div>
   </div>
 </div>
-<script src="alice.js?v=1"></script>
+<script src="alice.js?v=2"></script>
 <script>
 // Lignes et verdicts repris du contrat du parcours d'origine (total des frais inutiles : 168 € par an)
 const L = [

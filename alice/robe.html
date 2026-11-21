@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Alice · J'achète ou j'attends ?</title>
-<link rel="stylesheet" href="alice.css?v=1">
+<link rel="stylesheet" href="alice.css?v=2">
 <style>
-.tel{position:absolute;left:0;top:92px;width:372px;bottom:0;border-radius:36px;background:#1B0B2A;border:6px solid #2B1340;box-shadow:0 20px 44px rgba(58,0,87,.3);overflow:hidden;animation:monte .6s both}
+.tel{position:absolute;left:0;top:126px;width:400px;bottom:0;border-radius:36px;background:#1B0B2A;border:6px solid #2B1340;box-shadow:0 20px 44px rgba(58,0,87,.3);overflow:hidden;animation:monte .6s both}
 .tel .haut{position:absolute;left:0;right:0;top:0;height:74px;background:linear-gradient(135deg,#A174EE,#F3785D);display:flex;align-items:center;gap:12px;padding:0 18px;color:#fff;z-index:2}
 .tel .haut img{width:46px;height:46px;border-radius:50%;background:#FFE3DC;object-fit:cover;object-position:50% 6%;border:2px solid #fff}
 .tel .haut b{display:block;font:800 17px/1.1 var(--f-titre)}.tel .haut small{font-size:12.5px;opacity:.9}
@@ -28,7 +28,7 @@
 .rep .k{font:700 11px/1 var(--f-titre);letter-spacing:.14em;text-transform:uppercase;color:#C9B1F7;padding-left:4px}
 .rep button{text-align:left;border:1.5px solid var(--lilas);background:rgba(161,116,238,.12);color:#fff;border-radius:13px;padding:10px 13px;font:700 14.5px/1.3 var(--f-texte);transition:.15s}
 .rep button:hover{background:rgba(161,116,238,.35);transform:translateX(3px)}
-.cote{position:absolute;left:392px;right:0;top:92px;bottom:0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.cote{position:absolute;left:420px;right:0;top:126px;bottom:0;display:grid;grid-template-rows:auto 1fr;gap:14px}
 .h24{padding:16px 18px;display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:center}
 .horloge{width:118px;height:118px}
 .horloge .aig{transform-origin:59px 59px;transition:transform 2.6s cubic-bezier(.4,0,.2,1)}
@@ -50,7 +50,7 @@
 <div id="scene">
   <div class="zone">
     <h1>J'achète ou <em>j'attends</em> ?</h1>
-    <p class="sous">Alice vient de t'écrire. Réponds-lui dans le téléphone.</p>
+    <p class="sous">Réponds-lui dans le téléphone.</p>
     <div class="tel">
       <div class="haut"><img src="img/alice-ravie.png?v=1" alt=""><div><b>Alice</b><small>en ligne</small></div></div>
       <div class="fil" id="fil"></div>
@@ -70,9 +70,15 @@
     </div>
   </div>
 </div>
-<script src="alice.js?v=1"></script>
+<script src="alice.js?v=2"></script>
 <script>
 // Scène reprise du parcours d'origine : la robe à 60 € au lieu de 180 €, la règle des 24 heures. Reste du mois : 23 €.
+const SIT = [
+  { t: 'Tu reçois une promo pour une vente privée de maillots de bain : 60 €. Le tien est usé, tu en as besoin pour cet été, tu cherches depuis deux semaines et tu connais bien la marque.', c: ['J’achète', 'J’attends'], r: ['Ça se défend : besoin réel, recherche faite, marque connue. C’est un achat réfléchi, pas un coup de tête.', 'Bonne idée ! Donne-toi 24 heures pour voir si tu as vraiment envie de CE maillot. S’il est encore là demain, ce sera un achat réfléchi.'], cle: 'Un besoin réel, réfléchi : ce n’est pas un achat impulsif.' },
+  { t: 'Nouvelle série sur une plateforme que tu n’as pas. Au bureau, tout le monde en parle. Mais tu as déjà Netflix et Canal+.', c: ['J’achète', 'J’attends'], r: ['Attention à l’abonnement de trop : tu en paies déjà deux. Si tu craques, applique la règle du +1, −1 : un qui entre, un qui sort.', 'Bon réflexe. Tu en paies déjà deux : si tu en prends un nouveau, résilies-en un. C’est la règle du +1, −1.'], cle: 'Règle du +1, −1 : un abonnement entre, un autre sort.' },
+  { t: 'Après le travail, une collègue te propose d’aller boire un verre dans le nouveau bar qui vient d’ouvrir.', c: ['J’y vais', 'Je refuse'], r: ['Pour l’aspect social, c’est chouette de boire un verre de temps en temps avec ses collègues ! L’essentiel, c’est de savoir pourquoi tu le fais, et de le faire en conscience.', 'Pourquoi pas ! L’essentiel, c’est que ce soit un choix, pas une privation. Un verre de temps en temps, en conscience, c’est aussi du lien.'], cle: 'Dépenser en conscience, c’est savoir pourquoi on le fait.' },
+  { t: 'Tu traînes sur les réseaux et tu vois qu’une marque que tu aimes sort un nouveau complément « collagène matcha glow ».', c: ['J’achète', 'J’attends'], r: ['Envie née en traînant sur les réseaux : c’est l’achat impulsif typique. Donne-toi 24 heures avant de valider le panier.', 'Bravo ! Laisse retomber l’envie et revois-la demain. Si tu le veux toujours, c’est peut-être un vrai besoin.'], cle: 'Envie née en scrollant : on applique la règle des 24 heures.' },
+];
 const fil = document.getElementById('fil'), rep = document.getElementById('rep'), $ = id => document.getElementById(id);
 const bas = () => { fil.scrollTop = fil.scrollHeight; };
 const ROBE = '<svg viewBox="0 0 150 170" aria-hidden="true"><rect width="150" height="170" fill="#FFE3DC"/><path d="M58 22 Q75 34 92 22 L98 62 Q124 110 128 158 L22 158 Q26 110 52 62 Z" fill="#C2187A"/><path d="M58 22 Q75 34 92 22" fill="none" stroke="#8E0F58" stroke-width="3"/><path d="M52 62 Q75 72 98 62" fill="none" stroke="#8E0F58" stroke-width="3"/><path d="M60 80 L48 156 M75 82 L75 158 M90 80 L102 156" stroke="#A01468" stroke-width="2"/></svg>';
@@ -94,7 +100,11 @@ function choix(liste){ return new Promise(ok => { rep.innerHTML = '<div class="k
   await attends(3000); dis('robe-demain');
   await elle('24 heures plus tard… je n’y pense même plus 😅 60 € gardés !');
   $('solde').className = 'v vert'; $('si').className = 'si ok'; $('si').innerHTML = 'Alice finit le mois à <b>23 €</b> au lieu de −37 €. Cette règle lui a déjà évité pas mal de petits achats inutiles.'; $('h24p').textContent = 'Demain, l’envie n’est plus la même. On décide à froid.';
-  await attends(600); sys('Conversation terminée. Clique sur « Continuer ».');
+  // À toi : les quatre situations du parcours d'origine. Pas de mauvaise réponse, Alice réagit à chaque choix.
+  await attends(900); document.querySelector('.compte .k').textContent = 'À toi : quatre situations'; $('solde').className = 'v'; $('solde').textContent = '0 / 4'; document.querySelector('.compte p').textContent = 'Pas de mauvaise réponse : l’important, c’est de décider en conscience.'; $('si').className = 'si'; $('si').innerHTML = 'Lis la situation dans le téléphone, puis choisis.';
+  await elle('À toi maintenant ! Je t’envoie quatre situations. Tu achètes, ou tu attends ?');
+  for (let i = 0; i < SIT.length; i++) { const S = SIT[i]; sys('Situation ' + (i + 1) + ' sur 4'); await elle(S.t); const c = await choix(S.c); await elle(S.r[c]); $('solde').textContent = (i + 1) + ' / 4'; $('si').innerHTML = '<b style="color:var(--violet)">' + S.cle + '</b>'; await attends(500); }
+  $('solde').className = 'v vert'; sys('Conversation terminée. Clique sur « Continuer ».');
 })();
 </script>
 </body>

@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Alice · Où part mon salaire ?</title>
-<link rel="stylesheet" href="alice.css?v=1">
+<link rel="stylesheet" href="alice.css?v=2">
 <style>
-.envs{position:absolute;left:0;top:96px;width:440px;height:392px;padding:16px 16px 12px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.envs{position:absolute;left:0;top:126px;width:480px;height:366px;padding:16px 16px 12px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .env{position:relative;display:flex;flex-direction:column;align-items:center}
 .env .nom{font:800 13px/1.15 var(--f-titre);letter-spacing:.05em;text-transform:uppercase;text-align:center;height:32px}
 .env .pot{position:relative;width:100%;flex:1;border-radius:14px;background:var(--fond);border:2px solid rgba(58,0,87,.12);overflow:hidden;margin:6px 0}
@@ -16,9 +16,9 @@
 .env .cible span{position:absolute;right:6px;top:-18px;font:700 11px/1 var(--f-titre);color:var(--violet);background:rgba(255,255,255,.85);padding:2px 5px;border-radius:5px}
 .env .mt{font:700 26px/1 var(--f-chiffre)}
 .env .pc{font-size:13px;color:var(--gris)}
-.abos{position:absolute;left:458px;right:0;top:96px;height:392px;padding:14px 14px 10px;display:flex;flex-direction:column;gap:7px}
+.abos{position:absolute;left:498px;right:0;top:126px;height:366px;padding:14px 14px 10px;display:flex;flex-direction:column;gap:7px}
 .abos .k{font:800 13px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:var(--gris);margin-bottom:2px}
-.abo{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;padding:9px 12px;border-radius:12px;background:var(--fond);border:2px solid transparent;transition:.2s}
+.abo{display:grid;grid-template-columns:1fr auto;gap:1px 10px;align-items:center;padding:7px 12px;border-radius:12px;background:var(--fond);border:2px solid transparent;transition:.2s}
 .abo b{font:700 15.5px/1.2 var(--f-texte)}
 .abo small{grid-column:1;font-size:13px;color:var(--gris)}
 .abo .prix{font:700 19px/1 var(--f-chiffre);grid-row:1;grid-column:2;text-align:right}
@@ -26,7 +26,7 @@
 .abo.coupe{border-color:var(--ok);background:rgba(31,175,122,.08)}
 .abo.coupe b{text-decoration:line-through;text-decoration-color:var(--ok)}
 .abo.coupe button{background:#fff;color:var(--violet);box-shadow:0 0 0 2px var(--lilas) inset}
-.bilan{position:absolute;left:0;right:0;top:502px;height:132px;padding:14px 22px;display:flex;align-items:center;gap:22px;background:var(--violet);color:#fff;border:0}
+.bilan{position:absolute;left:0;right:0;top:506px;height:126px;padding:14px 22px;display:flex;align-items:center;gap:22px;background:var(--violet);color:#fff;border:0}
 .bilan .k{font:800 12.5px/1.2 var(--f-titre);letter-spacing:.08em;text-transform:uppercase;opacity:.8}
 .bilan .v{font:700 46px/1 var(--f-chiffre)}
 .bilan .v small{font:700 17px/1 var(--f-titre);opacity:.85;margin-left:4px}
@@ -39,7 +39,7 @@
 <div id="scene">
   <div class="zone">
     <h1>Où part mon <em>salaire</em> ?</h1>
-    <p class="sous">2 267 € par mois, et seulement 23 € d'épargne. Résilie ce qui ne sert plus : l'argent change d'enveloppe.</p>
+    <p class="sous">Résilie ce qui ne sert plus : l'argent change d'enveloppe.</p>
     <div class="envs carte">
       <div class="env b"><div class="nom">Besoins<br>essentiels</div><div class="pot"><div class="plein" id="pB"></div><div class="cible" style="bottom:50%"><span>repère 50 %</span></div></div><div class="mt" id="mB">1 733 €</div><div class="pc" id="cB"></div></div>
       <div class="env e"><div class="nom">Envies<br>et loisirs</div><div class="pot" id="potE"><div class="plein" id="pE"></div><div class="cible" style="bottom:30%"><span>repère 30 %</span></div></div><div class="mt" id="mE">511 €</div><div class="pc" id="cE"></div></div>
@@ -55,7 +55,7 @@
     </div>
   </div>
 </div>
-<script src="alice.js?v=1"></script>
+<script src="alice.js?v=2"></script>
 <script>
 // Salaire, charges et abonnements repris du parcours d'origine ; l'usage de chaque abonnement est un exemple pour la démo
 const SAL = 2267, BES = 1733; let env = 511, ep = 23;
