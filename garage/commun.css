@@ -35,3 +35,7 @@ button{font:inherit;cursor:pointer}
 .voix svg{width:28px;height:28px;display:block}
 .voix.joue{animation:voixpulse 1s ease-in-out infinite}
 @keyframes voixpulse{50%{box-shadow:0 0 0 10px rgba(255,45,138,.18),0 0 22px rgba(255,45,138,.7)}}
+
+/* mode ?natif : ce qui est posé en natif dans Genially disparaît de la page */
+.natif .hn,.natif .voix{display:none!important}
+.natif .bandeau .hud:last-child{display:none}

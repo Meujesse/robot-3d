@@ -11,6 +11,8 @@
 })();
 // Paramètre ?muet : aucun son (les pages n'en jouent de toute façon pas sans geste)
 const MUET = new URLSearchParams(location.search).has('muet');
+// Paramètre ?natif : Inès, sa bulle, le bouton voix et les étoiles sont posés dans Genially, la page ne les affiche plus
+const NATIF = new URLSearchParams(location.search).has('natif'); if (NATIF) document.documentElement.classList.add('natif');
 // Voiture citadine vue de côté, en SVG : carrosserie dégradée, roues qui tournent, phares
 function voitureSVG(id, opts){
   const o = Object.assign({ teinte1:'#FF2D8A', teinte2:'#B14CFF', w:420 }, opts||{});
