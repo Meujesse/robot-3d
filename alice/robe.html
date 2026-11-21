@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alice · J'achète ou j'attends ?</title>
+<link rel="stylesheet" href="alice.css?v=1">
+<style>
+.tel{position:absolute;left:0;top:92px;width:372px;bottom:0;border-radius:36px;background:#1B0B2A;border:6px solid #2B1340;box-shadow:0 20px 44px rgba(58,0,87,.3);overflow:hidden;animation:monte .6s both}
+.tel .haut{position:absolute;left:0;right:0;top:0;height:74px;background:linear-gradient(135deg,#A174EE,#F3785D);display:flex;align-items:center;gap:12px;padding:0 18px;color:#fff;z-index:2}
+.tel .haut img{width:46px;height:46px;border-radius:50%;background:#FFE3DC;object-fit:cover;object-position:50% 6%;border:2px solid #fff}
+.tel .haut b{display:block;font:800 17px/1.1 var(--f-titre)}.tel .haut small{font-size:12.5px;opacity:.9}
+.fil{position:absolute;left:0;right:0;top:74px;bottom:0;padding:12px 12px 140px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;scrollbar-width:none;scroll-behavior:smooth}
+.fil::-webkit-scrollbar{display:none}
+.msg{max-width:86%;padding:9px 13px;border-radius:17px;font-size:15px;line-height:1.34;animation:monte .3s both;flex:none;color:#fff}
+.msg.elle{align-self:flex-start;background:#3A1B55;border-bottom-left-radius:6px}
+.msg.moi{align-self:flex-end;background:var(--lilas);border-bottom-right-radius:6px}
+.msg.sys{align-self:center;max-width:94%;text-align:center;background:rgba(243,120,93,.16);border:1px solid rgba(243,120,93,.6);color:#FFD9D0;font:700 13.5px/1.35 var(--f-texte);border-radius:12px}
+.msg.photo{padding:6px;background:#3A1B55;width:150px}
+.msg.photo svg{display:block;width:100%;border-radius:12px}
+.msg.photo small{display:block;padding:5px 6px 2px;font-size:12.5px}.msg.photo s{opacity:.7}
+.points{display:inline-flex;gap:4px;align-items:center;height:15px}
+.points b{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.4;animation:tape 1s infinite}
+.points b:nth-child(2){animation-delay:.2s}.points b:nth-child(3){animation-delay:.4s}
+@keyframes tape{50%{opacity:1;transform:translateY(-3px)}}
+.rep{position:absolute;left:0;right:0;bottom:0;background:#140720;border-top:1px solid rgba(255,255,255,.12);padding:10px 12px 14px;display:grid;gap:7px;transform:translateY(100%);transition:transform .35s;z-index:3}
+.rep.on{transform:none}
+.rep .k{font:700 11px/1 var(--f-titre);letter-spacing:.14em;text-transform:uppercase;color:#C9B1F7;padding-left:4px}
+.rep button{text-align:left;border:1.5px solid var(--lilas);background:rgba(161,116,238,.12);color:#fff;border-radius:13px;padding:10px 13px;font:700 14.5px/1.3 var(--f-texte);transition:.15s}
+.rep button:hover{background:rgba(161,116,238,.35);transform:translateX(3px)}
+.cote{position:absolute;left:392px;right:0;top:92px;bottom:0;display:grid;grid-template-rows:auto 1fr;gap:14px}
+.h24{padding:16px 18px;display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:center}
+.horloge{width:118px;height:118px}
+.horloge .aig{transform-origin:59px 59px;transition:transform 2.6s cubic-bezier(.4,0,.2,1)}
+.h24 h2{margin:0 0 4px;font:800 19px/1.15 var(--f-titre)}
+.h24 p{margin:0;font-size:14.5px;line-height:1.38;color:var(--gris)}
+.envie{margin-top:8px;height:12px;border-radius:6px;background:#EFE5FA;overflow:hidden}
+.envie b{display:block;height:100%;width:95%;border-radius:6px;background:linear-gradient(90deg,var(--lilas),var(--corail));transition:width 2.6s cubic-bezier(.4,0,.2,1)}
+.envie-l{display:flex;justify-content:space-between;font:700 12px/1 var(--f-titre);letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-top:8px}
+.compte{padding:16px 18px;display:flex;flex-direction:column}
+.compte .k{font:800 13px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:var(--gris)}
+.compte .v{font:700 54px/1 var(--f-chiffre);margin:8px 0 2px;transition:color .3s}
+.compte .v.rouge{color:var(--ko)}.compte .v.vert{color:var(--ok)}
+.compte p{margin:0;font-size:14.5px;line-height:1.38;color:var(--gris)}
+.compte .si{margin-top:auto;padding:10px 12px;border-radius:12px;background:var(--fond);font-size:14px;line-height:1.35}
+.compte .si b{color:var(--ko)}.compte .si.ok b{color:var(--ok)}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="zone">
+    <h1>J'achète ou <em>j'attends</em> ?</h1>
+    <p class="sous">Alice vient de t'écrire. Réponds-lui dans le téléphone.</p>
+    <div class="tel">
+      <div class="haut"><img src="img/alice-ravie.png?v=1" alt=""><div><b>Alice</b><small>en ligne</small></div></div>
+      <div class="fil" id="fil"></div>
+      <div class="rep" id="rep"></div>
+    </div>
+    <div class="cote">
+      <div class="h24 carte">
+        <svg class="horloge" viewBox="0 0 118 118" aria-hidden="true"><circle cx="59" cy="59" r="54" fill="#fff" stroke="#3A0057" stroke-width="6"/><g stroke="#C9B1F7" stroke-width="3" stroke-linecap="round"><path d="M59 12v8M59 98v8M12 59h8M98 59h8"/></g><g class="aig" id="petite"><path d="M59 59V34" stroke="#3A0057" stroke-width="6" stroke-linecap="round"/></g><g class="aig" id="grande"><path d="M59 59V20" stroke="#F3785D" stroke-width="4" stroke-linecap="round"/></g><circle cx="59" cy="59" r="6" fill="#3A0057"/></svg>
+        <div><h2>La règle des 24 heures</h2><p id="h24p">Une envie d'achat ? On attend 24 heures avant de valider le panier.</p><div class="envie-l"><span>Envie d'acheter</span><span id="pcE">95 %</span></div><div class="envie"><b id="jE"></b></div></div>
+      </div>
+      <div class="compte carte">
+        <div class="k">Ce qu'il reste à Alice ce mois-ci</div>
+        <div class="v" id="solde">23 €</div>
+        <p>Une fois ses charges et ses loisirs payés.</p>
+        <div class="si" id="si">La robe coûte 60 €. Si elle craque maintenant, elle finit le mois à <b>−37 €</b>.</div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="alice.js?v=1"></script>
+<script>
+// Scène reprise du parcours d'origine : la robe à 60 € au lieu de 180 €, la règle des 24 heures. Reste du mois : 23 €.
+const fil = document.getElementById('fil'), rep = document.getElementById('rep'), $ = id => document.getElementById(id);
+const bas = () => { fil.scrollTop = fil.scrollHeight; };
+const ROBE = '<svg viewBox="0 0 150 170" aria-hidden="true"><rect width="150" height="170" fill="#FFE3DC"/><path d="M58 22 Q75 34 92 22 L98 62 Q124 110 128 158 L22 158 Q26 110 52 62 Z" fill="#C2187A"/><path d="M58 22 Q75 34 92 22" fill="none" stroke="#8E0F58" stroke-width="3"/><path d="M52 62 Q75 72 98 62" fill="none" stroke="#8E0F58" stroke-width="3"/><path d="M60 80 L48 156 M75 82 L75 158 M90 80 L102 156" stroke="#A01468" stroke-width="2"/></svg>';
+async function elle(html, cls = ''){ const m = document.createElement('div'); m.className = 'msg elle ' + cls; m.innerHTML = '<span class="points"><b></b><b></b><b></b></span>'; fil.appendChild(m); bas(); await attends(900 + Math.min(1200, html.length * 9)); m.innerHTML = html; bas(); await attends(450); }
+function moi(t){ const m = document.createElement('div'); m.className = 'msg moi'; m.textContent = t; fil.appendChild(m); bas(); }
+function sys(t){ const m = document.createElement('div'); m.className = 'msg sys'; m.textContent = t; fil.appendChild(m); bas(); }
+function choix(liste){ return new Promise(ok => { rep.innerHTML = '<div class="k">Ta réponse</div>'; liste.forEach((t, i) => { const b = document.createElement('button'); b.textContent = t; b.onclick = () => { rep.classList.remove('on'); moi(t); ok(i); }; rep.appendChild(b); }); rep.classList.add('on'); bas(); }); }
+(async () => {
+  await attends(700);
+  await elle('OMG ! 😍 Je viens de tomber sur une robe dos nu à 60 € au lieu de 180 € sur Vinted !');
+  await elle(ROBE + '<small>Robe dos nu · <s>180 €</s> <b>60 €</b></small>', 'photo');
+  await elle('Elle serait parfaite pour un mariage cet été. Bon, je n’ai pas encore de mariage de prévu… mais elle me fait de l’œil.');
+  const c = await choix(['C’est tentant !', 'Attends un peu']);
+  if (c === 0) { $('solde').textContent = '−37 €'; $('solde').className = 'v rouge'; dis('robe-tentant'); await elle('Haha ! T’es une vraie petite diablotine 😈 Mais attends… j’ai déjà une bonne dizaine de robes.'); $('solde').textContent = '23 €'; $('solde').className = 'v'; await elle('Je vais patienter 24 heures. Si demain j’en ai encore envie, je regarderai de plus près.'); }
+  else { dis('robe-attends'); await elle('Tu as raison. Si j’attends, elle risque de partir… mais je patiente 24 heures, et on en reparle demain.'); }
+  await attends(500); sys('24 heures passent…'); $('h24p').textContent = 'Le temps passe, et l’envie retombe.';
+  $('petite').style.transform = 'rotate(720deg)'; $('grande').style.transform = 'rotate(8640deg)'; $('jE').style.width = '18%';
+  const t0 = performance.now(); (function pas(t){ const k = Math.min(1, (t - t0) / (VITE ? 1 : 2600)); $('pcE').textContent = Math.round(95 - 77 * k) + ' %'; if (k < 1) requestAnimationFrame(pas); })(t0);
+  await attends(3000); dis('robe-demain');
+  await elle('24 heures plus tard… je n’y pense même plus 😅 60 € gardés !');
+  $('solde').className = 'v vert'; $('si').className = 'si ok'; $('si').innerHTML = 'Alice finit le mois à <b>23 €</b> au lieu de −37 €. Cette règle lui a déjà évité pas mal de petits achats inutiles.'; $('h24p').textContent = 'Demain, l’envie n’est plus la même. On décide à froid.';
+  await attends(600); sys('Conversation terminée. Clique sur « Continuer ».');
+})();
+</script>
+</body>
+</html>

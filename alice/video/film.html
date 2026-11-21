@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Alice · vidéos motion design</title>
+<link rel="stylesheet" href="../alice.css?v=1">
+<style>
+html,body{background:#FFF6F5}
+#plan{position:absolute;left:0;top:0;width:1280px;height:720px;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,#FFFFFF 0%,#FFF6F5 55%,#FCE6E1 100%)}
+#plan *{position:absolute}
+#plan em,#plan b,#plan i,#plan br,#plan span,#plan svg *{position:static}
+#plan .obj svg,#plan .obj b{position:static}
+.kick{left:70px;top:44px;font:800 17px/1 var(--f-titre);letter-spacing:.16em;text-transform:uppercase;color:var(--corail)}
+.titre{left:70px;top:70px;font:800 40px/1.1 var(--f-titre);color:var(--violet);letter-spacing:-.01em;white-space:nowrap}
+.gros{left:0;right:0;text-align:center;font:800 76px/1.05 var(--f-titre);color:var(--violet);letter-spacing:-.02em}
+.gros em{font-style:normal;color:var(--corail)}
+.sst{left:140px;right:140px;bottom:38px;text-align:center;font:700 25px/1.3 var(--f-texte);color:var(--violet)}
+.sst span{position:static;background:rgba(255,255,255,.92);padding:6px 14px;border-radius:10px;box-decoration-break:clone;-webkit-box-decoration-break:clone;box-shadow:0 4px 14px rgba(58,0,87,.08)}
+.dette{width:300px;height:170px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.14);border:2px solid rgba(58,0,87,.08)}
+.dette .n{left:24px;top:22px;font:800 21px/1.15 var(--f-titre);color:var(--violet)}
+.dette .m{left:24px;bottom:18px;font:700 54px/1 var(--f-chiffre);color:var(--corail)}
+.dette .rg{right:-14px;top:-14px;width:50px;height:50px;border-radius:50%;background:var(--violet);color:#fff;font:700 26px/50px var(--f-chiffre);text-align:center}
+.dette .ok{inset:0;border-radius:20px;background:rgba(31,175,122,.97);color:#fff;display:flex;align-items:center;justify-content:center;font:800 34px/1 var(--f-titre);letter-spacing:.04em}
+.pil{height:46px;padding:0 18px;border-radius:23px;font:800 19px/46px var(--f-titre);color:#fff;white-space:nowrap}
+.pil.min{background:var(--lilas)}.pil.plus{background:var(--corail)}
+.boule{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0%,#F1E9FD 55%,#C9B1F7 100%);box-shadow:0 10px 24px rgba(58,0,87,.2),0 0 0 4px #fff inset}
+.qm{font:800 120px/1 var(--f-chiffre);color:var(--lilas-2)}
+.note{left:70px;width:760px;font:400 22px/1.4 var(--f-texte);color:var(--gris)}
+.note b{color:var(--violet)}
+.col{width:500px;top:150px;bottom:150px;border-radius:26px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12)}
+.col .tete{left:0;right:0;top:0;height:70px;border-radius:24px 24px 0 0;color:#fff;font:800 28px/70px var(--f-titre);text-align:center;letter-spacing:.04em}
+.obj{width:150px;text-align:center}
+.obj svg{display:block;width:124px;height:124px;margin:0 auto}
+.obj b{display:block;font:700 20px/1.2 var(--f-texte);color:var(--violet);margin-top:6px}
+.barre{bottom:26px;height:22px;border-radius:11px;left:40px;width:420px;transform-origin:left center}
+.egal{left:590px;top:300px;width:100px;height:100px;border-radius:50%;background:var(--violet);color:#fff;font:700 62px/96px var(--f-chiffre);text-align:center}
+.dixans{left:0;right:0;top:60px;text-align:center;font:800 54px/1 var(--f-titre);color:var(--corail)}
+.cred{left:0;right:0;text-align:center;font:400 24px/1.4 var(--f-texte);color:var(--gris)}
+.conf{width:16px;height:24px;border-radius:4px}
+</style>
+</head>
+<body>
+<div id="plan"></div>
+<script>
+const plan = document.getElementById('plan'), anims = [], ticks = [];
+const el = (html, css, cls, parent) => { const d = document.createElement('div'); if (cls) d.className = cls; d.innerHTML = html; d.style.cssText = css || ''; (parent || plan).appendChild(d); return d; };
+const A = (e, kf, t0, d, ease) => { const a = e.animate(kf, { delay: t0 * 1000, duration: d * 1000, fill: 'both', easing: ease || 'cubic-bezier(.2,.8,.2,1)' }); a.pause(); anims.push(a); return a; };
+// K : une seule animation, images clés données en temps absolus [[t, {propriétés}], ...]
+const K = (e, f, ease) => { const t0 = f[0][0], d = f[f.length - 1][0] - t0; return A(e, f.map(([t, p]) => Object.assign({ offset: (t - t0) / d, easing: ease || 'cubic-bezier(.45,0,.2,1)' }, p)), t0, d, 'linear'); };
+const entre = (e, t, d = .55, dy = 34) => A(e, [{ opacity: 0, transform: `translateY(${dy}px)` }, { opacity: 1, transform: 'none' }], t, d);
+const pop = (e, t, d = .5) => A(e, [{ opacity: 0, transform: 'scale(.4)' }, { opacity: 1, transform: 'scale(1.12)', offset: .65 }, { opacity: 1, transform: 'scale(1)' }], t, d);
+const visible = (e, a, b, f = .35) => K(e, [[a, { opacity: 0 }], [a + f, { opacity: 1 }], [b - f, { opacity: 1 }], [b, { opacity: 0 }]], 'linear');
+const film = { duree: 0, pistes: [], at(t) { anims.forEach(a => { a.currentTime = t * 1000; }); ticks.forEach(f => f(t)); } };
+window.film = film;
+const F = new URLSearchParams(location.search).get('f') || 'neige';
+
+fetch('voix/durees.json').then(r => r.json()).then(D => {
+  // enchaînement : une réplique par plan, 0,45 s de respiration entre deux
+  const cles = F === 'neige' ? ['n1', 'n2', 'n3', 'n4', 'n5'] : ['y1', 'y2', 'y3', 'y4', 'y5']; let t = 1.5; const S = cles.map(k => { const s = { k, t, d: D[k], f: t + D[k] }; film.pistes.push({ f: k, t }); t += D[k] + .45; return s; }); film.duree = t + 1.6;
+  const sst = (s, txt) => { const e = el(`<span>${txt}</span>`, '', 'sst'); visible(e, s.t - .1, s.f + .3, .25); };
+  if (F === 'neige') {
+    const ouv = el('La méthode<br><em>boule de neige</em>', 'top:250px', 'gros'); K(ouv, [[0, { opacity: 0, transform: 'scale(.92)' }], [.5, { opacity: 1, transform: 'none' }], [1.25, { opacity: 1, transform: 'none' }], [1.6, { opacity: 0, transform: 'translateY(-40px)' }]]);
+    entre(el('Rembourser ses dettes', '', 'kick'), 1.5); entre(el('La méthode boule de neige', '', 'titre'), 1.6);
+    const [s1, s2, s3, s4, s5] = S;
+    // trois dettes : en vrac, puis rangées de la plus petite à la plus grande
+    const C = [['Téléphone', '300 €', [520, 300, 5], [110, 330]], ['Vélo électrique', '1 200 €', [860, 240, -4], [490, 270]], ['Travaux', '3 500 €', [170, 250, -6], [870, 210]]].map(([n, m, v, r], i) => { const c = el(`<div class="n">${n}</div><div class="m">${m}</div>`, 'left:0;top:0', 'dette'); const rg = el(i + 1, 'opacity:0', 'rg', c); const ok = el('✓ Soldée', 'opacity:0', 'ok', c);
+      K(c, [[s1.t + .2 + i * .25, { opacity: 0, transform: `translate(${v[0]}px,${v[1] + 60}px) rotate(${v[2]}deg)` }], [s1.t + .8 + i * .25, { opacity: 1, transform: `translate(${v[0]}px,${v[1]}px) rotate(${v[2]}deg)` }], [s2.t + .3, { opacity: 1, transform: `translate(${v[0]}px,${v[1]}px) rotate(${v[2]}deg)` }], [s2.t + 1.5, { opacity: 1, transform: `translate(${r[0]}px,${r[1]}px) rotate(0deg)` }], [film.duree, { opacity: 1, transform: `translate(${r[0]}px,${r[1]}px) rotate(0deg)` }]]);
+      pop(rg, s2.t + [3.0, 4.6, 6.3][i]); return { c, ok, r }; });
+    [0, 1, 2].forEach(i => { const q = el('?', `left:${[420, 760, 1120][i]}px;top:${[150, 420, 380][i]}px`, 'qm'); K(q, [[s1.t + 1.2 + i * .3, { opacity: 0, transform: 'scale(.3) rotate(-20deg)' }], [s1.t + 1.7 + i * .3, { opacity: 1, transform: 'scale(1) rotate(8deg)' }], [s2.t - .2, { opacity: 1, transform: 'scale(1) rotate(8deg)' }], [s2.t + .4, { opacity: 0, transform: 'scale(.3)' }]]); });
+    // minimum partout, et tout le reste sur la plus petite
+    const mins = C.map((x, i) => { const p = el('minimum', `left:${x.r[0] + 24}px;top:${x.r[1] + 186}px`, 'pil min'); return p; });
+    const plus = el('+ tout le reste', `left:${C[0].r[0] + 150}px;top:${C[0].r[1] + 186}px`, 'pil plus');
+    const dx1 = C[1].r[0] - C[0].r[0], dy1 = C[1].r[1] - C[0].r[1], dx2 = C[2].r[0] - C[0].r[0], dy2 = C[2].r[1] - C[0].r[1], a = s4.t + 1.0, b = s4.t + 3.6, c5 = s4.t + 5.9;
+    K(mins[0], [[s3.t + .3, { opacity: 0, transform: 'translateY(20px)' }], [s3.t + .8, { opacity: 1, transform: 'none' }], [a, { opacity: 1, transform: 'none' }], [a + .9, { opacity: 1, transform: `translate(${dx1 + 128}px,${dy1}px)` }], [b, { opacity: 1, transform: `translate(${dx1 + 128}px,${dy1}px)` }], [b + .9, { opacity: 1, transform: `translate(${dx2 + 128}px,${dy2}px)` }], [film.duree, { opacity: 1, transform: `translate(${dx2 + 128}px,${dy2}px)` }]]);
+    K(mins[1], [[s3.t + .5, { opacity: 0, transform: 'translateY(20px)' }], [s3.t + 1.0, { opacity: 1, transform: 'none' }], [b, { opacity: 1, transform: 'none' }], [b + .9, { opacity: 1, transform: `translate(${C[2].r[0] - C[1].r[0]}px,${C[2].r[1] - C[1].r[1] + 52}px)` }], [film.duree, { opacity: 1, transform: `translate(${C[2].r[0] - C[1].r[0]}px,${C[2].r[1] - C[1].r[1] + 52}px)` }]]);
+    entre(mins[2], s3.t + .7, .5, 20);
+    K(plus, [[s3.t + 2.9, { opacity: 0, transform: 'translate(260px,-130px) scale(.6)' }], [s3.t + 3.6, { opacity: 1, transform: 'none' }], [a, { opacity: 1, transform: 'none' }], [a + .9, { opacity: 1, transform: `translate(${dx1 - 126}px,${dy1 + 52}px)` }], [b, { opacity: 1, transform: `translate(${dx1 - 126}px,${dy1 + 52}px)` }], [b + .9, { opacity: 1, transform: `translate(${dx2 - 126}px,${dy2 + 104}px)` }], [film.duree, { opacity: 1, transform: `translate(${dx2 - 126}px,${dy2 + 104}px)` }]]);
+    A(C[0].c, [{ boxShadow: '0 16px 36px rgba(58,0,87,.14)' }, { boxShadow: '0 0 0 6px #F3785D,0 16px 36px rgba(243,120,93,.4)' }], s3.t + 3.4, .5);
+    pop(C[0].ok, a - .5); pop(C[1].ok, b - .5); pop(C[2].ok, c5);
+    // la boule qui roule sous les dettes et grossit
+    const boule = el('', 'left:0;top:0', 'boule'); K(boule, [[s1.t + 3.6, { opacity: 0, transform: 'translate(-140px,560px) scale(.4) rotate(0deg)' }], [s1.t + 4.6, { opacity: 1, transform: 'translate(40px,560px) scale(.4) rotate(360deg)' }], [a, { opacity: 1, transform: 'translate(200px,556px) scale(.45) rotate(540deg)' }], [a + 1, { opacity: 1, transform: 'translate(560px,540px) scale(.7) rotate(900deg)' }], [b, { opacity: 1, transform: 'translate(560px,540px) scale(.7) rotate(900deg)' }], [b + 1, { opacity: 1, transform: 'translate(960px,520px) scale(1) rotate(1260deg)' }], [film.duree, { opacity: 1, transform: 'translate(1010px,520px) scale(1.08) rotate(1300deg)' }]]);
+    // victoires
+    const P = ['#F3785D', '#A174EE', '#3A0057', '#C9B1F7', '#F79A85']; for (let i = 0; i < 46; i++) { const cf = el('', `left:${40 + (i * 53) % 1200}px;top:-30px;background:${P[i % 5]}`, 'conf'); A(cf, [{ transform: 'translateY(0) rotate(0deg)', opacity: 1 }, { transform: `translateY(${780 + (i % 7) * 20}px) rotate(${400 + i * 40}deg)`, opacity: .9 }], s5.t + .2 + (i % 9) * .12, 2.4 + (i % 5) * .3, 'cubic-bezier(.3,.1,.6,1)'); }
+    const fin = el('L’avalanche, elle, commence par le <b>taux le plus élevé</b> : moins d’intérêts, mais des victoires plus tardives.', 'top:126px', 'note'); entre(fin, s5.t + s5.d * .55);
+    sst(s1, 'Quand on a plusieurs dettes, on ne sait pas par où commencer.'); sst(s2, 'On les classe de la plus petite à la plus grande.'); sst(s3, 'Le minimum partout, et tout le reste sur la plus petite.'); sst(s4, 'Dès qu’elle est soldée, sa mensualité s’ajoute à la suivante.'); sst(s5, 'Chaque dette rayée, c’est une victoire.');
+  } else {
+    const ouv = el('La théorie du<br><em>pot de yaourt</em>', 'top:250px', 'gros'); K(ouv, [[0, { opacity: 0, transform: 'scale(.92)' }], [.5, { opacity: 1, transform: 'none' }], [1.25, { opacity: 1, transform: 'none' }], [1.6, { opacity: 0, transform: 'translateY(-40px)' }]]);
+    const [s1, s2, s3, s4, s5] = S; const finC = s5.t + .4;
+    const kick = el('Argent et couple', '', 'kick'), tit = el('Qui paie quoi ?', '', 'titre'); visible(kick, 1.5, finC, .4); visible(tit, 1.6, finC, .4);
+    const lui = el('<div class="tete" style="background:#3A0057">LUI</div>', 'left:110px', 'col'), elle = el('<div class="tete" style="background:#F3785D">ELLE</div>', 'left:670px', 'col');
+    [lui, elle].forEach((c, i) => K(c, [[s1.t + .2 + i * .2, { opacity: 0, transform: 'translateY(50px)' }], [s1.t + .9 + i * .2, { opacity: 1, transform: 'none' }], [finC - .4, { opacity: 1, transform: 'none' }], [finC, { opacity: 0, transform: 'translateY(30px)' }]]));
+    const I = { voiture: '<svg viewBox="0 0 110 110"><path d="M12 70 L20 46 Q24 38 34 38 L74 38 Q84 38 90 48 L100 62 Q104 66 104 74 L104 82 L8 82 L8 76 Z" fill="#A174EE" stroke="#3A0057" stroke-width="4" stroke-linejoin="round"/><path d="M30 46h18v14H24zM56 46h18l8 14H56z" fill="#fff"/><circle cx="32" cy="84" r="11" fill="#3A0057"/><circle cx="82" cy="84" r="11" fill="#3A0057"/></svg>', appart: '<svg viewBox="0 0 110 110"><path d="M18 100V34l37-24 37 24v66z" fill="#A174EE" stroke="#3A0057" stroke-width="4" stroke-linejoin="round"/><path d="M32 44h14v14H32zM64 44h14v14H64zM32 68h14v14H32zM64 68h14v32H64z" fill="#fff"/></svg>', courses: '<svg viewBox="0 0 110 110"><path d="M10 22h14l12 46h50l10-34H32" fill="#FBD3CA" stroke="#3A0057" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="42" cy="86" r="8" fill="#3A0057"/><circle cx="80" cy="86" r="8" fill="#3A0057"/><path d="M46 34v-12M60 34V16M74 34V24" stroke="#F3785D" stroke-width="6" stroke-linecap="round"/></svg>', habits: '<svg viewBox="0 0 110 110"><path d="M38 14 L16 28 L24 46 L34 40 L34 96 L76 96 L76 40 L86 46 L94 28 L72 14 Q55 28 38 14 Z" fill="#F79A85" stroke="#3A0057" stroke-width="4" stroke-linejoin="round"/></svg>', cantine: '<svg viewBox="0 0 110 110"><circle cx="55" cy="58" r="36" fill="#fff" stroke="#3A0057" stroke-width="4"/><circle cx="55" cy="58" r="22" fill="#FBD3CA"/><path d="M12 22v70M98 22v70M92 22q-10 20 6 34" stroke="#3A0057" stroke-width="4" stroke-linecap="round" fill="none"/></svg>', pot: '<svg viewBox="0 0 110 110"><path d="M26 30h58l-8 66H34z" fill="#fff" stroke="#3A0057" stroke-width="4" stroke-linejoin="round"/><path d="M22 22h66v10H22z" fill="#C9B1F7" stroke="#3A0057" stroke-width="4" stroke-linejoin="round"/><path d="M40 50h30" stroke="#C9B1F7" stroke-width="5" stroke-linecap="round"/></svg>' };
+    const k = s2.d / 7.2, obj = (p, x, y, ic, lib, t) => { const o = el(I[ic] + `<b>${lib}</b>`, `left:${x}px;top:${y}px`, 'obj', p); pop(o, t); return o; };
+    obj(lui, 80, 120, 'voiture', 'La voiture', s2.t + 1.0 * k); obj(lui, 270, 120, 'appart', 'L’appartement', s2.t + 2.2 * k);
+    const kk = s4.d / 7.6; const tmp = (x, ic, lib, t, i) => { const o = el(I[ic] + `<b>${lib}</b>`, `left:${x}px;top:120px`, 'obj', elle); const f = s4.t + 4.6 * kk + i * .15; K(o, [[t, { opacity: 0, transform: 'scale(.4)' }], [t + .35, { opacity: 1, transform: 'scale(1.1)' }], [t + .5, { opacity: 1, transform: 'scale(1)' }], [f, { opacity: 1, transform: 'scale(1)' }], [f + .5, { opacity: 0, transform: 'scale(.5)' }]]); return o; };
+    tmp(22, 'courses', 'Le frigo', s2.t + 3.7 * k, 0); tmp(175, 'habits', 'Les vêtements', s2.t + 5.0 * k, 1); tmp(328, 'cantine', 'La cantine', s2.t + 6.1 * k, 2);
+    // autant dépensé de chaque côté
+    [lui, elle].forEach((c, i) => { const b = el('', `background:${i ? '#F3785D' : '#3A0057'}`, 'barre', c); K(b, [[s3.t + .2, { transform: 'scaleX(0)', opacity: 1 }], [s3.t + 1.6, { transform: 'scaleX(1)', opacity: 1 }], [s4.t + .6, { transform: 'scaleX(1)', opacity: 1 }], [s4.t + 1.2, { transform: 'scaleX(1)', opacity: 0 }]]); });
+    const eg = el('=', '', 'egal'); K(eg, [[s3.t + 1.5, { opacity: 0, transform: 'scale(.3)' }], [s3.t + 2.0, { opacity: 1, transform: 'scale(1)' }], [s4.t + .3, { opacity: 1, transform: 'scale(1)' }], [s4.t + .8, { opacity: 0, transform: 'scale(.3)' }]]);
+    // dix ans plus tard
+    const dix = el('Dix ans plus tard…', '', 'dixans'); K(dix, [[s4.t + .2, { opacity: 0, transform: 'translateY(-30px)' }], [s4.t + .8, { opacity: 1, transform: 'none' }], [finC - .4, { opacity: 1, transform: 'none' }], [finC, { opacity: 0, transform: 'none' }]]);
+    A(tit, [{ opacity: 1 }, { opacity: 0 }], s4.t, .3); A(kick, [{ opacity: 1 }, { opacity: 0 }], s4.t, .3);
+    [0, 1, 2].forEach(i => { const p = el(I.pot + '<b>vide</b>', `left:${22 + i * 153}px;top:120px`, 'obj', elle); pop(p, s4.t + 5.1 * kk + i * .15); });
+    A(lui, [{ boxShadow: '0 16px 36px rgba(58,0,87,.12)' }, { boxShadow: '0 0 0 6px #1FAF7A,0 16px 36px rgba(31,175,122,.3)' }], s4.t + 2.2 * kk, .5);
+    const poss = el('Il possède', 'left:150px;right:150px;bottom:24px;text-align:center;font:800 26px/1 var(--f-titre);color:#0E7A53', '', lui); pop(poss, s4.t + 2.6 * kk);
+    const rien = el('Il ne lui reste rien', 'left:60px;right:60px;bottom:24px;text-align:center;font:800 26px/1 var(--f-titre);color:#B3293A', '', elle); pop(rien, s4.t + 6.0 * kk);
+    // la parade
+    const fin1 = el('La théorie du <em>pot de yaourt</em>', 'top:170px;font-size:66px', 'gros'), cr = el('Titiou Lecoq, <i style="position:static">Le couple et l’argent</i>, L’Iconoclaste, 2022', 'top:270px', 'cred'), par = el('La parade : <em>tout mettre à plat</em>,<br>et partager <em>au prorata des revenus</em>.', 'top:370px;font-size:52px', 'gros');
+    entre(fin1, finC + .1); entre(cr, finC + .5); entre(par, s5.t + s5.d * .62);
+    sst(s1, 'Chacun paie sa part. Sur le papier, c’est équitable.'); sst(s2, 'Lui paie ce qui dure. Elle paie ce qui se consomme.'); sst(s3, 'À la fin du mois, ils ont dépensé autant.'); sst(s4, 'Dix ans plus tard, lui possède. Elle, non.');
+  }
+  film.pret = true; film.at(new URLSearchParams(location.search).get('t') || 0);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alice · Ma photo financière</title>
+<link rel="stylesheet" href="alice.css?v=1">
+<style>
+.jetons{position:absolute;left:0;right:0;top:100px;height:50px;display:flex;gap:8px;flex-wrap:nowrap}
+.jeton{padding:10px 12px;border-radius:12px;background:#fff;border:2px solid var(--lilas);font:700 14.5px/1.1 var(--f-titre);color:var(--violet);box-shadow:0 6px 14px rgba(58,0,87,.12);cursor:grab;user-select:none;z-index:5;position:relative}
+.jeton b{font-family:var(--f-chiffre);font-size:16px;margin-left:5px;white-space:nowrap}
+.jeton.prise{cursor:grabbing;box-shadow:0 14px 26px rgba(58,0,87,.25);z-index:20}
+.jeton.non{animation:non .4s}
+@keyframes non{20%,60%{translate:-7px 0}40%,80%{translate:7px 0}}
+.cols{position:absolute;left:0;right:0;top:176px;height:262px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.col{overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s}
+.col.vise{box-shadow:0 0 0 3px var(--lilas),0 10px 30px rgba(58,0,87,.14)}
+.col h2{margin:0;padding:12px 18px;font:800 16px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#fff}
+.col.a h2{background:var(--corail)}.col.p h2{background:var(--violet)}
+.col ul{list-style:none;margin:0;padding:12px 18px;flex:1;display:grid;align-content:start;gap:8px}
+.col li{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:10px;background:var(--fond);font-weight:700;animation:monte .3s both}
+.col li b{font-family:var(--f-chiffre);font-size:18px}
+.col .vide{color:#B9A9C2;font-style:italic;font-weight:400;padding:8px 2px}
+.col .tot{display:flex;justify-content:space-between;align-items:baseline;padding:10px 18px 12px;border-top:1px dashed rgba(58,0,87,.2);font:700 14px/1 var(--f-titre);text-transform:uppercase;letter-spacing:.05em}
+.col .tot span{font:700 28px/1 var(--f-chiffre)}
+.col.a .tot span{color:var(--corail)}
+.net{position:absolute;left:0;right:0;top:456px;height:140px;padding:16px 22px;display:flex;align-items:center;gap:18px}
+.net .eq{display:flex;align-items:center;gap:14px;font:700 30px/1 var(--f-chiffre)}
+.net .eq i{font-style:normal;color:var(--gris);font-size:26px}
+.net .eq .res{font-size:52px;color:var(--lilas);min-width:210px;transition:color .3s}
+.net.fini .eq .res{color:var(--ok);animation:pop .5s}
+.net .k{font:800 13px/1.2 var(--f-titre);letter-spacing:.08em;text-transform:uppercase;color:var(--gris);margin-bottom:8px}
+.net .mot{flex:1;font-size:15.5px;line-height:1.4;color:var(--gris);border-left:3px solid var(--lilas-2);padding-left:14px}
+.net .mot b{color:var(--violet)}
+.aide{position:absolute;left:0;right:0;top:604px;font-size:14.5px;color:var(--gris);height:22px;transition:opacity .3s}
+.aide.ko{color:var(--ko);font-weight:700}
+</style>
+</head>
+<body>
+<div id="scene">
+  <div class="zone">
+    <h1>Ma photo <em>financière</em></h1>
+    <p class="sous">Glisse chaque ligne dans la bonne colonne : ce qu'Alice possède, ou ce qu'elle doit.</p>
+    <div class="jetons" id="jetons"></div>
+    <div class="cols">
+      <div class="col a carte" id="colA"><h2>Ce que je possède</h2><ul id="lA"><li class="vide">Dépose ici ses actifs</li></ul><div class="tot">Total<span id="tA" class="chiffre">0 €</span></div></div>
+      <div class="col p carte" id="colP"><h2>Ce que je dois</h2><ul id="lP"><li class="vide">Dépose ici ses dettes</li></ul><div class="tot">Total<span id="tP" class="chiffre">0 €</span></div></div>
+    </div>
+    <div class="net carte" id="net">
+      <div><div class="k">Patrimoine net</div><div class="eq"><span id="eA">0 €</span><i>−</i><span id="eP">0 €</span><i>=</i><span class="res" id="eN">0 €</span></div></div>
+      <div class="mot" id="mot">Le patrimoine net, c'est ce qu'il reste quand on retire les dettes de ce qu'on possède.</div>
+    </div>
+    <div class="aide" id="aide">5 lignes à ranger.</div>
+  </div>
+</div>
+<script src="alice.js?v=1"></script>
+<script>
+// Chiffres du cas d'Alice, repris du parcours d'origine
+const LIGNES = [
+  { n: 'Crédit voiture', v: 4000, t: 'p' }, { n: 'Livret A', v: 5000, t: 'a' }, { n: 'Bijoux', v: 2500, t: 'a' },
+  { n: 'Crédit ordinateur', v: 1500, t: 'p' }, { n: 'Voiture', v: 8000, t: 'a' },
+];
+const NON = { a: 'C’est quelque chose qu’elle possède : colonne de gauche.', p: 'Un crédit, c’est une dette : colonne de droite.' };
+const tot = { a: 0, p: 0 }; let reste = LIGNES.length;
+const $ = id => document.getElementById(id), aide = $('aide');
+const dans = (id, x, y) => { const sc = $('scene').getBoundingClientRect(), r = $(id).getBoundingClientRect(), k = echelle(); const l = (r.left - sc.left) / k, t = (r.top - sc.top) / k; return x > l && x < l + r.width / k && y > t - 30 && y < t + r.height / k + 30; };
+LIGNES.forEach(L => { const j = document.createElement('div'); j.className = 'jeton'; j.innerHTML = `${L.n}<b>${euro(L.v)}</b>`; $('jetons').appendChild(j);
+  j.addEventListener('pointermove', () => { if (!j.classList.contains('prise')) return; const sc = $('scene').getBoundingClientRect(), r = j.getBoundingClientRect(), k = echelle(), x = (r.left + r.width / 2 - sc.left) / k, y = (r.top + r.height / 2 - sc.top) / k; $('colA').classList.toggle('vise', dans('colA', x, y)); $('colP').classList.toggle('vise', dans('colP', x, y)); });
+  glissable(j, (el, x, y) => { $('colA').classList.remove('vise'); $('colP').classList.remove('vise'); const ou = dans('colA', x, y) ? 'a' : dans('colP', x, y) ? 'p' : null; if (!ou) return false;
+    if (ou !== L.t) { j.classList.remove('non'); void j.offsetWidth; j.classList.add('non'); aide.textContent = NON[L.t]; aide.className = 'aide ko'; return false; }
+    const ul = $(ou === 'a' ? 'lA' : 'lP'); const v = ul.querySelector('.vide'); if (v) v.remove(); const li = document.createElement('li'); li.innerHTML = `${L.n}<b>${euro(L.v)}</b>`; ul.appendChild(li); j.remove();
+    tot[ou] += L.v; compte($(ou === 'a' ? 'tA' : 'tP'), tot[ou]); compte($(ou === 'a' ? 'eA' : 'eP'), tot[ou]); compte($('eN'), tot.a - tot.p); reste--;
+    aide.className = 'aide'; aide.textContent = reste ? `Encore ${reste} ligne${reste > 1 ? 's' : ''} à ranger.` : 'Tout est rangé. Clique sur « Continuer ».';
+    if (!reste) { $('net').classList.add('fini'); $('mot').innerHTML = '<b>« Ah bah ça alors, je ne pensais pas que ce serait aussi concret ! »</b><br>15 500 € possédés, 5 500 € dus : Alice vaut 10 000 € nets, et elle ne le savait pas.'; }
+    return true; });
+});
+if (Q.has('fini')) setTimeout(() => { LIGNES.forEach(L => { tot[L.t] += L.v; }); document.querySelectorAll('.jeton').forEach(j => j.remove()); compte($('tA'), tot.a); compte($('tP'), tot.p); compte($('eA'), tot.a); compte($('eP'), tot.p); compte($('eN'), tot.a - tot.p); $('net').classList.add('fini'); }, 300);
+</script>
+</body>
+</html>
