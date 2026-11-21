@@ -56,7 +56,7 @@ const F = new URLSearchParams(location.search).get('f') || 'neige';
 
 fetch('voix/durees.json').then(r => r.json()).then(D => {
   // enchaînement : une réplique par plan, 0,45 s de respiration entre deux
-  const cles = F === 'neige' ? ['n1', 'n2', 'n3', 'n4', 'n5'] : ['y1', 'y2', 'y3', 'y4', 'y5', 'y6', 'y7', 'y8']; let t = 1.5; const S = cles.map(k => { const s = { k, t, d: D[k], f: t + D[k] }; film.pistes.push({ f: k, t }); t += D[k] + .45; return s; }); film.duree = t + 1.6;
+  const cles = F === 'neige' ? ['n1', 'n2', 'n3', 'n4', 'n5'] : ['y1', 'y2', 'y3', 'y4', 'ya', 'y5', 'y6', 'y7', 'y8', 'yb', 'yc']; let t = 1.5; const S = cles.map(k => { const s = { k, t, d: D[k], f: t + D[k] }; film.pistes.push({ f: k, t }); t += D[k] + .45; return s; }); film.duree = t + 1.6;
   const sst = (s, txt) => { const e = el(`<span>${txt}</span>`, '', 'sst'); visible(e, s.t - .1, s.f + .3, .25); };
   if (F === 'neige') {
     const ouv = el('La méthode<br><em>boule de neige</em>', 'top:250px', 'gros'); K(ouv, [[0, { opacity: 0, transform: 'scale(.92)' }], [.5, { opacity: 1, transform: 'none' }], [1.25, { opacity: 1, transform: 'none' }], [1.6, { opacity: 0, transform: 'translateY(-40px)' }]]);
@@ -85,7 +85,7 @@ fetch('voix/durees.json').then(r => r.json()).then(D => {
     sst(s1, 'Quand on a plusieurs dettes, on ne sait pas par où commencer.'); sst(s2, 'On les classe de la plus petite à la plus grande.'); sst(s3, 'Le minimum partout, et tout le reste sur la plus petite.'); sst(s4, 'Dès qu’elle est soldée, sa mensualité s’ajoute à la suivante.'); sst(s5, 'Chaque dette rayée, c’est une victoire.');
   } else {
     const ouv = el('La théorie du<br><em>pot de yaourt</em>', 'top:250px', 'gros'); K(ouv, [[0, { opacity: 0, transform: 'scale(.92)' }], [.5, { opacity: 1, transform: 'none' }], [1.25, { opacity: 1, transform: 'none' }], [1.6, { opacity: 0, transform: 'translateY(-40px)' }]]);
-    const [s1, s2, s3, s4, s5, s6, s7, s8] = S; const finC = s5.t + .4;
+    const [s1, s2, s3, s4, sa, s5, s6, s7, s8, sb, sc] = S; const finC = s5.t + .4;
     const kick = el('Argent et couple', '', 'kick'), tit = el('Qui paie quoi ?', '', 'titre'); visible(kick, 1.5, finC, .4); visible(tit, 1.6, finC, .4);
     const lui = el('<div class="tete" style="background:#3A0057">LUI</div>', 'left:110px', 'col'), elle = el('<div class="tete" style="background:#F3785D">ELLE</div>', 'left:670px', 'col');
     [lui, elle].forEach((c, i) => K(c, [[s1.t + .2 + i * .2, { opacity: 0, transform: 'translateY(50px)' }], [s1.t + .9 + i * .2, { opacity: 1, transform: 'none' }], [finC - .4, { opacity: 1, transform: 'none' }], [finC, { opacity: 0, transform: 'translateY(30px)' }]]));
@@ -98,7 +98,9 @@ fetch('voix/durees.json').then(r => r.json()).then(D => {
     [lui, elle].forEach((c, i) => { const b = el('', `background:${i ? '#F3785D' : '#3A0057'}`, 'barre', c); K(b, [[s3.t + .2, { transform: 'scaleX(0)', opacity: 1 }], [s3.t + 1.6, { transform: 'scaleX(1)', opacity: 1 }], [s4.t + .6, { transform: 'scaleX(1)', opacity: 1 }], [s4.t + 1.2, { transform: 'scaleX(1)', opacity: 0 }]]); });
     const eg = el('=', '', 'egal'); K(eg, [[s3.t + 1.5, { opacity: 0, transform: 'scale(.3)' }], [s3.t + 2.0, { opacity: 1, transform: 'scale(1)' }], [s4.t + .3, { opacity: 1, transform: 'scale(1)' }], [s4.t + .8, { opacity: 0, transform: 'scale(.3)' }]]);
     // dix ans plus tard
-    const dix = el('Dix ans plus tard…', '', 'dixans'); K(dix, [[s4.t + .2, { opacity: 0, transform: 'translateY(-30px)' }], [s4.t + .8, { opacity: 1, transform: 'none' }], [finC - .4, { opacity: 1, transform: 'none' }], [finC, { opacity: 0, transform: 'none' }]]);
+    const dix = el('Dix ans plus tard…', '', 'dixans'); K(dix, [[s4.t + .2, { opacity: 0, transform: 'translateY(-30px)' }], [s4.t + .8, { opacity: 1, transform: 'none' }], [sa.t - .3, { opacity: 1, transform: 'none' }], [sa.t + .1, { opacity: 0, transform: 'none' }]]);
+    const sep = el('Et en cas de séparation ?', '', 'dixans'); K(sep, [[sa.t + .1, { opacity: 0, transform: 'translateY(-30px)' }], [sa.t + .6, { opacity: 1, transform: 'none' }], [finC - .4, { opacity: 1, transform: 'none' }], [finC, { opacity: 0, transform: 'none' }]]);
+    A(elle, [{ boxShadow: '0 16px 36px rgba(58,0,87,.12)' }, { boxShadow: '0 0 0 6px #E24B5B,0 16px 36px rgba(226,75,91,.3)' }], sa.t + sa.d * .62, .5);
     A(tit, [{ opacity: 1 }, { opacity: 0 }], s4.t, .3); A(kick, [{ opacity: 1 }, { opacity: 0 }], s4.t, .3);
     [0, 1, 2].forEach(i => { const p = el(I.pot + '<b>vide</b>', `left:${22 + i * 153}px;top:120px`, 'obj', elle); pop(p, s4.t + 5.1 * kk + i * .15); });
     A(lui, [{ boxShadow: '0 16px 36px rgba(58,0,87,.12)' }, { boxShadow: '0 0 0 6px #1FAF7A,0 16px 36px rgba(31,175,122,.3)' }], s4.t + 2.2 * kk, .5);
@@ -109,23 +111,30 @@ fetch('voix/durees.json').then(r => r.json()).then(D => {
     K(fin1, [[finC + .1, { opacity: 0, transform: 'translateY(34px)' }], [finC + .65, { opacity: 1, transform: 'none' }], [s6.t - .3, { opacity: 1, transform: 'none' }], [s6.t + .2, { opacity: 0, transform: 'translateY(-30px)' }]]);
     K(cr, [[finC + .5, { opacity: 0, transform: 'translateY(34px)' }], [finC + 1.05, { opacity: 1, transform: 'none' }], [s6.t - .3, { opacity: 1, transform: 'none' }], [s6.t + .2, { opacity: 0, transform: 'translateY(-30px)' }]]);
     // la parade : le prorata, avec l'exemple d'Alice et Quentin
-    const kp = el('La parade', '', 'kick'), tp = el('Le prorata', '', 'titre'); entre(kp, s6.t + .1); entre(tp, s6.t + .2);
-    const regle = el('Chacun contribue<br><em>selon ses revenus</em>', 'top:250px;font-size:64px', 'gros'); K(regle, [[s6.t + .9, { opacity: 0, transform: 'scale(.9)' }], [s6.t + 1.5, { opacity: 1, transform: 'none' }], [s7.t - .2, { opacity: 1, transform: 'none' }], [s7.t + .3, { opacity: 0, transform: 'translateY(-30px)' }]]);
+    const hd = el('', 'inset:0'), pr = el('', 'inset:0'), elp = (h, c, k) => el(h, c, k, pr); const kp = el('La parade', '', 'kick', hd), tp = el('Le prorata', '', 'titre', hd); entre(kp, s6.t + .1); entre(tp, s6.t + .2);
+    K(pr, [[0, { opacity: 1 }], [sb.t - .2, { opacity: 1 }], [sb.t + .3, { opacity: 0 }]], 'linear'); K(hd, [[0, { opacity: 1 }], [sb.t - .2, { opacity: 1 }], [sb.t + .3, { opacity: 0 }]], 'linear');
+    const regle = el('Chacun contribue<br><em>selon ses revenus</em>', 'top:250px;font-size:64px', 'gros', pr); K(regle, [[s6.t + .9, { opacity: 0, transform: 'scale(.9)' }], [s6.t + 1.5, { opacity: 1, transform: 'none' }], [s7.t - .2, { opacity: 1, transform: 'none' }], [s7.t + .3, { opacity: 0, transform: 'translateY(-30px)' }]]);
     // barre des revenus : 2 267 € et 3 000 €, soit 43 % et 57 %
     const BW = 1000, BX = 140, wa = Math.round(BW * 0.43);
-    const lab = (t, css) => el(t, css + ';font:800 26px/1.15 var(--f-titre);color:var(--violet);white-space:nowrap');
+    const lab = (t, css) => elp(t, css + ';font:800 26px/1.15 var(--f-titre);color:var(--violet);white-space:nowrap');
     const la = lab('Alice<br><span style="font:700 40px/1.1 var(--f-chiffre);color:#F3785D">2 267 €</span>', `left:${BX}px;top:170px`), lq = lab('Quentin<br><span style="font:700 40px/1.1 var(--f-chiffre);color:#3A0057">3 000 €</span>', `left:${BX + wa + 24}px;top:170px`);
     entre(la, s7.t + 1.2); entre(lq, s7.t + 3.3);
-    const ba = el('', `left:${BX}px;top:290px;width:${wa}px;height:74px;border-radius:20px 0 0 20px;background:#F3785D;transform-origin:left center`), bq = el('', `left:${BX + wa}px;top:290px;width:${BW - wa}px;height:74px;border-radius:0 20px 20px 0;background:#3A0057;transform-origin:left center`);
+    const ba = elp('', `left:${BX}px;top:290px;width:${wa}px;height:74px;border-radius:20px 0 0 20px;background:#F3785D;transform-origin:left center`), bq = elp('', `left:${BX + wa}px;top:290px;width:${BW - wa}px;height:74px;border-radius:0 20px 20px 0;background:#3A0057;transform-origin:left center`);
     A(ba, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], s7.t + 1.4, .8); A(bq, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], s7.t + 3.5, .8);
-    const pa = el('43 %', `left:${BX}px;top:290px;width:${wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`), pq = el('57 %', `left:${BX + wa}px;top:290px;width:${BW - wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`);
+    const pa = elp('43 %', `left:${BX}px;top:290px;width:${wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`), pq = elp('57 %', `left:${BX + wa}px;top:290px;width:${BW - wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`);
     pop(pa, s7.t + s7.d * .62); pop(pq, s7.t + s7.d * .82);
     // budget commun de 1 344 € : 578 € et 766 €
-    const bud = el('Budget commun du foyer : <b style="color:#3A0057">1 344 € par mois</b>', 'left:0;right:0;top:404px;text-align:center;font:400 28px/1.3 var(--f-texte);color:var(--gris)'); entre(bud, s8.t + .3);
-    const ca = el('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#F3785D">Alice verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">578 €</div>', `left:${BX}px;top:470px;width:${wa}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
-    const cq = el('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#3A0057">Quentin verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">766 €</div>', `left:${BX + wa + 20}px;top:470px;width:${BW - wa - 20}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
+    const bud = elp('Budget commun du foyer : <b style="color:#3A0057">1 344 € par mois</b>', 'left:0;right:0;top:404px;text-align:center;font:400 28px/1.3 var(--f-texte);color:var(--gris)'); entre(bud, s8.t + .3);
+    const ca = elp('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#F3785D">Alice verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">578 €</div>', `left:${BX}px;top:470px;width:${wa}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
+    const cq = elp('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#3A0057">Quentin verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">766 €</div>', `left:${BX + wa + 20}px;top:470px;width:${BW - wa - 20}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
     pop(ca, s8.t + s8.d * .36); pop(cq, s8.t + s8.d * .52);
-    sst(s1, 'Chacun paie sa part. Sur le papier, c’est équitable.'); sst(s2, 'Lui paie ce qui dure. Elle paie ce qui se consomme.'); sst(s3, 'À la fin du mois, ils ont dépensé autant.'); sst(s4, 'Dix ans plus tard, lui possède. Elle, non.'); sst(s6, 'La parade : le prorata.'); sst(s7, 'Chacun apporte sa part des revenus du foyer.'); sst(s8, 'Chacun participe à sa mesure, et chacun peut épargner.');
+    // trois réflexes, puis la conclusion
+    const rf = el('', 'inset:0'); K(rf, [[0, { opacity: 1 }], [sc.t - .2, { opacity: 1 }], [sc.t + .3, { opacity: 0 }]], 'linear');
+    entre(el('À retenir', '', 'kick', rf), sb.t + .2); entre(el('Trois réflexes', '', 'titre', rf), sb.t + .3);
+    const R3 = [['Mettre à plat', 'qui paie quoi'], ['Partager', 'au prorata des revenus'], ['Épargner', 'chacun à son nom']], tr = [.2, .36, .62];
+    R3.forEach((r, i) => { const c = el(`<div style="position:static;width:64px;height:64px;border-radius:50%;background:#A174EE;color:#fff;font:700 38px/64px var(--f-chiffre);text-align:center;margin:0 auto 18px">${i + 1}</div><div style="position:static;font:800 34px/1.1 var(--f-titre);color:#3A0057">${r[0]}</div><div style="position:static;font:400 24px/1.3 var(--f-texte);color:#6B5A75;margin-top:8px">${r[1]}</div>`, `left:${110 + i * 365}px;top:220px;width:330px;height:270px;border-radius:26px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:34px`, '', rf); pop(c, sb.t + sb.d * tr[i]); });
+    const concl = el('Aimer quelqu’un,<br>ce n’est pas <em>se mettre en danger</em><br>financièrement.', 'top:210px;font-size:60px', 'gros'); entre(concl, sc.t + .3, .7);
+    sst(s1, 'Chacun paie sa part. Sur le papier, c’est équitable.'); sst(s2, 'Lui paie ce qui dure. Elle paie ce qui se consomme.'); sst(s3, 'À la fin du mois, ils ont dépensé autant.'); sst(s4, 'Dix ans plus tard, lui possède. Elle, non.'); sst(sa, 'En cas de séparation, chacun repart avec ce qu’il a payé.'); sst(s6, 'La parade : le prorata.'); sst(sb, 'Trois réflexes pour un couple à l’abri.'); sst(s7, 'Chacun apporte sa part des revenus du foyer.'); sst(s8, 'Chacun participe à sa mesure, et chacun peut épargner.');
   }
   film.pret = true; film.at(new URLSearchParams(location.search).get('t') || 0);
 });
