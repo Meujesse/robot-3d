@@ -71,7 +71,7 @@ LIGNES.forEach(L => { const j = document.createElement('div'); j.className = 'je
     const ul = $(ou === 'a' ? 'lA' : 'lP'); const v = ul.querySelector('.vide'); if (v) v.remove(); const li = document.createElement('li'); li.innerHTML = `${L.n}<b>${euro(L.v)}</b>`; ul.appendChild(li); j.remove();
     tot[ou] += L.v; compte($(ou === 'a' ? 'tA' : 'tP'), tot[ou]); compte($(ou === 'a' ? 'eA' : 'eP'), tot[ou]); compte($('eN'), tot.a - tot.p); reste--;
     aide.className = 'aide'; aide.textContent = reste ? `Encore ${reste} ligne${reste > 1 ? 's' : ''} à ranger.` : 'Tout est rangé. Clique sur « Continuer ».';
-    if (!reste) { $('net').classList.add('fini'); $('mot').innerHTML = '<b>« Ah bah ça alors, je ne pensais pas que ce serait aussi concret ! »</b><br>15 500 € possédés, 5 500 € dus : Alice vaut 10 000 € nets, et elle ne le savait pas.'; }
+    if (!reste) { $('net').classList.add('fini'); $('mot').innerHTML = '<b>« Ah bah ça alors, je ne pensais pas que ce serait aussi concret ! »</b><br>15&nbsp;500&nbsp;€ possédés, 5&nbsp;500&nbsp;€ dus : Alice vaut 10&nbsp;000&nbsp;€ nets, et elle ne le savait pas.'; }
     return true; });
 });
 if (Q.has('fini')) setTimeout(() => { LIGNES.forEach(L => { tot[L.t] += L.v; }); document.querySelectorAll('.jeton').forEach(j => j.remove()); compte($('tA'), tot.a); compte($('tP'), tot.p); compte($('eA'), tot.a); compte($('eP'), tot.p); compte($('eN'), tot.a - tot.p); $('net').classList.add('fini'); }, 300);

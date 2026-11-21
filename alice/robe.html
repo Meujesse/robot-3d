@@ -43,7 +43,10 @@
 .compte .v.rouge{color:var(--ko)}.compte .v.vert{color:var(--ok)}
 .compte p{margin:0;font-size:14.5px;line-height:1.38;color:var(--gris)}
 .compte .si{margin-top:auto;padding:10px 12px;border-radius:12px;background:var(--fond);font-size:14px;line-height:1.35}
-.compte .si b{color:var(--ko);white-space:nowrap}.compte .si.ok b{color:var(--ok)}
+.compte .si b{color:var(--ko);white-space:nowrap}
+.cles{display:none;list-style:none;margin:12px 0 0;padding:0;gap:7px}
+.cles li{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--fond);font:700 14px/1.3 var(--f-texte);animation:monte .35s both}
+.cles li i{width:26px;height:26px;border-radius:50%;background:var(--lilas);color:#fff;font:700 14px/26px var(--f-chiffre);font-style:normal;text-align:center}.compte .si.ok b{color:var(--ok)}
 </style>
 </head>
 <body>
@@ -65,6 +68,7 @@
         <div class="k">Ce qu'il reste à Alice ce mois-ci</div>
         <div class="v" id="solde">23 €</div>
         <p>Une fois ses charges et ses loisirs payés.</p>
+        <ul class="cles" id="cles"></ul>
         <div class="si" id="si">La robe coûte 60 €. Si elle craque maintenant, elle finit le mois à <b>−37 €</b>.</div>
       </div>
     </div>
@@ -101,9 +105,9 @@ function choix(liste){ return new Promise(ok => { rep.innerHTML = '<div class="k
   await elle('24 heures plus tard… je n’y pense même plus 😅 60 € gardés !');
   $('solde').className = 'v vert'; $('si').className = 'si ok'; $('si').innerHTML = 'Alice finit le mois à <b>23 €</b> au lieu de −37 €. Cette règle lui a déjà évité pas mal de petits achats inutiles.'; $('h24p').textContent = 'Demain, l’envie n’est plus la même. On décide à froid.';
   // À toi : les quatre situations du parcours d'origine. Pas de mauvaise réponse, Alice réagit à chaque choix.
-  await attends(900); document.querySelector('.compte .k').textContent = 'À toi : quatre situations'; $('solde').className = 'v'; $('solde').textContent = '0 / 4'; document.querySelector('.compte p').textContent = 'Pas de mauvaise réponse : l’important, c’est de décider en conscience.'; $('si').className = 'si'; $('si').innerHTML = 'Lis la situation dans le téléphone, puis choisis.';
+  await attends(900); document.querySelector('.compte .k').textContent = 'À toi : quatre situations'; $('solde').className = 'v'; $('solde').textContent = '0 / 4'; document.querySelector('.compte p').textContent = 'Pas de mauvaise réponse : l’important, c’est de décider en conscience.'; $('si').style.display = 'none'; $('cles').style.display = 'grid';
   await elle('À toi maintenant ! Je t’envoie quatre situations. Tu achètes, ou tu attends ?');
-  for (let i = 0; i < SIT.length; i++) { const S = SIT[i]; sys('Situation ' + (i + 1) + ' sur 4'); await elle(S.t); const c = await choix(S.c); await elle(S.r[c]); $('solde').textContent = (i + 1) + ' / 4'; $('si').innerHTML = '<b style="color:var(--violet)">' + S.cle + '</b>'; await attends(500); }
+  for (let i = 0; i < SIT.length; i++) { const S = SIT[i]; sys('Situation ' + (i + 1) + ' sur 4'); await elle(S.t); const c = await choix(S.c); await elle(S.r[c]); $('solde').textContent = (i + 1) + ' / 4'; const li = document.createElement('li'); li.innerHTML = '<i>' + (i + 1) + '</i>' + S.cle; $('cles').appendChild(li); await attends(500); }
   $('solde').className = 'v vert'; sys('Conversation terminée. Clique sur « Continuer ».');
 })();
 </script>
