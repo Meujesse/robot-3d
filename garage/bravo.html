@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Néon Garage · Mission accomplie</title>
-<link rel="stylesheet" href="commun.css">
+<link rel="stylesheet" href="commun.css?v=3">
 <style>
 #scene{background:#1E1245 url(img/ville.jpg) center/cover}
 #scene::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,11,46,.55),rgba(20,11,46,.75));pointer-events:none}
@@ -63,7 +63,7 @@
   <div class="perso hn"><img src="img/ines-bravo.webp?v=1" alt="Inès, poings levés"></div>
   <div class="route"><div class="auto" id="auto"></div></div>
 </div>
-<script src="commun.js"></script>
+<script src="commun.js?v=3"></script>
 <script>
 document.getElementById('auto').innerHTML = voitureSVG('v2', { w: 300 });
 const sc = document.getElementById('scene'), C = ['#FF2D8A', '#FF7A3D', '#FFB36B', '#B14CFF', '#4DE3FF', '#FFFFFF'];
