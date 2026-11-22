@@ -157,22 +157,22 @@ const PLACARD = [
   { n: 'Robe en jean', u: 'sa préférée', c: '#4A7FB5', dort: 0, m: 'Pas ma préférée ! Choisis-en une qui dort dans le placard.' },
 ];
 const OUTILS = ['J’attends 24 heures', 'Je fais le test BISOU', 'J’applique le +1, −1'];
-// pour chaque situation : le réflexe le plus adapté (0, 1 ou 2), la réaction d'Alice à chaque choix, puis une suite commune
+// pour chaque situation : le réflexe le plus adapté (0 = 24 heures, 1 = test BISOU, 2 = +1 −1), la réaction d'Alice à chaque choix DANS CET ORDRE, puis une suite commune
 const SIT = [
   { t: 'Tu scrolles tard le soir. Une marque que tu aimes sort un complément « collagène matcha glow » à 39 €. Le panier est prêt en deux clics.', bon: 0,
     r: ['Bien vu ! Une envie née en scrollant, tard le soir : c’est l’achat impulsif typique. On laisse passer la nuit.', 'Ça marche aussi. Mais tard le soir, on se raconte vite qu’on en a besoin. Le plus sûr : laisser passer 24 heures et décider à froid.', 'Le +1, −1, c’est pour le jour où tu achètes. Avant ça, laisse passer 24 heures : l’envie est née en scrollant.'],
     suite: async () => { sys('24 heures passent…'); await attends(1300); await elle('Le lendemain, tu n’y penses plus. 39 € gardés !'); },
     cle: 'Envie née en scrollant : on attend 24 heures.' },
   { t: 'Vente privée : un maillot de bain à 45 €. Le tien est usé, tu pars en août et tu cherches le bon depuis deux semaines.', bon: 1,
-    r: ['Bon réflexe ! On vérifie ensemble :', 'Tu peux. Mais ce n’est pas un coup de tête : tu cherches depuis deux semaines. Le test BISOU te le confirme :', 'Oui, mais après l’achat. D’abord on vérifie que c’en est un bon, avec le test BISOU :'],
+    r: ['Tu peux. Mais ce n’est pas un coup de tête : tu cherches depuis deux semaines. Le test BISOU te le confirme :', 'Bon réflexe ! On vérifie ensemble :', 'Oui, mais après l’achat. D’abord on vérifie que c’en est un bon, avec le test BISOU :'],
     suite: async () => { await test(['Le tien est usé', 'Tu pars en août', 'Aucun autre en bon état', 'Tu cherches depuis deux semaines', 'Tu le porteras tout l’été']); await elle('Cinq oui : achète sans culpabilité. Ces règles ne sont pas là pour t’interdire de dépenser.'); await elle('Et ton ancien maillot ?'); const c = await choix(['Il part au recyclage', 'Je le garde au cas où']); await elle(c === 0 ? 'Un qui entre, un qui sort : +1, −1 respecté 👌' : 'C’est comme ça que les placards débordent 😅 Un qui entre, un qui sort : c’est le +1, −1.'); },
     cle: 'Cinq oui au test BISOU : on achète sans culpabilité.' },
   { t: 'Au bureau, tout le monde parle d’une série. Elle est sur une plateforme que tu n’as pas : 9 € par mois. Tu paies déjà deux abonnements.', bon: 2,
-    r: ['Exactement : un abonnement entre, un autre sort.', 'Attendre, c’est bien : la série sera toujours là. Et si tu la prends, pense au +1, −1 : tu paies déjà deux abonnements.', 'Le test coince vite à la lettre S : tu as déjà deux abonnements semblables. Si tu y tiens, applique le +1, −1.'],
+    r: ['Attendre, c’est bien : la série sera toujours là. Et si tu la prends, pense au +1, −1 : tu paies déjà deux abonnements.', 'Le test coince vite à la lettre S : tu as déjà deux abonnements semblables. Si tu y tiens, applique le +1, −1.', 'Exactement : un abonnement entre, un autre sort.'],
     suite: async () => { await elle('Si tu la prends, lequel sort ?'); const c = await choix(['Celui que je n’ouvre plus depuis un mois', 'Aucun, je garde les trois']); await elle(c === 0 ? 'Parfait. Ton budget ne bouge presque pas, et tu regardes ce que tu paies.' : 'Trois abonnements qui tournent, c’est comme ça qu’un budget fuit sans bruit. Un qui entre, un qui sort !'); },
     cle: 'Un abonnement entre, un autre sort : c’est le +1, −1.' },
   { t: 'Une collègue te propose un verre ce soir, dans le bar qui vient d’ouvrir. Tu es déjà sortie deux fois cette semaine.', bon: 1,
-    r: ['Oui, et ici une seule lettre suffit : O comme Origine.', 'Difficile d’attendre 24 heures, c’est ce soir ! Pose-toi plutôt la question O du test BISOU.', 'Pas bête : un verre ce soir, une sortie en moins ce week-end. Mais avant, pose-toi la question O du test BISOU.'],
+    r: ['Difficile d’attendre 24 heures, c’est ce soir ! Pose-toi plutôt la question O du test BISOU.', 'Oui, et ici une seule lettre suffit : O comme Origine.', 'Pas bête : un verre ce soir, une sortie en moins ce week-end. Mais avant, pose-toi la question O du test BISOU.'],
     suite: async () => { await elle('Pourquoi tu en as envie ?'); const c = await choix(['Pour passer un moment avec elle', 'Parce que je n’ose pas dire non']); await elle(c === 0 ? 'Alors vas-y, et profites-en ! Dépenser en conscience, c’est savoir pourquoi on le fait.' : 'Alors propose un autre soir, ou un café à midi. Dire non à une dépense, ce n’est pas dire non à la personne.'); },
     cle: 'Dépenser en conscience, c’est savoir pourquoi on le fait.' },
 ];
