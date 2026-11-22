@@ -138,7 +138,7 @@
     </div>
   </div>
 </div>
-<script src="alice.js?v=3"></script>
+<script src="alice.js?v=4"></script>
 <script>
 // Trois réflexes sur un même achat (la robe à 60 €) : 24 heures, puis le test BISOU lettre par lettre, puis le +1, −1.
 // Ensuite quatre situations où l'on choisit soi-même le réflexe dans la boîte à outils. Reste du mois d'Alice : 50 €.
@@ -207,7 +207,7 @@ function outil(){ return new Promise(ok => { cote.classList.add('choisir'); O.fo
   else { dis('robe-attends'); await elle('Tu as raison. Si j’attends, elle risque de partir… mais je patiente 24 heures, et on en reparle demain.'); }
   await attends(500); sys('24 heures passent…'); $('h24p').textContent = 'Le temps passe, et l’envie retombe.';
   $('petite').style.transform = 'rotate(720deg)'; $('grande').style.transform = 'rotate(8640deg)'; envie(48, 2600);
-  await attends(3000); $('e1').textContent = 'Fait'; $('h24p').textContent = 'Le lendemain, l’envie n’est plus la même. On décide à froid.'; dis('robe-demain');
+  await attends(3000); $('e1').textContent = 'Fait'; $('h24p').textContent = 'Le lendemain, l’envie n’est plus la même. On décide à froid.'; await finVoix(); dis('robe-demain');
   await elle('24 heures plus tard… l’envie est retombée, mais la robe me trotte encore dans la tête 😅');
   // 2. le test BISOU, lettre par lettre
   await elle('Alors je sors ma deuxième arme : le test BISOU. Cinq lettres, cinq questions. Pose-les-moi !');
@@ -218,11 +218,11 @@ function outil(){ return new Promise(ok => { cote.classList.add('choisir'); O.fo
     b.fait = true; b.e.classList.remove('cours'); b.e.classList.add(b.v ? 'passe' : 'coince'); if (b.v) oui++; else envie(Math.max(6, pE - 10), 700);
     $('e2').textContent = oui + ' oui sur ' + (n + 1); $('bq').innerHTML = '<b>' + b.m + ' :</b> ' + (b.v ? 'ça passe.' : 'ça coince.') + (n < 4 ? ' Clique sur une autre lettre.' : ''); await attends(300);
   }
-  $('bq').innerHTML = '<b>Un seul oui sur cinq.</b> Quand ça coince autant, on repose le panier.'; dis('robe-panier');
+  $('bq').innerHTML = '<b>Un seul oui sur cinq.</b> Quand ça coince autant, on repose le panier.'; await finVoix(); dis('robe-panier');
   await elle('Un seul oui sur cinq : je repose le panier. 60 € gardés !'); envie(5, 900);
   $('solde').className = 'v vert'; $('si').className = 'si ok'; $('si').innerHTML = 'Alice finit le mois à <b>50 €</b> au lieu de −10 €. Avant, elle craquait à peu près une fois par mois.';
   // 3. le +1, −1, puis la boîte à outils passe dans les mains de l'apprenant
-  await attends(900); ouvre(2); dis('robe-plus-un');
+  await attends(900); ouvre(2); await finVoix(); dis('robe-plus-un');
   await elle('Et les jours où je craque quand même, j’ai une dernière règle : le +1, −1. Une chose entre chez moi, une autre en sort.');
   await elle('Imaginons que j’aie craqué pour la robe. Elle entre dans mon placard : +1. Laquelle doit sortir ? Choisis à droite.');
   $('sous').textContent = 'Clique, à droite, sur la robe qui doit sortir du placard.'; $('si').className = 'si'; $('si').innerHTML = 'Vendue, donnée ou recyclée : l’important, c’est que le placard ne grossisse pas.';
