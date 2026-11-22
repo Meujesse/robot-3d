@@ -25,7 +25,7 @@
 .releve .pied span{font:700 22px/1 var(--f-chiffre);color:var(--violet)}
 .fiche{position:absolute;left:560px;right:0;top:126px;height:240px;padding:18px 20px}
 .fiche h2{margin:8px 0 6px;font:800 19px/1.2 var(--f-titre)}
-.fiche p{margin:0 0 8px;font-size:15.5px;line-height:1.42;color:var(--gris)}
+.fiche p{margin:0 0 8px;font-size:15px;line-height:1.4;color:var(--gris)}
 .fiche .geste{font-weight:700;color:var(--violet)}
 .fiche.pop{animation:pop .3s}
 .compteur{position:absolute;left:560px;right:0;top:382px;bottom:0;padding:16px 20px;text-align:center;background:var(--violet);color:#fff;border:0}
@@ -36,44 +36,57 @@
 .compteur .jauge b{display:block;height:100%;width:0;background:var(--corail);border-radius:5px;transition:width .6s cubic-bezier(.2,.8,.3,1)}
 .compteur.fini{background:var(--corail)}
 .compteur.fini .jauge b{background:#fff}
+.fiche .dec{display:flex;gap:8px;margin-top:10px}
+.fiche .dec button{flex:1;border:0;border-radius:10px;padding:11px 8px;font:700 14.5px/1 var(--f-titre);background:var(--lilas);color:#fff;transition:.15s}
+.fiche .dec button:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(161,116,238,.4)}
+.fiche .dec button.sec{background:#fff;color:var(--violet);box-shadow:0 0 0 2px var(--lilas) inset}
+.fiche p b{color:var(--violet)}
+.ligne.doute{border-color:var(--corail)}
+.pastille.att{background:rgba(161,116,238,.16);color:var(--violet-2)}.pastille.presque{background:rgba(243,120,93,.16);color:#B8452C}
 </style>
 </head>
 <body>
 <div id="scene">
   <div class="zone">
     <h1>Mes frais <em>bancaires</em></h1>
-    <p class="sous">Clique sur chaque ligne : utile, ou à supprimer ?</p>
+    <p class="sous">Clique sur une ligne, lis l'indice, puis décide : elle garde, ou elle supprime ?</p>
     <div class="releve carte">
       <div class="tete"><b>Contrat bancaire</b><small>Compte courant · tarifs annuels</small></div>
       <ul id="lignes"></ul>
-      <div class="pied">Total payé par an<span>204 €</span></div>
+      <div class="pied">Total payé par an<span>198 €</span></div>
     </div>
-    <div class="fiche carte" id="fiche"><span class="pastille" style="background:rgba(161,116,238,.16);color:var(--violet-2)">Audit</span><h2>Six lignes, six verdicts</h2><p>Chaque ligne coûte peu. Additionnées sur l'année, elles pèsent.</p><p class="geste">Commence par celle que tu veux.</p></div>
-    <div class="compteur carte" id="compteur"><div class="k">Frais inutiles repérés</div><div class="v" id="v">0 €</div><div class="jauge"><b id="j"></b></div><div class="s" id="s">par an · 0 ligne vérifiée sur 6</div></div>
+    <div class="fiche carte" id="fiche"><span class="pastille att">Audit</span><h2>Six lignes, six décisions</h2><p>Pour chaque ligne, trois questions : est-ce qu'elle s'en sert ? Est-ce qu'elle l'a déjà ailleurs ? Est-ce gratuit ailleurs ?</p><p class="geste">Clique sur une ligne pour commencer.</p></div>
+    <div class="compteur carte" id="compteur"><div class="k">Frais inutiles supprimés</div><div class="v" id="v">0 €</div><div class="jauge"><b id="j"></b></div><div class="s" id="s">par an · 0 ligne tranchée sur 6</div></div>
   </div>
 </div>
 <script src="alice.js?v=2"></script>
 <script>
-// Lignes et verdicts repris du contrat du parcours d'origine (total des frais inutiles : 168 € par an)
+// Contrat d'exemple pour cette démo : 198 € par an, dont 156 € de frais inutiles (13 € par mois).
+// Chaque ligne : libellé, prix annuel, utile ?, indice, explication, geste
 const L = [
-  ['Frais de tenue de compte', 60, false, 'Inutile, à renégocier', 'Ces frais sont souvent optionnels. Beaucoup de banques en ligne les suppriment totalement.', 'Demande à ton conseiller de les supprimer, ou compare avec une banque en ligne.'],
-  ['Carte Visa Classique', 36, true, 'Utile', 'C’est la carte principale pour les paiements du quotidien. Le coût est cohérent si elle sert vraiment.', 'Vérifie simplement qu’elle correspond à ton usage réel.'],
-  ['Package « Sérénité »', 60, false, 'Inutile, doublon', 'Ces assurances et assistances sont souvent déjà incluses dans d’autres contrats : habitation, carte, mutuelle.', 'Demande le détail du package et résilie ce qui fait doublon.'],
-  ['Assurance moyens de paiement', 24, false, 'Inutile', 'Tu es souvent déjà couverte par ton assurance habitation.', 'Vérifie tes garanties existantes avant de payer deux fois.'],
-  ['Alerte SMS « solde bas »', 24, false, 'Inutile', 'L’application de la banque envoie déjà ces alertes gratuitement.', 'Désactive cette option dans ton espace client.'],
-  ['Virements SEPA en ligne', 0, true, 'Utile', 'Ce service fait partie du socle bancaire standard, et il est gratuit.', 'Rien à modifier ici.'],
+  ['Frais de tenue de compte', 48, false, 'Plusieurs banques, en ligne comme en agence, ne les facturent plus du tout.', 'Ces frais ne paient aucun service précis, et beaucoup de banques les ont supprimés.', 'Demander à son conseiller de les retirer, ou comparer avec une autre banque.'],
+  ['Carte bancaire classique', 42, true, 'Elle s’en sert tous les jours, pour payer comme pour retirer.', 'C’est son moyen de paiement principal : le prix est cohérent avec l’usage.', 'Rien à changer, tant que la carte correspond à son usage.'],
+  ['Pack « Tranquillité »', 60, false, 'Il regroupe une assistance et des assurances qu’elle a déjà avec son logement et sa carte.', 'Un pack regroupe souvent des garanties déjà incluses ailleurs : elle paie deux fois.', 'Demander le détail du pack et résilier ce qui fait doublon.'],
+  ['Assurance moyens de paiement', 30, false, 'Son assurance habitation couvre déjà le vol de son sac et de sa carte.', 'Elle est déjà couverte par son assurance habitation : c’est un doublon.', 'Vérifier ses garanties, puis résilier l’option.'],
+  ['Alertes SMS « solde bas »', 18, false, 'L’application de sa banque envoie les mêmes alertes, gratuitement.', 'Le même service existe gratuitement dans l’application.', 'Désactiver l’option et activer les notifications de l’application.'],
+  ['Virements en ligne', 0, true, 'Ils sont gratuits, et elle en fait chaque mois.', 'Un service de base, gratuit : rien à gagner à le supprimer.', 'Rien à modifier ici.'],
 ];
-const ul = document.getElementById('lignes'), fiche = document.getElementById('fiche'); let vus = 0, total = 0;
+const ul = document.getElementById('lignes'), fiche = document.getElementById('fiche'), $ = id => document.getElementById(id); let faits = 0, total = 0;
+const prix = l => l[1] ? ' · ' + euro(l[1]) + ' par an' : ' · gratuit';
+function montre(l, b){ const e = b.dataset.etat; fiche.classList.remove('pop'); void fiche.offsetWidth; fiche.classList.add('pop');
+  if (!e) fiche.innerHTML = `<span class="pastille att">À toi de trancher</span><h2>${l[0]}${prix(l)}</h2><p><b>Indice.</b> ${l[3]}</p><div class="dec"><button class="sec" data-c="g">Elle garde</button><button data-c="s">Elle supprime</button></div>`;
+  else if (e === 'ok') fiche.innerHTML = `<span class="pastille ${l[2] ? 'ok' : 'ko'}">${l[2] ? 'Utile : on garde' : 'Inutile : on supprime'}</span><h2>${l[0]}${prix(l)}</h2><p>${l[4]}</p><p class="geste">→ ${l[5]}</p>`;
+  else fiche.innerHTML = `<span class="pastille presque">Pas tout à fait</span><h2>${l[0]}${prix(l)}</h2><p>${l[4]}</p><div class="dec"><button data-c="${l[2] ? 'g' : 's'}">${l[2] ? 'Finalement, elle garde' : 'Finalement, elle supprime'}</button></div>`;
+  fiche.querySelectorAll('.dec button').forEach(x => x.onclick = () => decide(l, b, x.dataset.c)); }
+function decide(l, b, c){ if ((c === 'g') !== l[2]) { b.dataset.etat = 'faux'; b.classList.add('doute'); return montre(l, b); }
+  b.dataset.etat = 'ok'; b.classList.remove('doute'); b.classList.add('vu', l[2] ? 'ok' : 'ko'); b.querySelector('i').textContent = l[2] ? '✓' : '✕'; faits++; if (!l[2]) total += l[1];
+  compte($('v'), total); $('j').style.width = (total / 156 * 100) + '%';
+  $('s').textContent = faits < 6 ? `par an · ${faits} ligne${faits > 1 ? 's' : ''} tranchée${faits > 1 ? 's' : ''} sur 6` : 'par an, soit 13 € par mois : le Japon avance encore d’un mois';
+  if (faits === 6) { $('compteur').classList.add('fini'); document.querySelector('#compteur .k').textContent = '« 156 € par an pour des services que j’avais déjà ! »'; }
+  montre(l, b); }
 L.forEach((l, n) => { const li = document.createElement('li'); const b = document.createElement('button'); b.className = 'ligne'; b.innerHTML = `<i>${n + 1}</i><em>${l[0]}</em><span><b>${l[1] ? euro(l[1]) : 'Gratuit'}</b></span>`; li.appendChild(b); ul.appendChild(li);
-  b.onclick = () => { document.querySelectorAll('.ligne.on').forEach(x => x.classList.remove('on')); b.classList.add('on');
-    fiche.classList.remove('pop'); void fiche.offsetWidth; fiche.classList.add('pop');
-    fiche.innerHTML = `<span class="pastille ${l[2] ? 'ok' : 'ko'}">${l[3]}</span><h2>${l[0]}${l[1] ? ' · ' + euro(l[1]) + ' par an' : ''}</h2><p>${l[4]}</p><p class="geste">→ ${l[5]}</p>`;
-    if (b.classList.contains('vu')) return; b.classList.add('vu', l[2] ? 'ok' : 'ko'); b.querySelector('i').textContent = l[2] ? '✓' : '✕'; vus++; if (!l[2]) total += l[1];
-    compte(document.getElementById('v'), total); document.getElementById('j').style.width = (total / 168 * 100) + '%';
-    document.getElementById('s').textContent = vus < 6 ? `par an · ${vus} ligne${vus > 1 ? 's' : ''} vérifiée${vus > 1 ? 's' : ''} sur 6` : 'par an, soit 14 € par mois qui partaient sans raison';
-    if (vus === 6) { document.getElementById('compteur').classList.add('fini'); document.querySelector('#compteur .k').textContent = '« 168 € par an, et je laissais filer ça ! »'; } };
-});
-if (Q.has('fini')) setTimeout(() => document.querySelectorAll('.ligne').forEach(b => b.click()), 300);
+  b.onclick = () => { document.querySelectorAll('.ligne.on').forEach(x => x.classList.remove('on')); b.classList.add('on'); montre(l, b); }; });
+if (Q.has('fini')) setTimeout(() => document.querySelectorAll('.ligne').forEach((b, i) => { b.click(); fiche.querySelector(`[data-c="${L[i][2] ? 'g' : 's'}"]`).click(); }), 300);
 </script>
 </body>
 </html>

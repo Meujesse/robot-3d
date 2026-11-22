@@ -33,47 +33,50 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;heigh
 .coup.on{background:var(--lilas);border-color:var(--lilas);color:#fff}.coup.on small,.coup.on span{color:#fff}
 .gain{margin-top:auto;padding:10px 12px;border-radius:12px;background:var(--fond);font-size:14.5px;line-height:1.35;color:var(--gris)}
 .gain b{color:var(--ok)}
+.regl .note{margin:10px 0 0;font-size:14px;line-height:1.36;color:var(--gris)}.regl .note b{color:var(--violet)}
 </style>
 </head>
 <body>
 <div id="scene">
   <div class="zone">
-    <h1>Cap sur l'<em>Amérique du Sud</em></h1>
-    <p class="sous">Objectif : 4 500 €, sa part du voyage. Règle l'épargne et regarde le départ.</p>
+    <h1>Cap sur le <em>Japon</em></h1>
+    <p class="sous">Objectif : 3 600 €, trois semaines au Japon. Active ce qu'elle a appris et regarde le départ avancer.</p>
     <div class="ciel carte" id="ciel">
       <svg viewBox="0 0 826 236" preserveAspectRatio="none" aria-hidden="true"><path d="M70 176 Q 410 -70 756 150" fill="none" stroke="#fff" stroke-width="2.5" stroke-dasharray="3 9" stroke-linecap="round" opacity=".7"/><circle cx="70" cy="176" r="7" fill="#fff"/><circle cx="756" cy="150" r="9" fill="#F3785D" stroke="#fff" stroke-width="3"/></svg>
-      <div class="res"><div class="k">Départ dans</div><div class="v" id="quand">7 ans et 6 mois</div></div>
-      <div class="ville" style="left:26px">Montpellier<small>aujourd'hui</small></div>
-      <div class="ville" style="right:22px;text-align:right">Amérique du Sud<small id="mois">90 mois d'épargne</small></div>
+      <div class="res"><div class="k">Départ dans</div><div class="v" id="quand">6 ans</div></div>
+      <div class="ville" style="left:26px">Nantes<small>aujourd'hui</small></div>
+      <div class="ville" style="right:22px;text-align:right">Tokyo<small id="mois">72 mois d'épargne</small></div>
       <div class="avion" id="avion"><svg viewBox="0 0 54 54" aria-hidden="true"><path d="M50 27 L30 20 L16 6 L11 8 L20 22 L8 24 L4 19 L1 20 L4 27 L1 34 L4 35 L8 30 L20 32 L11 46 L16 48 L30 34 Z" fill="#fff" stroke="#3A0057" stroke-width="2" stroke-linejoin="round"/></svg></div>
     </div>
     <div class="regl carte">
-      <div class="k">Épargne d'Alice pour ce projet</div>
-      <div class="mt"><span id="mt">50 €</span><small>par mois</small></div>
-      <input type="range" id="curseur" min="50" max="250" step="10" value="50" aria-label="Épargne par mois">
-      <div class="pre"><button data-v="50">50 €<small>avant</small></button><button data-v="100">100 €<small>cette année</small></button><button data-v="180">180 €<small>l'an prochain</small></button></div>
+      <div class="k">Virement automatique vers le projet Japon</div>
+      <div class="mt"><span id="mt">50 €</span><small>par mois</small></div>
+      <input type="range" id="curseur" min="50" max="200" step="10" value="50" aria-label="Virement automatique par mois">
+      <div class="pre"><button data-v="50">50 €<small>aujourd'hui</small></button><button data-v="100">100 €<small>un effort léger</small></button><button data-v="150">150 €<small>un vrai effort</small></button></div>
+      <p class="note"><b>Se payer en premier :</b> le virement part le jour de la paie, avant les dépenses. Ce qui n'est plus sur le compte courant ne se dépense pas.</p>
     </div>
     <div class="plus carte">
-      <div class="k">Deux coups de pouce</div>
-      <button class="coup" data-v="80"><b>Solder le crédit de l'ordinateur</b><span>+80 €</span><small>La mensualité libérée part dans le projet</small></button>
-      <button class="coup" data-v="14"><b>Supprimer les frais bancaires inutiles</b><span>+14 €</span><small>168 € par an récupérés</small></button>
-      <div class="gain" id="gain">À 50 € par mois, il faut sept ans et demi. Fais bouger le curseur.</div>
+      <div class="k">Ce qu'elle a appris cette semaine</div>
+      <button class="coup" data-v="121"><b>Abonnements fantômes résiliés</b><span>+121 €</span><small>Le tri au coût par usage</small></button>
+      <button class="coup" data-v="60"><b>Un achat impulsif évité par mois</b><span>+60 €</span><small>24 heures, test BISOU, +1, −1</small></button>
+      <div class="gain" id="gain"></div>
     </div>
   </div>
 </div>
 <script src="alice.js?v=2"></script>
 <script>
-// Objectif et montants repris du parcours d'origine : 9 000 € à deux, soit 4 500 € pour Alice ; 50 € par mois au départ, puis 100 € et 180 €
-const OBJ = 4500, $ = id => document.getElementById(id), cur = $('curseur');
+// Projet d'Alice pour cette démo : trois semaines au Japon, 3 600 €. Elle épargne 50 € par mois au départ (six ans).
+// Les deux leviers reprennent les activités précédentes : 121 € d'abonnements, 60 € d'achats impulsifs.
+const OBJ = 3600, MIN = 10, $ = id => document.getElementById(id), cur = $('curseur');
 const duree = m => { const a = Math.floor(m / 12), r = m % 12; return (a ? a + ' an' + (a > 1 ? 's' : '') : '') + (a && r ? ' et ' : '') + (r ? r + ' mois' : '') || 'moins d’un mois'; };
 for (let i = 0; i < 26; i++) { const e = document.createElement('i'); e.className = 'etoile'; e.style.left = (Math.random() * 100) + '%'; e.style.top = (Math.random() * 60) + '%'; e.style.opacity = .3 + Math.random() * .6; $('ciel').appendChild(e); }
-function maj(){ const base = +cur.value, bonus = [...document.querySelectorAll('.coup.on')].reduce((s, b) => s + +b.dataset.v, 0), m = base + bonus, mois = Math.ceil(OBJ / m), ref = Math.ceil(OBJ / 50);
-  cur.style.setProperty('--p', ((base - 50) / 200 * 100) + '%'); $('mt').textContent = euro(m); $('quand').textContent = duree(mois); $('mois').textContent = mois + ' mois d’épargne';
-  $('avion').style.offsetDistance = (6 + (1 - (mois - 15) / (ref - 15)) * 88) + '%';
+function maj(){ const base = +cur.value, n = document.querySelectorAll('.coup.on').length, bonus = [...document.querySelectorAll('.coup.on')].reduce((s, b) => s + +b.dataset.v, 0), m = base + bonus, mois = Math.ceil(OBJ / m), ref = Math.ceil(OBJ / 50);
+  cur.style.setProperty('--p', ((base - 50) / 150 * 100) + '%'); $('mt').textContent = euro(base); $('quand').textContent = duree(mois); $('mois').textContent = mois + ' mois d’épargne';
+  $('avion').style.offsetDistance = (6 + (1 - (mois - MIN) / (ref - MIN)) * 88) + '%';
   document.querySelectorAll('.pre button').forEach(b => b.classList.toggle('on', +b.dataset.v === base));
-  $('gain').innerHTML = mois >= ref ? 'À 50 € par mois, il faut sept ans et demi. Fais bouger le curseur.' : `Avec ${euro(m)} par mois, Alice part <b>${duree(ref - mois)} plus tôt</b> qu’avec ses 50 € du début.`; }
+  $('gain').innerHTML = mois >= ref ? 'À 50 € par mois, il faut six ans. Active ses deux nouveaux réflexes, puis règle le virement.' : `${euro(m)} par mois vers le projet : Alice part <b>${duree(ref - mois)} plus tôt</b>.` + (n < 2 ? ' Il reste un réflexe à activer.' : base === 50 ? ' Et sans toucher à son virement de départ.' : ''); }
 cur.oninput = maj; document.querySelectorAll('.pre button').forEach(b => b.onclick = () => { cur.value = b.dataset.v; maj(); }); document.querySelectorAll('.coup').forEach(b => b.onclick = () => { b.classList.toggle('on'); maj(); });
-maj(); if (Q.has('fini')) setTimeout(() => { cur.value = 180; document.querySelector('.coup').click(); }, 400);
+maj(); if (Q.has('fini')) setTimeout(() => document.querySelectorAll('.coup').forEach(b => b.click()), 400);
 </script>
 </body>
 </html>

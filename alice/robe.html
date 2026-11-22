@@ -10,7 +10,7 @@
 .tel .haut{position:absolute;left:0;right:0;top:0;height:74px;background:linear-gradient(135deg,#A174EE,#F3785D);display:flex;align-items:center;gap:12px;padding:0 18px;color:#fff;z-index:2}
 .tel .haut img{width:46px;height:46px;border-radius:50%;background:#FFE3DC;object-fit:cover;object-position:50% 6%;border:2px solid #fff}
 .tel .haut b{display:block;font:800 17px/1.1 var(--f-titre)}.tel .haut small{font-size:12.5px;opacity:.9}
-.fil{position:absolute;left:0;right:0;top:74px;bottom:0;padding:12px 12px 140px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;scrollbar-width:none;scroll-behavior:smooth}
+.fil{position:absolute;left:0;right:0;top:74px;bottom:0;padding:12px 12px 150px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;scrollbar-width:none;scroll-behavior:smooth}
 .fil::-webkit-scrollbar{display:none}
 .msg{max-width:86%;padding:9px 13px;border-radius:17px;font-size:15px;line-height:1.34;animation:monte .3s both;flex:none;color:#fff}
 .msg.elle{align-self:flex-start;background:#3A1B55;border-bottom-left-radius:6px}
@@ -19,6 +19,9 @@
 .msg.photo{padding:6px;background:#3A1B55;width:176px}
 .msg.photo svg{display:block;width:100%;border-radius:12px}
 .msg.photo small{display:block;padding:5px 6px 2px;font-size:12.5px;white-space:nowrap}.msg.photo s{opacity:.7}
+.msg.test{display:grid;gap:5px;padding:10px 12px}
+.msg.test div{display:grid;grid-template-columns:24px 1fr;gap:9px;align-items:center;font-size:14px;line-height:1.25;animation:monte .3s both}
+.msg.test b{width:24px;height:24px;border-radius:50%;background:var(--ok);font:700 14px/24px var(--f-chiffre);text-align:center}
 .points{display:inline-flex;gap:4px;align-items:center;height:15px}
 .points b{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.4;animation:tape 1s infinite}
 .points b:nth-child(2){animation-delay:.2s}.points b:nth-child(3){animation-delay:.4s}
@@ -28,87 +31,189 @@
 .rep .k{font:700 11px/1 var(--f-titre);letter-spacing:.14em;text-transform:uppercase;color:#C9B1F7;padding-left:4px}
 .rep button{text-align:left;border:1.5px solid var(--lilas);background:rgba(161,116,238,.12);color:#fff;border-radius:13px;padding:10px 13px;font:700 14.5px/1.3 var(--f-texte);transition:.15s}
 .rep button:hover{background:rgba(161,116,238,.35);transform:translateX(3px)}
-.cote{position:absolute;left:420px;right:0;top:126px;bottom:0;display:grid;grid-template-rows:auto 1fr;gap:14px}
-.h24{padding:16px 18px;display:grid;grid-template-columns:118px 1fr;gap:16px;align-items:center}
-.horloge{width:118px;height:118px}
+/* colonne de droite : le suivi, puis la boîte à outils d'Alice (trois réflexes), puis la note du bas */
+.cote{position:absolute;left:420px;right:0;top:126px;bottom:0;display:flex;flex-direction:column;gap:9px}
+.suivi{padding:11px 16px 12px;display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;flex:none}
+.suivi .k{font:800 11.5px/1.2 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:var(--gris)}
+.suivi .l{display:flex;justify-content:space-between;align-items:baseline}
+.suivi .l b{font:700 17px/1 var(--f-chiffre)}
+.envie{margin-top:7px;height:12px;border-radius:6px;background:#EFE5FA;overflow:hidden}
+.envie b{display:block;height:100%;width:95%;border-radius:6px;background:linear-gradient(90deg,var(--lilas),var(--corail));transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.suivi p{margin:5px 0 0;font-size:13.5px;line-height:1.3;color:var(--gris)}
+.suivi .d{text-align:right}
+.suivi .v{font:700 36px/1 var(--f-chiffre);margin-top:3px;white-space:nowrap;transition:color .3s}
+.suivi .v.rouge{color:var(--ko)}.suivi .v.vert{color:var(--ok)}
+.outil{flex:none;overflow:hidden;transition:box-shadow .2s,transform .2s,border-color .2s;border:2px solid transparent}
+.outil .tete{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;padding:8px 14px}
+.outil .ico{width:40px;height:40px;border-radius:50%;background:var(--lilas);display:grid;place-items:center;color:#fff;font:700 15px/1 var(--f-chiffre)}
+.outil .ico svg{width:24px;height:24px}
+.outil h2{margin:0;font:800 16px/1.15 var(--f-titre)}
+.outil .regle{margin:1px 0 0;font-size:13px;line-height:1.3;color:var(--gris)}
+.outil .etat{font:700 11.5px/1.2 var(--f-titre);letter-spacing:.03em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:rgba(31,175,122,.14);color:#0E7A53;white-space:nowrap}
+.outil .etat:empty{display:none}
+.outil .corps{max-height:0;opacity:0;padding:0 14px;transition:max-height .5s,opacity .4s,padding .5s}
+.outil.ouvert .corps{max-height:150px;opacity:1;padding:2px 14px 12px}
+.outil.ouvert{border-color:var(--lilas-2)}
+.cote.choisir .outil{cursor:pointer;border-color:var(--lilas)}
+.cote.choisir .outil:hover{transform:translateX(-4px);box-shadow:0 12px 26px rgba(161,116,238,.35)}
+.cote.choisir .outil .etat{background:var(--lilas);color:#fff}
+.outil.pris{border-color:var(--corail)}
+.outil.bon{border-color:var(--ok);animation:pop .4s}
+.h24{display:grid;grid-template-columns:86px 1fr;gap:14px;align-items:center}
+.horloge{width:86px;height:86px}
 .horloge .aig{transform-origin:59px 59px;transition:transform 2.6s cubic-bezier(.4,0,.2,1)}
-.h24 h2{margin:0 0 4px;font:800 19px/1.15 var(--f-titre)}
-.h24 p{margin:0;font-size:14.5px;line-height:1.38;color:var(--gris)}
-.envie{margin-top:8px;height:12px;border-radius:6px;background:#EFE5FA;overflow:hidden}
-.envie b{display:block;height:100%;width:95%;border-radius:6px;background:linear-gradient(90deg,var(--lilas),var(--corail));transition:width 2.6s cubic-bezier(.4,0,.2,1)}
-.envie-l{display:flex;justify-content:space-between;font:700 12px/1 var(--f-titre);letter-spacing:.05em;text-transform:uppercase;color:var(--gris);margin-top:8px}
-.compte{padding:16px 18px;display:flex;flex-direction:column}
-.compte .k{font:800 13px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:var(--gris)}
-.compte .v{font:700 54px/1 var(--f-chiffre);margin:8px 0 2px;transition:color .3s}
-.compte .v.rouge{color:var(--ko)}.compte .v.vert{color:var(--ok)}
-.compte p{margin:0;font-size:14.5px;line-height:1.38;color:var(--gris)}
-.compte .si{margin-top:auto;padding:10px 12px;border-radius:12px;background:var(--fond);font-size:14px;line-height:1.35}
-.compte .si b{color:var(--ko);white-space:nowrap}
-.cles{display:none;list-style:none;margin:12px 0 0;padding:0;gap:7px}
-.cles li{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--fond);font:700 14px/1.3 var(--f-texte);animation:monte .35s both}
-.cles li i{width:26px;height:26px;border-radius:50%;background:var(--lilas);color:#fff;font:700 14px/26px var(--f-chiffre);font-style:normal;text-align:center}.compte .si.ok b{color:var(--ok)}
+.h24 p,.bq{margin:0;font-size:14px;line-height:1.36;color:var(--gris)}
+.lettres{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.lettre{border:2px solid var(--lilas-2);background:#fff;border-radius:13px;padding:5px 0 6px;text-align:center;color:var(--violet);transition:.2s;cursor:default}
+.lettre b{display:block;font:700 28px/1 var(--f-chiffre)}
+.lettre small{display:block;font:700 11px/1.2 var(--f-titre)}
+.lettre.attend{cursor:pointer;border-color:var(--lilas);background:#F4EDFE;box-shadow:0 5px 12px rgba(161,116,238,.3)}
+.lettre.attend:hover{transform:translateY(-3px);background:var(--lilas);color:#fff}
+.lettre.cours{border-color:var(--corail);background:#FFF0EC}
+.lettre.passe{background:rgba(31,175,122,.14);border-color:var(--ok);color:#0E7A53}
+.lettre.coince{background:rgba(226,75,91,.1);border-color:var(--ko);color:#B3293A}
+.bq{margin-top:8px;min-height:38px}
+.bq b{color:var(--violet)}
+.pm{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pm div{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--fond);font-size:13.5px;line-height:1.3}
+.pm b{font:700 26px/1 var(--f-chiffre);color:var(--ok)}.pm div+div b{color:var(--corail)}
+.si{margin-top:auto;padding:10px 14px;border-radius:14px;background:#fff;border:1px solid rgba(58,0,87,.07);font-size:14px;line-height:1.35}
+.si b{color:var(--ko);white-space:nowrap}.si.ok b{color:var(--ok)}
+.cles{display:none;list-style:none;margin:0;padding:0;gap:6px}
+.cles li{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:center;padding:6px 12px;border-radius:12px;background:#fff;border:1px solid rgba(58,0,87,.07);font:700 13.5px/1.28 var(--f-texte);animation:monte .35s both}
+.cles li i{width:26px;height:26px;border-radius:50%;background:var(--lilas);color:#fff;font:700 14px/26px var(--f-chiffre);font-style:normal;text-align:center}
+.cles li i.ok{background:var(--ok)}
 </style>
 </head>
 <body>
 <div id="scene">
   <div class="zone">
     <h1>J'achète ou <em>j'attends</em> ?</h1>
-    <p class="sous">Réponds-lui dans le téléphone.</p>
+    <p class="sous" id="sous">Réponds-lui dans le téléphone.</p>
     <div class="tel">
       <div class="haut"><img src="img/alice-ravie.png?v=1" alt=""><div><b>Alice</b><small>en ligne</small></div></div>
       <div class="fil" id="fil"></div>
       <div class="rep" id="rep"></div>
     </div>
-    <div class="cote">
-      <div class="h24 carte">
-        <svg class="horloge" viewBox="0 0 118 118" aria-hidden="true"><circle cx="59" cy="59" r="54" fill="#fff" stroke="#3A0057" stroke-width="6"/><g stroke="#C9B1F7" stroke-width="3" stroke-linecap="round"><path d="M59 12v8M59 98v8M12 59h8M98 59h8"/></g><g class="aig" id="petite"><path d="M59 59V34" stroke="#3A0057" stroke-width="6" stroke-linecap="round"/></g><g class="aig" id="grande"><path d="M59 59V20" stroke="#F3785D" stroke-width="4" stroke-linecap="round"/></g><circle cx="59" cy="59" r="6" fill="#3A0057"/></svg>
-        <div><h2>La règle des 24 heures</h2><p id="h24p">Une envie d'achat ? On attend 24 heures avant de valider le panier.</p><div class="envie-l"><span>Envie d'acheter</span><span id="pcE">95 %</span></div><div class="envie"><b id="jE"></b></div></div>
+    <div class="cote" id="cote">
+      <div class="suivi carte">
+        <div id="sG">
+          <div class="l"><span class="k">Envie d'acheter la robe</span><b id="pcE">95 %</b></div>
+          <div class="envie"><b id="jE"></b></div>
+        </div>
+        <div class="d"><div class="k" id="kD">Reste ce mois-ci</div><div class="v" id="solde">50 €</div></div>
       </div>
-      <div class="compte carte">
-        <div class="k">Ce qu'il reste à Alice ce mois-ci</div>
-        <div class="v" id="solde">23 €</div>
-        <p>Une fois ses charges et ses loisirs payés.</p>
-        <ul class="cles" id="cles"></ul>
-        <div class="si" id="si">La robe coûte 60 €. Si elle craque maintenant, elle finit le mois à <b>−37 €</b>.</div>
+      <div class="outil carte ouvert" id="o1">
+        <div class="tete"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><div><h2>La règle des 24 heures</h2><p class="regle">Une envie ? On laisse passer une nuit avant de payer.</p></div><span class="etat" id="e1"></span></div>
+        <div class="corps"><div class="h24">
+          <svg class="horloge" viewBox="0 0 118 118" aria-hidden="true"><circle cx="59" cy="59" r="54" fill="#fff" stroke="#3A0057" stroke-width="6"/><g stroke="#C9B1F7" stroke-width="3" stroke-linecap="round"><path d="M59 12v8M59 98v8M12 59h8M98 59h8"/></g><g class="aig" id="petite"><path d="M59 59V34" stroke="#3A0057" stroke-width="6" stroke-linecap="round"/></g><g class="aig" id="grande"><path d="M59 59V20" stroke="#F3785D" stroke-width="4" stroke-linecap="round"/></g><circle cx="59" cy="59" r="6" fill="#3A0057"/></svg>
+          <p id="h24p">Si l'envie vient d'une émotion, d'une promo ou d'une habitude, on attend 24 heures avant de valider le panier.</p>
+        </div></div>
       </div>
+      <div class="outil carte" id="o2">
+        <div class="tete"><span class="ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.5C6.5 16.2 3 13 3 9.2 3 6.6 5 4.8 7.3 4.8c1.9 0 3.5 1 4.7 2.9 1.2-1.9 2.8-2.9 4.7-2.9C19 4.8 21 6.6 21 9.2c0 3.8-3.500 7-9 11.300z"/></svg></span><div><h2>Le test BISOU</h2><p class="regle">Cinq questions à se poser avant d'acheter.</p></div><span class="etat" id="e2"></span></div>
+        <div class="corps">
+          <div class="lettres" id="lettres"></div>
+          <p class="bq" id="bq">Clique sur une lettre pour poser la question à Alice.</p>
+        </div>
+      </div>
+      <div class="outil carte" id="o3">
+        <div class="tete"><span class="ico">+1−1</span><div><h2>La règle du +1, −1</h2><p class="regle">Une chose entre chez moi, une autre en sort.</p></div><span class="etat" id="e3"></span></div>
+        <div class="corps"><div class="pm"><div><b>+1</b><span>un objet acheté, reçu ou récupéré</span></div><div><b>−1</b><span>un objet vendu, donné ou recyclé</span></div></div></div>
+      </div>
+      <ul class="cles" id="cles"></ul>
+      <div class="si" id="si">La robe coûte 60 €. Si elle craque maintenant, elle finit le mois dans le rouge : <b>−10 €</b>.</div>
     </div>
   </div>
 </div>
-<script src="alice.js?v=2"></script>
+<script src="alice.js?v=3"></script>
 <script>
-// Scène reprise du parcours d'origine : la robe à 60 € au lieu de 180 €, la règle des 24 heures. Reste du mois : 23 €.
-const SIT = [
-  { t: 'Tu reçois une promo pour une vente privée de maillots de bain : 60 €. Le tien est usé, tu en as besoin pour cet été, tu cherches depuis deux semaines et tu connais bien la marque.', c: ['J’achète', 'J’attends'], r: ['Ça se défend : besoin réel, recherche faite, marque connue. C’est un achat réfléchi, pas un coup de tête.', 'Bonne idée ! Donne-toi 24 heures pour voir si tu as vraiment envie de CE maillot. S’il est encore là demain, ce sera un achat réfléchi.'], cle: 'Un besoin réel, réfléchi : ce n’est pas un achat impulsif.' },
-  { t: 'Nouvelle série sur une plateforme que tu n’as pas. Au bureau, tout le monde en parle. Mais tu as déjà Netflix et Canal+.', c: ['J’achète', 'J’attends'], r: ['Attention à l’abonnement de trop : tu en paies déjà deux. Si tu craques, applique la règle du +1, −1 : un qui entre, un qui sort.', 'Bon réflexe. Tu en paies déjà deux : si tu en prends un nouveau, résilies-en un. C’est la règle du +1, −1.'], cle: 'Règle du +1, −1 : un abonnement entre, un autre sort.' },
-  { t: 'Après le travail, une collègue te propose d’aller boire un verre dans le nouveau bar qui vient d’ouvrir.', c: ['J’y vais', 'Je refuse'], r: ['Pour l’aspect social, c’est chouette de boire un verre de temps en temps avec ses collègues ! L’essentiel, c’est de savoir pourquoi tu le fais, et de le faire en conscience.', 'Pourquoi pas ! L’essentiel, c’est que ce soit un choix, pas une privation. Un verre de temps en temps, en conscience, c’est aussi du lien.'], cle: 'Dépenser en conscience, c’est savoir pourquoi on le fait.' },
-  { t: 'Tu traînes sur les réseaux et tu vois qu’une marque que tu aimes sort un nouveau complément « collagène matcha glow ».', c: ['J’achète', 'J’attends'], r: ['Envie née en traînant sur les réseaux : c’est l’achat impulsif typique. Donne-toi 24 heures avant de valider le panier.', 'Bravo ! Laisse retomber l’envie et revois-la demain. Si tu le veux toujours, c’est peut-être un vrai besoin.'], cle: 'Envie née en scrollant : on applique la règle des 24 heures.' },
+// Trois réflexes sur un même achat (la robe à 60 €) : 24 heures, puis le test BISOU lettre par lettre, puis le +1, −1.
+// Ensuite quatre situations où l'on choisit soi-même le réflexe dans la boîte à outils. Reste du mois d'Alice : 50 €.
+const BISOU = [
+  { l: 'B', m: 'Besoin', q: 'En as-tu vraiment besoin ?', a: 'Besoin, besoin… Je n’ai aucun mariage de prévu cet été 🙈', v: 0, ok: 'Oui, ça coince. Une envie, ce n’est pas un besoin.', ko: 'Sois honnête avec moi : sans mariage, c’est une envie, pas un besoin. Ça coince.' },
+  { l: 'I', m: 'Immédiat', q: 'En as-tu besoin tout de suite ?', a: 'Non, rien ne presse. C’est la promo qui me presse.', v: 0, ok: 'Voilà. Si elle part, il y en aura d’autres.', ko: 'Pas vraiment : c’est la promo qui crée l’urgence, pas moi. Ça coince.' },
+  { l: 'S', m: 'Semblable', q: 'Tu n’as pas déjà quelque chose de semblable ?', a: 'Euh… j’ai une bonne dizaine de robes dans mon placard.', v: 0, ok: 'Dix robes. Ça coince, on est d’accord 😅', ko: 'Avec dix robes dans le placard ? Là, ça coince 😅' },
+  { l: 'O', m: 'Origine', q: 'D’où vient cette envie ?', a: 'Je scrollais sur mon téléphone hier soir, après une journée pourrie.', v: 0, ok: 'Oui : c’était la fatigue qui parlait, pas moi.', ko: 'Je crois que c’est ma journée pourrie qui voulait cette robe, pas moi. Ça coince.' },
+  { l: 'U', m: 'Utile', q: 'Est-ce qu’elle te sera vraiment utile ?', a: 'Elle est bien coupée, je pourrais aussi la porter au bureau.', v: 1, ok: 'Oui, celle-là passe. Mais ça ne fait pas lourd…', ko: 'Tu es dure 😄 Elle me servirait quand même. Disons que celle-là passe.' },
 ];
-const fil = document.getElementById('fil'), rep = document.getElementById('rep'), $ = id => document.getElementById(id);
+const OUTILS = ['J’attends 24 heures', 'Je fais le test BISOU', 'J’applique le +1, −1'];
+// pour chaque situation : le réflexe le plus adapté (0, 1 ou 2), la réaction d'Alice à chaque choix, puis une suite commune
+const SIT = [
+  { t: 'Tu scrolles tard le soir. Une marque que tu aimes sort un complément « collagène matcha glow » à 39 €. Le panier est prêt en deux clics.', bon: 0,
+    r: ['Bien vu ! Une envie née en scrollant, tard le soir : c’est l’achat impulsif typique. On laisse passer la nuit.', 'Ça marche aussi. Mais tard le soir, on se raconte vite qu’on en a besoin. Le plus sûr : laisser passer 24 heures et décider à froid.', 'Le +1, −1, c’est pour le jour où tu achètes. Avant ça, laisse passer 24 heures : l’envie est née en scrollant.'],
+    suite: async () => { sys('24 heures passent…'); await attends(1300); await elle('Le lendemain, tu n’y penses plus. 39 € gardés !'); },
+    cle: 'Envie née en scrollant : on attend 24 heures.' },
+  { t: 'Vente privée : un maillot de bain à 45 €. Le tien est usé, tu pars en août et tu cherches le bon depuis deux semaines.', bon: 1,
+    r: ['Bon réflexe ! On vérifie ensemble :', 'Tu peux. Mais ce n’est pas un coup de tête : tu cherches depuis deux semaines. Le test BISOU te le confirme :', 'Oui, mais après l’achat. D’abord on vérifie que c’en est un bon, avec le test BISOU :'],
+    suite: async () => { await test(['Le tien est usé', 'Tu pars en août', 'Aucun autre en bon état', 'Tu cherches depuis deux semaines', 'Tu le porteras tout l’été']); await elle('Cinq oui : achète sans culpabilité. Ces règles ne sont pas là pour t’interdire de dépenser.'); await elle('Et ton ancien maillot ?'); const c = await choix(['Il part au recyclage', 'Je le garde au cas où']); await elle(c === 0 ? 'Un qui entre, un qui sort : +1, −1 respecté 👌' : 'C’est comme ça que les placards débordent 😅 Un qui entre, un qui sort : c’est le +1, −1.'); },
+    cle: 'Cinq oui au test BISOU : on achète sans culpabilité.' },
+  { t: 'Au bureau, tout le monde parle d’une série. Elle est sur une plateforme que tu n’as pas : 9 € par mois. Tu paies déjà deux abonnements.', bon: 2,
+    r: ['Exactement : un abonnement entre, un autre sort.', 'Attendre, c’est bien : la série sera toujours là. Et si tu la prends, pense au +1, −1 : tu paies déjà deux abonnements.', 'Le test coince vite à la lettre S : tu as déjà deux abonnements semblables. Si tu y tiens, applique le +1, −1.'],
+    suite: async () => { await elle('Si tu la prends, lequel sort ?'); const c = await choix(['Celui que je n’ouvre plus depuis un mois', 'Aucun, je garde les trois']); await elle(c === 0 ? 'Parfait. Ton budget ne bouge presque pas, et tu regardes ce que tu paies.' : 'Trois abonnements qui tournent, c’est comme ça qu’un budget fuit sans bruit. Un qui entre, un qui sort !'); },
+    cle: 'Un abonnement entre, un autre sort : c’est le +1, −1.' },
+  { t: 'Une collègue te propose un verre ce soir, dans le bar qui vient d’ouvrir. Tu es déjà sortie deux fois cette semaine.', bon: 1,
+    r: ['Oui, et ici une seule lettre suffit : O comme Origine.', 'Difficile d’attendre 24 heures, c’est ce soir ! Pose-toi plutôt la question O du test BISOU.', 'Pas bête : un verre ce soir, une sortie en moins ce week-end. Mais avant, pose-toi la question O du test BISOU.'],
+    suite: async () => { await elle('Pourquoi tu en as envie ?'); const c = await choix(['Pour passer un moment avec elle', 'Parce que je n’ose pas dire non']); await elle(c === 0 ? 'Alors vas-y, et profites-en ! Dépenser en conscience, c’est savoir pourquoi on le fait.' : 'Alors propose un autre soir, ou un café à midi. Dire non à une dépense, ce n’est pas dire non à la personne.'); },
+    cle: 'Dépenser en conscience, c’est savoir pourquoi on le fait.' },
+];
+const fil = document.getElementById('fil'), rep = document.getElementById('rep'), $ = id => document.getElementById(id), cote = $('cote'), O = [$('o1'), $('o2'), $('o3')];
 const bas = () => { fil.scrollTop = fil.scrollHeight; };
 const ROBE = '<svg viewBox="0 0 150 170" aria-hidden="true"><rect width="150" height="170" fill="#FFE3DC"/><path d="M58 22 Q75 34 92 22 L98 62 Q124 110 128 158 L22 158 Q26 110 52 62 Z" fill="#C2187A"/><path d="M58 22 Q75 34 92 22" fill="none" stroke="#8E0F58" stroke-width="3"/><path d="M52 62 Q75 72 98 62" fill="none" stroke="#8E0F58" stroke-width="3"/><path d="M60 80 L48 156 M75 82 L75 158 M90 80 L102 156" stroke="#A01468" stroke-width="2"/></svg>';
-async function elle(html, cls = ''){ const m = document.createElement('div'); m.className = 'msg elle ' + cls; m.innerHTML = '<span class="points"><b></b><b></b><b></b></span>'; fil.appendChild(m); bas(); await attends(900 + Math.min(1200, html.length * 9)); m.innerHTML = html; bas(); await attends(450); }
+async function elle(html, cls = ''){ const m = document.createElement('div'); m.className = 'msg elle ' + cls; m.innerHTML = '<span class="points"><b></b><b></b><b></b></span>'; fil.appendChild(m); bas(); await attends(800 + Math.min(1100, html.length * 8)); m.innerHTML = html; bas(); await attends(450); }
 function moi(t){ const m = document.createElement('div'); m.className = 'msg moi'; m.textContent = t; fil.appendChild(m); bas(); }
 function sys(t){ const m = document.createElement('div'); m.className = 'msg sys'; m.textContent = t; fil.appendChild(m); bas(); }
 function choix(liste){ return new Promise(ok => { rep.innerHTML = '<div class="k">Ta réponse</div>'; liste.forEach((t, i) => { const b = document.createElement('button'); b.textContent = t; b.onclick = () => { rep.classList.remove('on'); moi(t); ok(i); }; rep.appendChild(b); }); rep.classList.add('on'); bas(); }); }
+// le test BISOU déroulé d'un coup dans le fil : cinq lignes vertes qui arrivent l'une après l'autre
+async function test(lignes){ const m = document.createElement('div'); m.className = 'msg elle test'; fil.appendChild(m); for (let i = 0; i < 5; i++) { const d = document.createElement('div'); d.innerHTML = '<b>' + 'BISOU'[i] + '</b><span>' + lignes[i] + '</span>'; m.appendChild(d); bas(); await attends(480); } await attends(500); }
+let pE = 95; function envie(p, ms = 1200){ const de = pE, t0 = performance.now(); pE = p; $('jE').style.transitionDuration = ms + 'ms'; $('jE').style.width = p + '%'; (function pas(t){ const k = Math.min(1, (t - t0) / (VITE ? 1 : ms)); $('pcE').textContent = Math.round(de + (p - de) * k) + ' %'; if (k < 1) requestAnimationFrame(pas); })(t0); }
+const ouvre = n => O.forEach((o, i) => o.classList.toggle('ouvert', i === n));
+// les cinq lettres : on clique, la question part dans le fil
+BISOU.forEach((b, i) => { const e = document.createElement('button'); e.type = 'button'; e.className = 'lettre'; e.disabled = true; e.innerHTML = '<b>' + b.l + '</b><small>' + b.m + '</small>'; e.setAttribute('aria-label', b.m + ' : ' + b.q); $('lettres').appendChild(e); b.e = e; });
+function lettre(){ return new Promise(ok => { BISOU.forEach((b, i) => { if (b.fait) return; b.e.disabled = false; b.e.classList.add('attend'); b.e.onclick = () => { BISOU.forEach(x => { x.e.disabled = true; x.e.classList.remove('attend'); x.e.onclick = null; }); b.e.classList.add('cours'); ok(i); }; }); }); }
+// la boîte à outils devient cliquable : on choisit un des trois réflexes
+function outil(){ return new Promise(ok => { cote.classList.add('choisir'); O.forEach((o, i) => { o.tabIndex = 0; o.setAttribute('role', 'button'); const va = () => { cote.classList.remove('choisir'); O.forEach(x => { x.onclick = x.onkeydown = null; x.removeAttribute('tabindex'); }); o.classList.add('pris'); moi(OUTILS[i]); ok(i); }; o.onclick = va; o.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); va(); } }; }); }); }
 (async () => {
   await attends(700);
-  await elle('OMG ! 😍 Je viens de tomber sur une robe dos nu à 60 € au lieu de 180 € sur Vinted !');
-  await elle(ROBE + '<small>Robe dos nu · <s>180 €</s> <b>60 €</b></small>', 'photo');
+  // 1. la règle des 24 heures
+  await elle('OMG ! 😍 Je viens de tomber sur une robe dos nu à 60 € au lieu de 180 € !');
+  await elle(ROBE + '<small>Robe dos nu · <s>180 €</s> <b>60 €</b></small>', 'photo');
   await elle('Elle serait parfaite pour un mariage cet été. Bon, je n’ai pas encore de mariage de prévu… mais elle me fait de l’œil.');
   const c = await choix(['C’est tentant !', 'Attends un peu']);
-  if (c === 0) { $('solde').textContent = '−37 €'; $('solde').className = 'v rouge'; dis('robe-tentant'); await elle('Haha ! T’es une vraie petite diablotine 😈 Mais attends… j’ai déjà une bonne dizaine de robes.'); $('solde').textContent = '23 €'; $('solde').className = 'v'; await elle('Je vais patienter 24 heures. Si demain j’en ai encore envie, je regarderai de plus près.'); }
-  else { dis('robe-attends'); await elle('Tu as raison. Si j’attends, elle risque de partir… mais je patiente 24 heures, et on en reparle demain.'); }
-  await attends(500); sys('24 heures passent…'); $('h24p').textContent = 'Le temps passe, et l’envie retombe.';
-  $('petite').style.transform = 'rotate(720deg)'; $('grande').style.transform = 'rotate(8640deg)'; $('jE').style.width = '18%';
-  const t0 = performance.now(); (function pas(t){ const k = Math.min(1, (t - t0) / (VITE ? 1 : 2600)); $('pcE').textContent = Math.round(95 - 77 * k) + ' %'; if (k < 1) requestAnimationFrame(pas); })(t0);
-  await attends(3000); dis('robe-demain');
-  await elle('24 heures plus tard… je n’y pense même plus 😅 60 € gardés !');
-  $('solde').className = 'v vert'; $('si').className = 'si ok'; $('si').innerHTML = 'Alice finit le mois à <b>23 €</b> au lieu de −37 €. Cette règle lui a déjà évité pas mal de petits achats inutiles.'; $('h24p').textContent = 'Demain, l’envie n’est plus la même. On décide à froid.';
-  // À toi : les quatre situations du parcours d'origine. Pas de mauvaise réponse, Alice réagit à chaque choix.
-  await attends(900); document.querySelector('.compte .k').textContent = 'À toi : quatre situations'; $('solde').className = 'v'; $('solde').textContent = '0 / 4'; document.querySelector('.compte p').textContent = 'Pas de mauvaise réponse : l’important, c’est de décider en conscience.'; $('si').style.display = 'none'; $('cles').style.display = 'grid';
-  await elle('À toi maintenant ! Je t’envoie quatre situations. Tu achètes, ou tu attends ?');
-  for (let i = 0; i < SIT.length; i++) { const S = SIT[i]; sys('Situation ' + (i + 1) + ' sur 4'); await elle(S.t); const c = await choix(S.c); await elle(S.r[c]); $('solde').textContent = (i + 1) + ' / 4'; const li = document.createElement('li'); li.innerHTML = '<i>' + (i + 1) + '</i>' + S.cle; $('cles').appendChild(li); await attends(500); }
-  $('solde').className = 'v vert'; sys('Conversation terminée. Clique sur « Continuer ».');
+  if (c === 0) { $('solde').textContent = '−10 €'; $('solde').className = 'v rouge'; dis('robe-tentant'); await elle('Haha ! T’es une vraie petite diablotine 😈 Mais attends… j’ai déjà une bonne dizaine de robes.'); $('solde').textContent = '50 €'; $('solde').className = 'v'; await elle('Je vais patienter 24 heures. Si demain j’en ai encore envie, je regarderai de plus près.'); }
+  else { dis('robe-attends'); await elle('Tu as raison. Si j’attends, elle risque de partir… mais je patiente 24 heures, et on en reparle demain.'); }
+  await attends(500); sys('24 heures passent…'); $('h24p').textContent = 'Le temps passe, et l’envie retombe.';
+  $('petite').style.transform = 'rotate(720deg)'; $('grande').style.transform = 'rotate(8640deg)'; envie(48, 2600);
+  await attends(3000); $('e1').textContent = 'Fait'; $('h24p').textContent = 'Le lendemain, l’envie n’est plus la même. On décide à froid.'; dis('robe-demain');
+  await elle('24 heures plus tard… l’envie est retombée, mais la robe me trotte encore dans la tête 😅');
+  // 2. le test BISOU, lettre par lettre
+  await elle('Alors je sors ma deuxième arme : le test BISOU. Cinq lettres, cinq questions. Pose-les-moi !');
+  ouvre(1); $('sous').textContent = 'Clique sur chaque lettre, à droite, pour lui poser la question.'; $('si').innerHTML = 'À chaque « non » ou « bof », l’envie baisse. Au bout des cinq lettres, Alice décide.';
+  let oui = 0;
+  for (let n = 0; n < 5; n++) {
+    const b = BISOU[await lettre()]; $('bq').innerHTML = '<b>' + b.m + ' :</b> ' + b.q; moi(b.q); await attends(350); await elle(b.a);
+    const j = await choix(['Ça passe', 'Ça coince']); await elle((j === 0) === (b.v === 1) ? b.ok : b.ko);
+    b.fait = true; b.e.classList.remove('cours'); b.e.classList.add(b.v ? 'passe' : 'coince'); if (b.v) oui++; else envie(Math.max(6, pE - 10), 700);
+    $('e2').textContent = oui + ' oui sur ' + (n + 1); if (n < 4) $('bq').textContent = 'Lettre suivante : clique pour poser la question.';
+  }
+  $('bq').innerHTML = '<b>Un seul oui sur cinq.</b> Quand ça coince autant, on repose le panier.'; dis('robe-panier');
+  await elle('Un seul oui sur cinq : je repose le panier. 60 € gardés !'); envie(5, 900);
+  $('solde').className = 'v vert'; $('si').className = 'si ok'; $('si').innerHTML = 'Alice finit le mois à <b>50 €</b> au lieu de −10 €. Avant, elle craquait à peu près une fois par mois.';
+  // 3. le +1, −1, puis la boîte à outils passe dans les mains de l'apprenant
+  await attends(900); ouvre(2); dis('robe-plus-un');
+  await elle('Et les jours où je craque quand même, j’ai une dernière règle : le +1, −1. Une chose entre chez moi, une autre en sort.');
+  await attends(1600);
+  await elle('À toi maintenant ! Je t’envoie quatre situations. Choisis le bon réflexe dans ma boîte à outils, à droite.');
+  ouvre(-1); ['e1', 'e2', 'e3'].forEach(e => $(e).textContent = 'Choisir'); $('si').style.display = 'none'; $('cles').style.display = 'grid';
+  $('sG').innerHTML = '<div class="k">À toi : quatre situations</div><p>Clique sur le réflexe qui te semble le plus adapté.</p>'; $('kD').textContent = 'Situation'; $('solde').className = 'v'; $('solde').textContent = '0 / 4';
+  $('sous').textContent = 'Lis la situation, puis choisis un réflexe à droite.';
+  for (let i = 0; i < SIT.length; i++) {
+    const S = SIT[i]; O.forEach(o => o.classList.remove('pris', 'bon')); sys('Situation ' + (i + 1) + ' sur 4'); await elle(S.t);
+    const k = await outil(); await elle(S.r[k]); O[S.bon].classList.add('bon'); await S.suite();
+    $('solde').textContent = (i + 1) + ' / 4'; const li = document.createElement('li'); li.innerHTML = '<i' + (k === S.bon ? ' class="ok"' : '') + '>' + (i + 1) + '</i>' + S.cle; $('cles').appendChild(li); await attends(500);
+  }
+  O.forEach(o => o.classList.remove('pris', 'bon')); ['e1', 'e2', 'e3'].forEach(e => $(e).textContent = ''); $('solde').className = 'v vert'; $('sG').innerHTML = '<div class="k">Trois réflexes en poche</div><p>24 heures, le test BISOU, le +1, −1 : à toi de piocher selon la situation.</p>';
+  $('sous').textContent = 'Clique sur « Continuer ».'; sys('Conversation terminée. Clique sur « Continuer ».');
 })();
 </script>
 </body>
