@@ -114,19 +114,19 @@ fetch('voix/durees.json').then(r => r.json()).then(D => {
     const hd = el('', 'inset:0'), pr = el('', 'inset:0'), elp = (h, c, k) => el(h, c, k, pr); const kp = el('La parade', '', 'kick', hd), tp = el('Le prorata', '', 'titre', hd); entre(kp, s6.t + .1); entre(tp, s6.t + .2);
     K(pr, [[0, { opacity: 1 }], [sb.t - .2, { opacity: 1 }], [sb.t + .3, { opacity: 0 }]], 'linear'); K(hd, [[0, { opacity: 1 }], [sb.t - .2, { opacity: 1 }], [sb.t + .3, { opacity: 0 }]], 'linear');
     const regle = el('Chacun contribue<br><em>selon ses revenus</em>', 'top:250px;font-size:64px', 'gros', pr); K(regle, [[s6.t + .9, { opacity: 0, transform: 'scale(.9)' }], [s6.t + 1.5, { opacity: 1, transform: 'none' }], [s7.t - .2, { opacity: 1, transform: 'none' }], [s7.t + .3, { opacity: 0, transform: 'translateY(-30px)' }]]);
-    // barre des revenus : 2 267 € et 3 000 €, soit 43 % et 57 %
-    const BW = 1000, BX = 140, wa = Math.round(BW * 0.43);
+    // barre des revenus : 2 400 € et 3 000 €, soit 44 % et 56 %
+    const BW = 1000, BX = 140, wa = Math.round(BW * 0.444);
     const lab = (t, css) => elp(t, css + ';font:800 26px/1.15 var(--f-titre);color:var(--violet);white-space:nowrap');
-    const la = lab('Alice<br><span style="font:700 40px/1.1 var(--f-chiffre);color:#F3785D">2 267 €</span>', `left:${BX}px;top:170px`), lq = lab('Quentin<br><span style="font:700 40px/1.1 var(--f-chiffre);color:#3A0057">3 000 €</span>', `left:${BX + wa + 24}px;top:170px`);
+    const la = lab('Alice<br><span style="font:700 40px/1.1 var(--f-chiffre);color:#F3785D">2 400 €</span>', `left:${BX}px;top:170px`), lq = lab('Quentin<br><span style="font:700 40px/1.1 var(--f-chiffre);color:#3A0057">3 000 €</span>', `left:${BX + wa + 24}px;top:170px`);
     entre(la, s7.t + 1.2); entre(lq, s7.t + 3.3);
     const ba = elp('', `left:${BX}px;top:290px;width:${wa}px;height:74px;border-radius:20px 0 0 20px;background:#F3785D;transform-origin:left center`), bq = elp('', `left:${BX + wa}px;top:290px;width:${BW - wa}px;height:74px;border-radius:0 20px 20px 0;background:#3A0057;transform-origin:left center`);
     A(ba, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], s7.t + 1.4, .8); A(bq, [{ transform: 'scaleX(0)' }, { transform: 'scaleX(1)' }], s7.t + 3.5, .8);
-    const pa = elp('43 %', `left:${BX}px;top:290px;width:${wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`), pq = elp('57 %', `left:${BX + wa}px;top:290px;width:${BW - wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`);
+    const pa = elp('44 %', `left:${BX}px;top:290px;width:${wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`), pq = elp('56 %', `left:${BX + wa}px;top:290px;width:${BW - wa}px;text-align:center;font:700 46px/74px var(--f-chiffre);color:#fff`);
     pop(pa, s7.t + s7.d * .62); pop(pq, s7.t + s7.d * .82);
-    // budget commun de 1 344 € : 578 € et 766 €
-    const bud = elp('Budget commun du foyer : <b style="color:#3A0057">1 344 € par mois</b>', 'left:0;right:0;top:404px;text-align:center;font:400 28px/1.3 var(--f-texte);color:var(--gris)'); entre(bud, s8.t + .3);
-    const ca = elp('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#F3785D">Alice verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">578 €</div>', `left:${BX}px;top:470px;width:${wa}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
-    const cq = elp('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#3A0057">Quentin verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">766 €</div>', `left:${BX + wa + 20}px;top:470px;width:${BW - wa - 20}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
+    // budget commun de 1 350 € : 600 € et 750 €
+    const bud = elp('Budget commun du foyer : <b style="color:#3A0057">1 350 € par mois</b>', 'left:0;right:0;top:404px;text-align:center;font:400 28px/1.3 var(--f-texte);color:var(--gris)'); entre(bud, s8.t + .3);
+    const ca = elp('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#F3785D">Alice verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">600 €</div>', `left:${BX}px;top:470px;width:${wa}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
+    const cq = elp('<div style="position:static;font:800 20px/1 var(--f-titre);letter-spacing:.06em;text-transform:uppercase;color:#3A0057">Quentin verse</div><div style="position:static;font:700 68px/1.1 var(--f-chiffre);color:#3A0057">750 €</div>', `left:${BX + wa + 20}px;top:470px;width:${BW - wa - 20}px;height:150px;border-radius:22px;background:#fff;box-shadow:0 16px 36px rgba(58,0,87,.12);text-align:center;padding-top:26px`);
     pop(ca, s8.t + s8.d * .36); pop(cq, s8.t + s8.d * .52);
     // trois réflexes, puis la conclusion
     const rf = el('', 'inset:0'); K(rf, [[0, { opacity: 1 }], [sc.t - .2, { opacity: 1 }], [sc.t + .3, { opacity: 0 }]], 'linear');
