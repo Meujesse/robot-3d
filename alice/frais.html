@@ -49,7 +49,7 @@
 <div id="scene">
   <div class="zone">
     <h1>Mes frais <em>bancaires</em></h1>
-    <p class="sous">Clique sur une ligne, lis l'indice, puis décide : elle garde, ou elle supprime ?</p>
+    <p class="sous">Clique sur une ligne, lis l'indice, puis décide : garder ou supprimer ?</p>
     <div class="releve carte">
       <div class="tete"><b>Contrat bancaire</b><small>Compte courant · tarifs annuels</small></div>
       <ul id="lignes"></ul>
@@ -74,9 +74,9 @@ const L = [
 const ul = document.getElementById('lignes'), fiche = document.getElementById('fiche'), $ = id => document.getElementById(id); let faits = 0, total = 0;
 const prix = l => l[1] ? ' · ' + euro(l[1]) + ' par an' : ' · gratuit';
 function montre(l, b){ const e = b.dataset.etat; fiche.classList.remove('pop'); void fiche.offsetWidth; fiche.classList.add('pop');
-  if (!e) fiche.innerHTML = `<span class="pastille att">À toi de trancher</span><h2>${l[0]}${prix(l)}</h2><p><b>Indice.</b> ${l[3]}</p><div class="dec"><button class="sec" data-c="g">Elle garde</button><button data-c="s">Elle supprime</button></div>`;
+  if (!e) fiche.innerHTML = `<span class="pastille att">À toi de trancher</span><h2>${l[0]}${prix(l)}</h2><p><b>Indice.</b> ${l[3]}</p><div class="dec"><button class="sec" data-c="g">Garder</button><button data-c="s">Supprimer</button></div>`;
   else if (e === 'ok') fiche.innerHTML = `<span class="pastille ${l[2] ? 'ok' : 'ko'}">${l[2] ? 'Utile : on garde' : 'Inutile : on supprime'}</span><h2>${l[0]}${prix(l)}</h2><p>${l[4]}</p><p class="geste">→ ${l[5]}</p>`;
-  else fiche.innerHTML = `<span class="pastille presque">Pas tout à fait</span><h2>${l[0]}${prix(l)}</h2><p>${l[4]}</p><div class="dec"><button data-c="${l[2] ? 'g' : 's'}">${l[2] ? 'Finalement, elle garde' : 'Finalement, elle supprime'}</button></div>`;
+  else fiche.innerHTML = `<span class="pastille presque">Pas tout à fait</span><h2>${l[0]}${prix(l)}</h2><p>${l[4]}</p><div class="dec"><button data-c="${l[2] ? 'g' : 's'}">${l[2] ? 'Finalement, garder' : 'Finalement, supprimer'}</button></div>`;
   fiche.querySelectorAll('.dec button').forEach(x => x.onclick = () => decide(l, b, x.dataset.c)); }
 function decide(l, b, c){ if ((c === 'g') !== l[2]) { b.dataset.etat = 'faux'; b.classList.add('doute'); return montre(l, b); }
   b.dataset.etat = 'ok'; b.classList.remove('doute'); b.classList.add('vu', l[2] ? 'ok' : 'ko'); b.querySelector('i').textContent = l[2] ? '✓' : '✕'; faits++; if (!l[2]) total += l[1];
