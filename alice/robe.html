@@ -52,7 +52,7 @@
 .outil .etat{font:700 11.5px/1.2 var(--f-titre);letter-spacing:.03em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:rgba(31,175,122,.14);color:#0E7A53;white-space:nowrap}
 .outil .etat:empty{display:none}
 .outil .corps{max-height:0;opacity:0;padding:0 14px;transition:max-height .5s,opacity .4s,padding .5s}
-.outil.ouvert .corps{max-height:150px;opacity:1;padding:2px 14px 12px}
+.outil.ouvert .corps{max-height:170px;opacity:1;padding:2px 14px 12px}
 .outil.ouvert{border-color:var(--lilas-2)}
 .cote.choisir .outil{cursor:pointer;border-color:var(--lilas)}
 .cote.choisir .outil:hover{transform:translateX(-4px);box-shadow:0 12px 26px rgba(161,116,238,.35)}
@@ -83,6 +83,18 @@
 .cles li{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:center;padding:6px 12px;border-radius:12px;background:#fff;border:1px solid rgba(58,0,87,.07);font:700 13.5px/1.28 var(--f-texte);animation:monte .35s both}
 .cles li i{width:26px;height:26px;border-radius:50%;background:var(--lilas);color:#fff;font:700 14px/26px var(--f-chiffre);font-style:normal;text-align:center}
 .cles li i.ok{background:var(--ok)}
+.placard{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.vet{border:2px solid var(--lilas-2);background:#fff;border-radius:13px;padding:5px 2px 6px;text-align:center;color:var(--violet);transition:.2s;cursor:default}
+.vet svg{display:block;width:30px;height:33px;margin:0 auto 1px}
+.vet b{display:block;font:700 11.5px/1.2 var(--f-titre)}
+.vet small{display:block;font-size:10.5px;line-height:1.2;color:var(--gris)}
+.vet.attend{cursor:pointer;border-color:var(--lilas);background:#F4EDFE;box-shadow:0 5px 12px rgba(161,116,238,.3)}
+.vet.attend:hover{transform:translateY(-3px)}
+.vet.cours{border-color:var(--corail);background:#FFF0EC}
+.vet.non{opacity:.55}
+.vet.sortie{border-color:var(--ok);background:rgba(31,175,122,.12)}
+.vet.sortie b{text-decoration:line-through}
+#pq{min-height:20px}
 </style>
 </head>
 <body>
@@ -119,7 +131,7 @@
       </div>
       <div class="outil carte" id="o3">
         <div class="tete"><span class="ico">+1−1</span><div><h2>La règle du +1, −1</h2><p class="regle">Une chose entre chez moi, une autre en sort.</p></div><span class="etat" id="e3"></span></div>
-        <div class="corps"><div class="pm"><div><b>+1</b><span>un objet acheté, reçu ou récupéré</span></div><div><b>−1</b><span>un objet vendu, donné ou recyclé</span></div></div></div>
+        <div class="corps"><div class="placard" id="placard"></div><p class="bq" id="pq">Si la robe entre (<b>+1</b>), laquelle sort (<b>−1</b>) ?</p></div>
       </div>
       <ul class="cles" id="cles"></ul>
       <div class="si" id="si">La robe coûte 60 €. Si elle craque maintenant, elle finit le mois dans le rouge : <b>−10 €</b>.</div>
@@ -131,11 +143,18 @@
 // Trois réflexes sur un même achat (la robe à 60 €) : 24 heures, puis le test BISOU lettre par lettre, puis le +1, −1.
 // Ensuite quatre situations où l'on choisit soi-même le réflexe dans la boîte à outils. Reste du mois d'Alice : 50 €.
 const BISOU = [
-  { l: 'B', m: 'Besoin', q: 'En as-tu vraiment besoin ?', a: 'Besoin, besoin… Je n’ai aucun mariage de prévu cet été 🙈', v: 0, ok: 'Oui, ça coince. Une envie, ce n’est pas un besoin.', ko: 'Sois honnête avec moi : sans mariage, c’est une envie, pas un besoin. Ça coince.' },
-  { l: 'I', m: 'Immédiat', q: 'En as-tu besoin tout de suite ?', a: 'Non, rien ne presse. C’est la promo qui me presse.', v: 0, ok: 'Voilà. Si elle part, il y en aura d’autres.', ko: 'Pas vraiment : c’est la promo qui crée l’urgence, pas moi. Ça coince.' },
-  { l: 'S', m: 'Semblable', q: 'Tu n’as pas déjà quelque chose de semblable ?', a: 'Euh… j’ai une bonne dizaine de robes dans mon placard.', v: 0, ok: 'Dix robes. Ça coince, on est d’accord 😅', ko: 'Avec dix robes dans le placard ? Là, ça coince 😅' },
-  { l: 'O', m: 'Origine', q: 'D’où vient cette envie ?', a: 'Je scrollais sur mon téléphone hier soir, après une journée pourrie.', v: 0, ok: 'Oui : c’était la fatigue qui parlait, pas moi.', ko: 'Je crois que c’est ma journée pourrie qui voulait cette robe, pas moi. Ça coince.' },
-  { l: 'U', m: 'Utile', q: 'Est-ce qu’elle te sera vraiment utile ?', a: 'Elle est bien coupée, je pourrais aussi la porter au bureau.', v: 1, ok: 'Oui, celle-là passe. Mais ça ne fait pas lourd…', ko: 'Tu es dure 😄 Elle me servirait quand même. Disons que celle-là passe.' },
+  { l: 'B', m: 'Besoin', q: 'En as-tu vraiment besoin ?', a: 'Besoin, besoin… Je n’ai aucun mariage de prévu cet été 🙈 C’est une envie, pas un besoin. Ça coince.', v: 0 },
+  { l: 'I', m: 'Immédiat', q: 'En as-tu besoin tout de suite ?', a: 'Non, rien ne presse. C’est la promo qui crée l’urgence, pas moi. Ça coince aussi.', v: 0 },
+  { l: 'S', m: 'Semblable', q: 'Tu n’as pas déjà quelque chose de semblable ?', a: 'Euh… j’ai une bonne dizaine de robes dans mon placard 😅 Ça coince.', v: 0 },
+  { l: 'O', m: 'Origine', q: 'D’où vient cette envie ?', a: 'Je scrollais hier soir, après une journée pourrie. C’était la fatigue qui parlait, pas moi. Ça coince.', v: 0 },
+  { l: 'U', m: 'Utile', q: 'Est-ce qu’elle te sera vraiment utile ?', a: 'Là, oui : elle est bien coupée, je pourrais aussi la porter au bureau. Celle-là passe !', v: 1 },
+];
+// le placard d'Alice pour l'exercice du +1, −1 : si la robe entre, laquelle sort ?
+const PLACARD = [
+  { n: 'Robe noire', u: 'chaque semaine', c: '#3A0057', dort: 0, m: 'Ah non, celle-là, je la porte toutes les semaines ! Choisis-en une qui dort dans le placard.' },
+  { n: 'Robe à fleurs', u: 'encore étiquetée', c: '#F3785D', dort: 1, m: 'Bien vu : elle a encore son étiquette. Achetée en promo, jamais portée…' },
+  { n: 'Robe longue', u: 'une fois en 2 ans', c: '#A174EE', dort: 1, m: 'Bien vu : je l’ai mise une seule fois en deux ans.' },
+  { n: 'Robe en jean', u: 'sa préférée', c: '#4A7FB5', dort: 0, m: 'Pas ma préférée ! Choisis-en une qui dort dans le placard.' },
 ];
 const OUTILS = ['J’attends 24 heures', 'Je fais le test BISOU', 'J’applique le +1, −1'];
 // pour chaque situation : le réflexe le plus adapté (0, 1 ou 2), la réaction d'Alice à chaque choix, puis une suite commune
@@ -171,6 +190,10 @@ const ouvre = n => O.forEach((o, i) => o.classList.toggle('ouvert', i === n));
 // les cinq lettres : on clique, la question part dans le fil
 BISOU.forEach((b, i) => { const e = document.createElement('button'); e.type = 'button'; e.className = 'lettre'; e.disabled = true; e.innerHTML = '<b>' + b.l + '</b><small>' + b.m + '</small>'; e.setAttribute('aria-label', b.m + ' : ' + b.q); $('lettres').appendChild(e); b.e = e; });
 function lettre(){ return new Promise(ok => { BISOU.forEach((b, i) => { if (b.fait) return; b.e.disabled = false; b.e.classList.add('attend'); b.e.onclick = () => { BISOU.forEach(x => { x.e.disabled = true; x.e.classList.remove('attend'); x.e.onclick = null; }); b.e.classList.add('cours'); ok(i); }; }); }); }
+// le placard : quatre robes, on clique sur celle qui sort
+const ROBE_MINI = c => `<svg viewBox="0 0 40 44" aria-hidden="true"><path d="M15 4 Q20 8 25 4 L27 16 Q35 30 36 41 L4 41 Q5 30 13 16 Z" fill="${c}"/></svg>`;
+PLACARD.forEach(v => { const e = document.createElement('button'); e.type = 'button'; e.className = 'vet'; e.disabled = true; e.innerHTML = ROBE_MINI(v.c) + '<b>' + v.n + '</b><small>' + v.u + '</small>'; $('placard').appendChild(e); v.e = e; });
+function sortie(){ return new Promise(ok => { PLACARD.forEach((v, i) => { if (v.e.classList.contains('non')) return; v.e.disabled = false; v.e.classList.add('attend'); v.e.onclick = () => { PLACARD.forEach(x => { x.e.disabled = true; x.e.classList.remove('attend'); x.e.onclick = null; }); v.e.classList.add('cours'); ok(i); }; }); }); }
 // la boîte à outils devient cliquable : on choisit un des trois réflexes
 function outil(){ return new Promise(ok => { cote.classList.add('choisir'); O.forEach((o, i) => { o.tabIndex = 0; o.setAttribute('role', 'button'); const va = () => { cote.classList.remove('choisir'); O.forEach(x => { x.onclick = x.onkeydown = null; x.removeAttribute('tabindex'); }); o.classList.add('pris'); moi(OUTILS[i]); ok(i); }; o.onclick = va; o.onkeydown = e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); va(); } }; }); }); }
 (async () => {
@@ -192,9 +215,8 @@ function outil(){ return new Promise(ok => { cote.classList.add('choisir'); O.fo
   let oui = 0;
   for (let n = 0; n < 5; n++) {
     const b = BISOU[await lettre()]; $('bq').innerHTML = '<b>' + b.m + ' :</b> ' + b.q; moi(b.q); await attends(350); await elle(b.a);
-    const j = await choix(['Ça passe', 'Ça coince']); await elle((j === 0) === (b.v === 1) ? b.ok : b.ko);
     b.fait = true; b.e.classList.remove('cours'); b.e.classList.add(b.v ? 'passe' : 'coince'); if (b.v) oui++; else envie(Math.max(6, pE - 10), 700);
-    $('e2').textContent = oui + ' oui sur ' + (n + 1); if (n < 4) $('bq').textContent = 'Lettre suivante : clique pour poser la question.';
+    $('e2').textContent = oui + ' oui sur ' + (n + 1); $('bq').innerHTML = '<b>' + b.m + ' :</b> ' + (b.v ? 'ça passe.' : 'ça coince.') + (n < 4 ? ' Clique sur une autre lettre.' : ''); await attends(300);
   }
   $('bq').innerHTML = '<b>Un seul oui sur cinq.</b> Quand ça coince autant, on repose le panier.'; dis('robe-panier');
   await elle('Un seul oui sur cinq : je repose le panier. 60 € gardés !'); envie(5, 900);
@@ -202,7 +224,13 @@ function outil(){ return new Promise(ok => { cote.classList.add('choisir'); O.fo
   // 3. le +1, −1, puis la boîte à outils passe dans les mains de l'apprenant
   await attends(900); ouvre(2); dis('robe-plus-un');
   await elle('Et les jours où je craque quand même, j’ai une dernière règle : le +1, −1. Une chose entre chez moi, une autre en sort.');
-  await attends(1600);
+  await elle('Imaginons que j’aie craqué pour la robe. Elle entre dans mon placard : +1. Laquelle doit sortir ? Choisis à droite.');
+  $('sous').textContent = 'Clique, à droite, sur la robe qui doit sortir du placard.'; $('si').className = 'si'; $('si').innerHTML = 'Vendue, donnée ou recyclée : l’important, c’est que le placard ne grossisse pas.';
+  let v; do { v = PLACARD[await sortie()]; moi(v.n + ' : elle sort'); await attends(300); await elle(v.m); if (!v.dort) { v.e.classList.remove('cours'); v.e.classList.add('non'); } } while (!v.dort);
+  v.e.classList.remove('cours'); v.e.classList.add('sortie'); $('pq').innerHTML = '<b>+1</b> la nouvelle robe, <b>−1</b> la ' + v.n.toLowerCase() + '.'; $('e3').textContent = 'Fait';
+  await elle('Et j’en fais quoi ?'); const q = await choix(['Tu la vends', 'Tu la donnes']);
+  await elle(q === 0 ? 'Vendue 20 € sur une appli de seconde main : la nouvelle ne m’aurait coûté que 40 €. Et mon placard ne déborde pas !' : 'Donnée à une association : elle sera enfin portée. Et mon placard ne déborde pas !');
+  await attends(700);
   await elle('À toi maintenant ! Je t’envoie quatre situations. Choisis le bon réflexe dans ma boîte à outils, à droite.');
   ouvre(-1); ['e1', 'e2', 'e3'].forEach(e => $(e).textContent = 'Choisir'); $('si').style.display = 'none'; $('cles').style.display = 'grid';
   $('sG').innerHTML = '<div class="k">À toi : quatre situations</div><p>Clique sur le réflexe qui te semble le plus adapté.</p>'; $('kD').textContent = 'Situation'; $('solde').className = 'v'; $('solde').textContent = '0 / 4';

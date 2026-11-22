@@ -7,51 +7,46 @@
 <link rel="stylesheet" href="alice.css?v=2">
 <style>
 .envs{position:absolute;left:0;top:126px;width:372px;height:372px;padding:14px 12px 10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.env{position:relative;display:flex;flex-direction:column;align-items:center;border:0;background:none;padding:4px 2px;border-radius:14px;color:var(--violet);cursor:default;transition:background .2s,transform .2s}
-.diag .env{cursor:pointer}
-.diag .env:hover{background:#F4EDFE;transform:translateY(-3px)}
-.env.non{animation:non .4s}
-@keyframes non{20%,60%{translate:-6px 0}40%,80%{translate:6px 0}}
+.env{position:relative;display:flex;flex-direction:column;align-items:center;padding:4px 2px;color:var(--violet)}
 .env .nom{font:800 12px/1.15 var(--f-titre);letter-spacing:.04em;text-transform:uppercase;text-align:center;height:30px}
 .env .pot{position:relative;width:100%;flex:1;border-radius:14px;background:var(--fond);border:2px solid rgba(58,0,87,.12);overflow:hidden;margin:6px 0}
-.env .plein{position:absolute;left:0;right:0;bottom:0;height:0;transition:height .7s cubic-bezier(.2,.8,.3,1)}
-.env.b .plein{background:linear-gradient(180deg,#5B1B80,#3A0057)}.env.e .plein{background:linear-gradient(180deg,#F79A85,#F3785D)}.env.s .plein{background:linear-gradient(180deg,#C9B1F7,#A174EE)}
+.env .plein{position:absolute;left:0;right:0;bottom:0;height:0;transition:height .7s cubic-bezier(.2,.8,.3,1),background-color .5s}
+.env.b .plein{background-color:#3A0057}.env.s .plein{background-color:#A174EE}
+.env.e .plein{background-color:#E24B5B}.env.e.bon .plein{background-color:#1FAF7A}.env.s.bon .plein{background-color:#1FAF7A}
+/* la part des crédits dans les besoins : une bande hachurée posée au-dessus du repère */
+.env .credit{position:absolute;left:0;right:0;bottom:50%;height:7.5%;background:repeating-linear-gradient(135deg,#E24B5B 0 6px,#F4A3AB 6px 12px);transition:height .7s cubic-bezier(.2,.8,.3,1);z-index:1}
+.env .credit span{position:absolute;left:0;right:0;top:-17px;text-align:center;font:700 10.5px/1 var(--f-titre);color:#B3293A;white-space:nowrap}
 .env .cible{position:absolute;left:0;right:0;height:0;border-top:2px dashed var(--violet);z-index:2}
-.env .cible span{position:absolute;right:5px;top:-18px;font:700 10.5px/1 var(--f-titre);color:var(--violet);background:rgba(255,255,255,.88);padding:2px 5px;border-radius:5px;white-space:nowrap}
+.env .cible span{position:absolute;right:5px;top:3px;font:700 10.5px/1 var(--f-titre);color:#fff;background:rgba(58,0,87,.78);padding:2px 5px;border-radius:5px;white-space:nowrap}
 .env .mt{font:700 24px/1 var(--f-chiffre);white-space:nowrap}
 .env .pc{font-size:12.5px;color:var(--gris);margin-top:1px}
-.env .ecart{margin-top:4px;height:20px;font:700 11.5px/20px var(--f-titre);padding:0 8px;border-radius:999px;white-space:nowrap;opacity:0;transition:opacity .4s}
-.env .ecart.on{opacity:1}
-.env .ecart.haut{background:rgba(226,75,91,.13);color:#B3293A}.env .ecart.bas{background:rgba(161,116,238,.18);color:var(--violet-2)}.env .ecart.bon{background:rgba(31,175,122,.14);color:#0E7A53}
-.abos{position:absolute;left:386px;right:0;top:126px;height:372px;padding:11px 12px 9px;display:flex;flex-direction:column;gap:5px;overflow:hidden}
-.abos .k{display:flex;justify-content:space-between;font:800 12px/1.2 var(--f-titre);letter-spacing:.05em;text-transform:uppercase;color:var(--gris);padding:0 2px 1px}
-.abo{display:grid;grid-template-columns:1fr 96px 176px;gap:8px;align-items:center;padding:4px 8px 4px 10px;border-radius:11px;background:var(--fond);border:2px solid transparent;transition:.2s;min-height:42px}
-.abo b{display:block;font:700 14px/1.2 var(--f-texte)}
-.abo small{display:block;font-size:12px;line-height:1.2;color:var(--gris)}
-.abo .prix{text-align:right;font:700 17px/1 var(--f-chiffre);white-space:nowrap}
+.env .ecart{margin-top:4px;height:20px;font:700 11px/20px var(--f-titre);padding:0 7px;border-radius:999px;white-space:nowrap;transition:background .4s,color .4s}
+.env .ecart.haut{background:rgba(226,75,91,.13);color:#B3293A}.env .ecart.bas{background:rgba(161,116,238,.18);color:var(--violet-2)}.env .ecart.bon{background:rgba(31,175,122,.16);color:#0E7A53}
+.abos{position:absolute;left:386px;right:0;top:126px;height:372px;padding:10px 12px 8px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.abos .k{display:flex;justify-content:space-between;font:800 12px/1.2 var(--f-titre);letter-spacing:.05em;text-transform:uppercase;color:var(--gris);padding:0 2px 2px}
+.abo{display:grid;grid-template-columns:1fr 94px 172px;gap:8px;align-items:center;padding:3px 8px 3px 10px;border-radius:10px;background:var(--fond);border:2px solid transparent;transition:.2s;min-height:38px}
+.abo b{display:block;font:700 13.5px/1.2 var(--f-texte)}
+.abo small{display:block;font-size:11.5px;line-height:1.2;color:var(--gris)}
+.abo .prix{text-align:right;font:700 16px/1 var(--f-chiffre);white-space:nowrap}
 .abo .prix small{font:700 10.5px/1.25 var(--f-titre);color:var(--corail);white-space:nowrap}
 .abo .dec{display:flex;gap:4px}
-.abo .dec button{flex:1;border:0;border-radius:8px;padding:8px 0;font:700 11.5px/1 var(--f-titre);background:#fff;color:var(--violet);box-shadow:0 0 0 1.5px var(--lilas-2) inset;transition:.15s}
+.abo .dec button{flex:1;border:0;border-radius:8px;padding:7px 0;font:700 11px/1 var(--f-titre);background:#fff;color:var(--violet);box-shadow:0 0 0 1.5px var(--lilas-2) inset;transition:.15s}
 .abo .dec button:hover{box-shadow:0 0 0 2px var(--lilas) inset}
 .abo .dec button.on{background:var(--lilas);color:#fff;box-shadow:none}
-.abo.bien{border-color:var(--ok);background:rgba(31,175,122,.07)}
-.abo.revoir{border-color:var(--corail);background:rgba(243,120,93,.08)}
-.abo.coupe b{text-decoration:line-through;text-decoration-color:var(--ok)}
-.verrou{position:absolute;inset:0;background:rgba(255,255,255,.93);z-index:6;display:flex;flex-direction:column;justify-content:center;padding:0 34px;gap:10px;transition:opacity .5s}
-.verrou.off{opacity:0;pointer-events:none}
-.verrou h2{margin:0;font:800 20px/1.2 var(--f-titre)}
-.verrou p{margin:0;font-size:15.5px;line-height:1.42;color:var(--gris)}
-.verrou p b{color:var(--violet)}
-.verrou .r{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:2px 0}
-.verrou .r div{border-radius:12px;background:var(--fond);padding:9px 6px;text-align:center;font:700 12.5px/1.25 var(--f-titre)}
-.verrou .r b{display:block;font:700 26px/1 var(--f-chiffre)}
-.verrou .go{font:700 15.5px/1.35 var(--f-texte);color:var(--violet)}
+.abo.coupe{background:#F1EEF3}
+.abo.coupe b{text-decoration:line-through;color:var(--gris)}
+.abo.coupe .prix{color:var(--gris);text-decoration:line-through}.abo.coupe .prix small{text-decoration:none;display:none}
+.abo.reduit{border-color:var(--lilas-2)}
 .bilan{position:absolute;left:0;right:0;top:510px;height:122px;padding:12px 20px;display:flex;align-items:center;gap:18px;background:var(--violet);color:#fff;border:0}
 .bilan .k{font:800 12px/1.2 var(--f-titre);letter-spacing:.08em;text-transform:uppercase;opacity:.8;white-space:nowrap}
 .bilan .v{font:700 42px/1 var(--f-chiffre);white-space:nowrap}
 .bilan .sep{width:1px;align-self:stretch;background:rgba(255,255,255,.25)}
-.bilan .mot{flex:1;font-size:14.5px;line-height:1.38;opacity:.97}
+.bilan .droite{flex:1;display:flex;flex-direction:column;gap:7px;align-items:flex-start}
+.bilan .mot{font-size:14.5px;line-height:1.36;opacity:.97}
 .bilan .mot b{color:#FFD9D0}
+.bilan #demain{display:none;border:0;border-radius:9px;padding:8px 14px;font:700 13px/1 var(--f-titre);background:var(--corail);color:#fff;transition:.15s}
+.bilan #demain:hover{transform:translateY(-2px);box-shadow:0 8px 16px rgba(0,0,0,.25)}
+.bilan #demain.vu{background:rgba(255,255,255,.16)}
 .piece{position:absolute;width:26px;height:26px;border-radius:50%;background:var(--corail);border:3px solid #fff;z-index:30;pointer-events:none;box-shadow:0 4px 10px rgba(58,0,87,.3)}
 </style>
 </head>
@@ -59,78 +54,77 @@
 <div id="scene">
   <div class="zone">
     <h1>Où part mon <em>salaire</em> ?</h1>
-    <p class="sous" id="sous">Étape 1 : trouve l'enveloppe qui déborde.</p>
-    <div class="envs carte diag" id="envs">
-      <button class="env b" data-e="b"><div class="nom">Besoins<br>essentiels</div><div class="pot"><div class="plein" id="pB"></div><div class="cible" style="bottom:50%"><span>repère 50 %</span></div></div><div class="mt" id="mB">1 310 €</div><div class="pc" id="cB"></div><div class="ecart haut" id="xB">+110 €</div></button>
-      <button class="env e" data-e="e"><div class="nom">Envies<br>et loisirs</div><div class="pot" id="potE"><div class="plein" id="pE"></div><div class="cible" style="bottom:30%"><span>repère 30 %</span></div></div><div class="mt" id="mE">1 040 €</div><div class="pc" id="cE"></div><div class="ecart haut" id="xE">+320 €</div></button>
-      <button class="env s" data-e="s"><div class="nom">Épargne<br>et projets</div><div class="pot" id="potS"><div class="plein" id="pS"></div><div class="cible" style="bottom:20%"><span>repère 20 %</span></div></div><div class="mt" id="mS">50 €</div><div class="pc" id="cS"></div><div class="ecart bas" id="xS">−430 €</div></button>
+    <p class="sous">Garde, réduis ou résilie ses abonnements, et regarde les enveloppes bouger.</p>
+    <div class="envs carte" id="envs">
+      <div class="env b" id="eB"><div class="nom">Besoins<br>essentiels</div><div class="pot"><div class="plein" id="pB"></div><div class="credit" id="cred"><span>crédits : 180 €</span></div><div class="cible" style="bottom:50%"><span>repère 50 %</span></div></div><div class="mt" id="mB">1 380 €</div><div class="pc" id="cB"></div><div class="ecart haut" id="xB"></div></div>
+      <div class="env e" id="eE"><div class="nom">Envies<br>et loisirs</div><div class="pot" id="potE"><div class="plein" id="pE"></div><div class="cible" style="bottom:30%"><span>repère 30 %</span></div></div><div class="mt" id="mE">940 €</div><div class="pc" id="cE"></div><div class="ecart haut" id="xE"></div></div>
+      <div class="env s" id="eS"><div class="nom">Épargne<br>et projets</div><div class="pot" id="potS"><div class="plein" id="pS"></div><div class="cible" style="bottom:20%"><span>repère 20 %</span></div></div><div class="mt" id="mS">80 €</div><div class="pc" id="cS"></div><div class="ecart bas" id="xS"></div></div>
     </div>
     <div class="abos carte">
-      <div class="k"><span>Ses abonnements</span><span id="totA">147 € par mois</span></div>
+      <div class="k"><span>Ses abonnements</span><span id="totA">246 € par mois</span></div>
       <div id="abos" style="display:contents"></div>
-      <div class="verrou" id="verrou">
-        <h2>D'abord, le diagnostic</h2>
-        <p>Alice gagne <b>2 400 € net</b> par mois. La règle du 50/30/20 donne un repère pour répartir un salaire :</p>
-        <div class="r"><div><b>50 %</b>pour les besoins</div><div><b>30 %</b>pour les envies</div><div><b>20 %</b>pour l'épargne</div></div>
-        <p class="go" id="go">Compare ses trois enveloppes à leur repère, puis clique sur celle qui déborde le plus.</p>
-      </div>
     </div>
     <div class="bilan carte">
-      <div><div class="k">Épargne par mois</div><div class="v"><span id="vM">50 €</span></div></div>
+      <div><div class="k">Épargne par mois</div><div class="v"><span id="vM">80 €</span></div></div>
       <div class="sep"></div>
-      <div><div class="k">Récupéré sur un an</div><div class="v"><span id="vA">0 €</span></div></div>
+      <div><div class="k">Récupéré sur un an</div><div class="v"><span id="vA">0 €</span></div></div>
       <div class="sep"></div>
-      <div class="mot" id="mot">« Je gagne correctement ma vie, et à la fin du mois il ne me reste presque rien. » Avant de couper quoi que ce soit, on regarde où part l'argent.</div>
+      <div class="droite"><div class="mot" id="mot"></div><button id="demain">Et quand ses crédits seront remboursés ?</button></div>
     </div>
   </div>
 </div>
 <script src="alice.js?v=2"></script>
 <script>
-// Le budget d'Alice pour cette démo : 2 400 € net, 1 310 € de besoins, 1 040 € d'envies, 50 € d'épargne (repères 50/30/20 : 1 200, 720, 480).
-// Étape 1 : repérer l'enveloppe qui déborde. Étape 2 : trier les abonnements avec le coût par usage (garder, réduire, résilier).
-const SAL = 2400, BES = 1310, EP0 = 50; let env = 1040, ep = EP0;
-// bon : décision conseillée (g garder, r réduire, x résilier) ; aussi : autre décision acceptable ; red : [nouveau prix, formule]
+// Le budget d'Alice pour cette démo : 2 400 € net. Besoins 1 380 € (dont 180 € de crédits), envies 940 €, épargne 80 €. Repères 50/30/20 : 1 200, 720, 480.
+// Pas de bonne ni de mauvaise réponse : on garde, on réduit ou on résilie, et on regarde les enveloppes. En coupant les abonnements qui dorment
+// (220 €), les envies tombent pile à 30 % et l'épargne passe à 300 €. Le reste de l'écart, ce sont les crédits : remboursés, l'épargne atteint 480 €, soit 20 %.
+const SAL = 2400, BES0 = 1380, CRED = 180, ENV0 = 940, EP0 = 80; let credits = true, atteint = false;
 const A = [
-  { n: 'Séries en streaming', p: 14, c: 'Regardées presque tous les soirs', u: '0,50 € la soirée', red: [8, 'formule avec pub'], bon: 'g', aussi: 'r',
-    m: { g: 'Presque tous les soirs, pour 0,50 € la soirée : celui-là vaut son prix. Elle le garde.', r: 'La formule avec pub à 8 € : pourquoi pas, si la pub ne la dérange pas. 6 € de gagnés.', x: 'Elle peut. Mais elle s’en sert presque tous les soirs : couper ce qui sert vraiment, c’est se priver pour rien. La cible, ce sont les abonnements fantômes.' } },
-  { n: 'Bouquet films et sport', p: 26, c: 'Pas ouvert depuis trois mois', u: '78 € pour rien', bon: 'x',
-    m: { g: 'Trois mois sans l’ouvrir : 78 € partis pour rien. Et elle a déjà ses séries ailleurs : c’est le S du test BISOU, « semblable ».', x: 'Oui ! Trois mois sans l’ouvrir, et un doublon avec ses séries. 26 € récupérés chaque mois.' } },
-  { n: 'Musique en streaming', p: 11, c: 'Écoutée tous les jours', u: '0,37 € par jour', bon: 'g',
-    m: { g: 'Tous les jours, pour 0,37 € : un abonnement qui sert, on le garde sans culpabiliser.', x: 'Elle l’écoute tous les jours. Résilier ce qui sert vraiment, c’est le meilleur moyen de tout reprendre dans un mois.' } },
-  { n: 'Salle de sport', p: 40, c: 'Deux séances en cinq mois', u: '100 € la séance', bon: 'x',
-    m: { g: '200 € payés pour deux séances, soit 100 € la séance. À ce prix-là, elle paie surtout sa bonne conscience.', x: 'Oui. Deux séances en cinq mois, soit 100 € la séance. Le jour où elle s’y remet, une entrée à l’unité suffira.' } },
-  { n: 'Carte ciné illimitée', p: 22, c: 'Un film en quatre mois', u: '88 € le film', bon: 'x',
-    m: { g: 'Un film en quatre mois : 88 € la place. À l’unité, elle en coûte 12.', x: 'Oui. À 88 € le film, mieux vaut payer sa place les soirs où elle y va vraiment.' } },
-  { n: 'Stockage en ligne 2 To', p: 10, c: '40 Go utilisés sur 2 000', u: '2 % utilisés', red: [1, 'formule 50 Go'], bon: 'r',
-    m: { g: 'Elle paie 2 000 Go pour en utiliser 40. Pas besoin de résilier : il suffit de changer de formule.', r: 'Oui : elle garde le service, pas le superflu. 50 Go à 1 € au lieu de 2 To à 10 €.', x: 'Ses photos sont dessus : tout couper n’est pas le plus simple. La formule 50 Go à 1 € lui suffit largement.' } },
-  { n: 'Box beauté mensuelle', p: 24, c: 'Trois box encore emballées', u: '72 € dorment', bon: 'x',
-    m: { g: 'Trois box pas ouvertes : 72 € qui dorment dans un placard.', x: 'Oui. Quand les box s’empilent sans être ouvertes, c’est que l’envie est passée.' } },
+  { n: 'Séries en streaming', p: 14, c: 'Regardées presque tous les soirs', u: '0,50 € la soirée', red: [8, 'formule avec pub'],
+    m: { g: 'Elle les garde : presque tous les soirs, pour 0,50 € la soirée.', r: 'Formule avec pub à 8 € : 6 € de gagnés, si la pub ne la dérange pas.', x: '14 € de gagnés. En échange, plus de séries le soir : c’est l’abonnement dont elle se sert le plus.' } },
+  { n: 'Bouquet films et sport', p: 32, c: 'Pas ouvert depuis trois mois', u: '96 € pour rien',
+    m: { g: 'Elle le garde : 32 € par mois, pas ouvert depuis trois mois.', x: '32 € de gagnés. Elle ne l’ouvrait plus depuis trois mois, et ses séries sont ailleurs.' } },
+  { n: 'Musique en streaming', p: 11, c: 'Écoutée tous les jours', u: '0,37 € par jour',
+    m: { g: 'Elle la garde : écoutée tous les jours, pour 0,37 € par jour.', x: '11 € de gagnés. En échange, plus de musique dans les transports, tous les jours.' } },
+  { n: 'Salle de sport premium', p: 69, c: 'Deux séances en cinq mois', u: '172 € la séance',
+    m: { g: 'Elle la garde : 69 € par mois, pour deux séances en cinq mois.', x: '69 € de gagnés. Le jour où elle s’y remet, une entrée à l’unité coûte 12 €.' } },
+  { n: 'Carte ciné illimitée', p: 24, c: 'Un film en quatre mois', u: '96 € le film',
+    m: { g: 'Elle la garde : 24 € par mois, pour un film en quatre mois.', x: '24 € de gagnés. Les soirs où elle ira au cinéma, la place à l’unité coûte 12 €.' } },
+  { n: 'Box beauté mensuelle', p: 31, c: 'Trois box encore emballées', u: '93 € au placard',
+    m: { g: 'Elle la garde : 31 € par mois, et trois box encore emballées.', x: '31 € de gagnés. Elle a trois box d’avance à ouvrir.' } },
+  { n: 'Location de vêtements', p: 55, c: 'Deux colis renvoyés sans rien porter', u: '110 € pour rien',
+    m: { g: 'Elle la garde : 55 € par mois, deux colis renvoyés sans rien porter.', x: '55 € de gagnés. Et son placard est déjà plein : souviens-toi du +1, −1.' } },
+  { n: 'Stockage en ligne 2 To', p: 10, c: '40 Go utilisés sur 2 000', u: '2 % utilisés', red: [1, 'formule 50 Go'],
+    m: { g: 'Elle le garde : 10 € par mois pour 40 Go utilisés sur 2 000.', r: 'Formule 50 Go à 1 € : 9 € de gagnés, et ses photos restent en ligne.', x: '10 € de gagnés. En échange, 40 Go de photos à ranger ailleurs.' } },
 ];
-const $ = id => document.getElementById(id), pc = v => Math.round(v / SAL * 100) + ' % du salaire', LIB = { g: 'Garder', r: 'Réduire', x: 'Résilier' };
-const gain = a => a.d === 'x' ? a.p : a.d === 'r' ? a.p - a.red[0] : 0;
-function maj(){ $('pB').style.height = (BES / SAL * 100) + '%'; $('pE').style.height = (env / SAL * 100) + '%'; $('pS').style.height = Math.max(1.5, ep / SAL * 100) + '%'; compte($('mE'), env); compte($('mS'), ep); $('cB').textContent = pc(BES); $('cE').textContent = pc(env); $('cS').textContent = pc(ep); compte($('vM'), ep); compte($('vA'), (ep - EP0) * 12);
-  $('xE').textContent = '+' + euro(env - 720); $('xS').textContent = '−' + euro(480 - ep); $('totA').textContent = euro(A.reduce((s, a) => s + a.p - gain(a), 0)) + ' par mois'; }
-$('mE').dataset.v = env; $('mS').dataset.v = ep; $('vM').dataset.v = ep; $('vA').dataset.v = 0;
+A.forEach(a => a.d = 'g');
+const $ = id => document.getElementById(id), pc = v => (Math.round(v / SAL * 1000) / 10).toLocaleString('fr-FR') + ' % du salaire', LIB = { g: 'Garder', r: 'Réduire', x: 'Résilier' };
+const gain = a => a.d === 'x' ? a.p : a.d === 'r' ? a.p - a.red[0] : 0, gains = () => A.reduce((s, a) => s + gain(a), 0);
+const chip = (id, cls, t) => { $(id).className = 'ecart ' + cls; $(id).textContent = t; };
+function maj(){ const g = gains(), bes = credits ? BES0 : BES0 - CRED, env = ENV0 - g, ep = EP0 + g + (credits ? 0 : CRED), ok = Math.round(env / SAL * 100) <= 30;
+  $('pB').style.height = (Math.min(bes, 1200) / SAL * 100) + '%'; $('cred').style.height = credits ? '7.5%' : '0'; $('cred').firstChild.style.opacity = credits ? 1 : 0; $('pE').style.height = (env / SAL * 100) + '%'; $('pS').style.height = Math.max(1.5, ep / SAL * 100) + '%';
+  compte($('mB'), bes); compte($('mE'), env); compte($('mS'), ep); $('cB').textContent = pc(bes); $('cE').textContent = pc(env); $('cS').textContent = pc(ep); compte($('vM'), ep); compte($('vA'), g * 12);
+  $('eE').classList.toggle('bon', ok); $('eS').classList.toggle('bon', ep >= 480);
+  chip('xB', credits ? 'haut' : 'bon', credits ? '+180 € : ses crédits' : 'repère atteint'); chip('xE', ok ? 'bon' : 'haut', ok ? 'repère atteint' : '+' + euro(env - 720) + ' au-dessus'); chip('xS', ep >= 480 ? 'bon' : 'bas', ep >= 480 ? 'repère atteint' : 'encore ' + euro(480 - ep));
+  $('totA').textContent = euro(A.reduce((s, a) => s + a.p - gain(a), 0)) + ' par mois';
+  return { env, ep, ok, g }; }
+['mB', 'mE', 'mS', 'vM'].forEach((id, i) => $(id).dataset.v = [BES0, ENV0, EP0, EP0][i]); $('vA').dataset.v = 0;
 function vole(de, vers){ const sc = $('scene').getBoundingClientRect(), k = echelle(), a = de.getBoundingClientRect(), b = vers.getBoundingClientRect(); const p = document.createElement('i'); p.className = 'piece'; const x0 = (a.left + a.width / 2 - sc.left) / k - 13, y0 = (a.top + a.height / 2 - sc.top) / k - 13, x1 = (b.left + b.width / 2 - sc.left) / k - 13, y1 = (b.bottom - sc.top) / k - 40; p.style.left = x0 + 'px'; p.style.top = y0 + 'px'; $('scene').appendChild(p); p.animate([{ transform: 'none' }, { transform: `translate(${(x1 - x0) / 2}px,${Math.min(0, y1 - y0) - 90}px) scale(1.2)`, offset: .5 }, { transform: `translate(${x1 - x0}px,${y1 - y0}px) scale(.7)` }], { duration: VITE ? 10 : 650, easing: 'ease-in-out' }).onfinish = () => p.remove(); }
-// étape 1 : le diagnostic
-const NON = { b: '55 % au lieu de 50 % : un peu au-dessus, mais un loyer ou des courses se bougent difficilement. Cherche celle qui dépasse le plus son repère.', s: 'Celle-là ne déborde pas, au contraire : 2 % au lieu de 20 %. Cherche celle qui dépasse le plus son repère.' };
-document.querySelectorAll('.env').forEach(e => e.onclick = () => { if (!$('envs').classList.contains('diag')) return; const k = e.dataset.e;
-  if (k !== 'e') { e.classList.remove('non'); void e.offsetWidth; e.classList.add('non'); $('go').textContent = NON[k]; $('go').style.color = 'var(--ko)'; return; }
-  $('envs').classList.remove('diag'); document.querySelectorAll('.ecart').forEach(x => x.classList.add('on')); $('verrou').classList.add('off');
-  $('sous').textContent = 'Étape 2 : pour chaque abonnement, garde, réduis ou résilie.';
-  $('mot').innerHTML = '<b>Ses envies dépassent le repère de 320 € par mois</b>, et c’est l’épargne qui trinque. Dans ces envies : 147 € d’abonnements. Regarde ce que coûte vraiment chaque utilisation avant de décider.'; });
-// étape 2 : le tri des abonnements
-function synthese(){ const bons = A.filter(a => a.d === a.bon || a.d === a.aussi).length, g = ep - EP0;
-  $('sous').textContent = 'Tu peux encore changer d’avis, puis clique sur « Continuer ».';
-  $('mot').innerHTML = `<b>${euro(g)} récupérés chaque mois</b>${bons === 7 ? ', sans rien changer à son quotidien' : ''}. Les envies passent de 43 % à ${Math.round(env / SAL * 100)} % du salaire, l’épargne de 2 % à ${Math.round(ep / SAL * 100)} %. ${bons === 7 ? 'Le repère des 20 % est encore loin, mais c’est un vrai début.' : 'Les lignes entourées en corail méritent un second regard.'}`; }
+let minuteur = null;
+function bravo(e){ $('mot').innerHTML = `<b>Repère atteint : ses envies pèsent ${Math.round(e.env / SAL * 100)} % du salaire.</b> Son épargne passe de 80 € à ${euro(e.ep)} par mois, rien qu’avec ses abonnements. Il manque encore ${euro(Math.max(0, 480 - e.ep))} pour les 20 %.`; $('demain').style.display = 'block'; }
 A.forEach(a => { const d = document.createElement('div'); d.className = 'abo'; const opts = a.red ? ['g', 'r', 'x'] : ['g', 'x'];
-  d.innerHTML = `<div><b>${a.n}</b><small>${a.c}</small></div><div class="prix">${euro(a.p)}<small>${a.u}</small></div><div class="dec">${opts.map(o => `<button data-d="${o}"${o === 'r' ? ` title="${a.red[1]} à ${euro(a.red[0])}"` : ''}>${LIB[o]}</button>`).join('')}</div>`; $('abos').appendChild(d);
+  d.innerHTML = `<div><b>${a.n}</b><small>${a.c}</small></div><div class="prix">${euro(a.p)}<small>${a.u}</small></div><div class="dec">${opts.map(o => `<button data-d="${o}"${o === 'g' ? ' class="on"' : ''}${o === 'r' ? ` title="${a.red[1]} à ${euro(a.red[0])}"` : ''}>${LIB[o]}</button>`).join('')}</div>`; $('abos').appendChild(d);
   d.querySelectorAll('button').forEach(b => b.onclick = () => { if (a.d === b.dataset.d) return; const avant = gain(a); a.d = b.dataset.d; const delta = gain(a) - avant;
-    d.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); const ok = a.d === a.bon || a.d === a.aussi; d.classList.toggle('bien', ok); d.classList.toggle('revoir', !ok); d.classList.toggle('coupe', a.d === 'x');
-    env -= delta; ep += delta; if (delta > 0) vole($('potE'), $('potS')); else if (delta < 0) vole($('potS'), $('potE')); setTimeout(maj, VITE || !delta ? 0 : 350);
-    $('mot').innerHTML = `<b>${a.n}.</b> ${a.m[a.d]}`; if (A.every(x => x.d)) setTimeout(synthese, VITE ? 30 : 3200); }); });
-setTimeout(maj, 200);
-if (Q.has('fini')) setTimeout(() => { document.querySelector('.env.e').click(); A.forEach((a, i) => document.querySelectorAll('.abo')[i].querySelector(`[data-d="${a.bon}"]`).click()); }, 500);
+    d.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); d.classList.toggle('coupe', a.d === 'x'); d.classList.toggle('reduit', a.d === 'r');
+    if (!credits) { credits = true; $('demain').classList.remove('vu'); $('demain').textContent = 'Et quand ses crédits seront remboursés ?'; }
+    if (delta > 0) vole($('potE'), $('potS')); else if (delta < 0) vole($('potS'), $('potE'));
+    $('mot').innerHTML = `<b>${a.n}.</b> ${a.m[a.d]}`; clearTimeout(minuteur);
+    setTimeout(() => { const e = maj(); if (e.ok) minuteur = setTimeout(() => bravo(e), VITE ? 30 : 2600); else $('demain').style.display = 'none'; }, VITE ? 0 : 350); }); });
+// la suite de l'histoire : dans deux ans, les crédits sont remboursés et les 180 € passent en épargne
+$('demain').onclick = () => { credits = !credits; if (!credits) vole($('eB').querySelector('.pot'), $('potS')); else vole($('potS'), $('eB').querySelector('.pot')); $('demain').classList.toggle('vu', !credits); $('demain').textContent = credits ? 'Et quand ses crédits seront remboursés ?' : 'Revenir à aujourd’hui';
+  setTimeout(() => { const e = maj(); if (credits) return bravo(e); $('mot').innerHTML = `<b>Dans deux ans, ses crédits sont remboursés.</b> Si ces 180 € partent en épargne au lieu de repartir en dépenses : ${euro(e.ep)} par mois, soit ${Math.round(e.ep / SAL * 100)} % du salaire.` + (e.ep >= 480 ? ' Les trois repères sont atteints.' : ''); }, VITE ? 0 : 350); };
+setTimeout(() => { maj(); $('mot').innerHTML = '«&nbsp;Je gagne correctement ma vie, et il ne me reste presque rien.&nbsp;» <b>Objectif : ramener ses envies sous le repère des 30 %.</b> Dans ces envies, 246 € d’abonnements.'; }, 200);
+if (Q.has('fini')) setTimeout(() => A.forEach((a, i) => { const d = a.red && a.p === 10 ? 'r' : ['Séries en streaming', 'Musique en streaming'].includes(a.n) ? null : 'x'; if (d) document.querySelectorAll('.abo')[i].querySelector(`[data-d="${d}"]`).click(); }), 500);
 </script>
 </body>
 </html>
