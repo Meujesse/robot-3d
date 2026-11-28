@@ -1,0 +1,141 @@
+{
+ "titre": "Néon Garage : teaser",
+ "pistes": [
+  [
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/p0-ville-b.mp4",
+    "in": 0.3,
+    "out": 3.3,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "La ville"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/p2-accueil-c-sync.mp4",
+    "in": 0.0,
+    "out": 4.7,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "Inès se présente"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/prise-voiture.mp4",
+    "in": 0.5,
+    "out": 2.4,
+    "zoom": 1.0,
+    "volume": 0.0,
+    "nom": "La voiture en 3D"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/prise-pannes.mp4",
+    "in": 1.3,
+    "out": 3.2,
+    "zoom": 1.0,
+    "volume": 0.0,
+    "nom": "Les pannes"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/prise-texto.mp4",
+    "in": 1.0,
+    "out": 2.9,
+    "zoom": 1.0,
+    "volume": 0.0,
+    "nom": "Le texto du client"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/prise-reparer.mp4",
+    "in": 0.3,
+    "out": 2.2,
+    "zoom": 1.0,
+    "volume": 0.0,
+    "nom": "La réparation"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/p5-mission-b-sync.mp4",
+    "in": 0.0,
+    "out": 4.5,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "À toi de trouver la panne"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/teaser-carton-79b5aa34.mp4",
+    "in": 0.0,
+    "out": 4.0,
+    "zoom": 1.0,
+    "volume": 0.0,
+    "nom": "Carton de titre"
+   }
+  ],
+  [
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/images/teaser-1-ea58d357.png",
+    "at": 0.35,
+    "in": 0,
+    "out": 2.65,
+    "nom": "texte 1"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/images/teaser-2-0e46ccf4.png",
+    "at": 7.7,
+    "in": 0,
+    "out": 1.9,
+    "nom": "texte 2"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/images/teaser-3-b5576942.png",
+    "at": 9.6,
+    "in": 0,
+    "out": 1.9,
+    "nom": "texte 3"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/images/teaser-4-c1616b71.png",
+    "at": 11.5,
+    "in": 0,
+    "out": 1.9,
+    "nom": "texte 4"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/images/teaser-5-aac14c7d.png",
+    "at": 13.4,
+    "in": 0,
+    "out": 1.9,
+    "nom": "texte 5"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/images/teaser-6-ddaf2e6c.png",
+    "at": 20.15,
+    "in": 0,
+    "out": 3.65,
+    "nom": "texte 6"
+   }
+  ]
+ ],
+ "audio": [
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/teaser-accueil.mp3",
+   "in": 0,
+   "out": 4.72,
+   "at": 3.0,
+   "volume": 1.0,
+   "nom": "Voix d’Inès : teaser-accueil"
+  },
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p5-mission.mp3",
+   "in": 0,
+   "out": 3.97,
+   "at": 15.3,
+   "volume": 1.0,
+   "nom": "Voix d’Inès : p5-mission"
+  },
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/musique-teaser.wav",
+   "in": 0,
+   "out": 23.8,
+   "at": 0,
+   "volume": 1.0,
+   "nom": "Musique (fin du morceau, niveaux déjà réglés)"
+  }
+ ]
+}

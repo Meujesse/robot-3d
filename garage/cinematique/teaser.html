@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Néon Garage · textes du teaser</title>
+<style>
+/* Textes du teaser, 1920 x 1080 sur fond transparent. ?n=1 : accroche ; 2 à 5 : une activité ; 6 : ligne sous le carton de titre */
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;700&display=swap');
+html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:transparent}
+.t{position:absolute;display:none}
+/* accroche centrée sur le plan de la ville */
+#t1{inset:0;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 50% 50%,rgba(20,11,46,.62) 0%,rgba(20,11,46,.18) 70%)}
+#t1 small{font:700 34px/1 "Barlow Condensed",sans-serif;letter-spacing:.22em;text-transform:uppercase;color:#FFB36B;margin-bottom:22px;text-shadow:0 3px 0 #140B2E}
+#t1 b{font:400 124px/1.02 "Anton",sans-serif;text-transform:uppercase;color:#fff;text-align:center;text-shadow:0 6px 0 #140B2E,0 0 40px rgba(255,45,138,.55);letter-spacing:.01em}
+em{font-style:normal;background:linear-gradient(92deg,#FFB36B 0%,#FF5FA2 48%,#B14CFF 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 6px 0 #140B2E)}
+/* bandeau d'une activité, en bas à gauche */
+.act{left:0;right:0;bottom:0;height:300px;align-items:flex-end;padding:0 0 64px 84px;background:linear-gradient(180deg,rgba(20,11,46,0) 0%,rgba(20,11,46,.9) 78%)}
+.act b{font:400 92px/1 "Anton",sans-serif;text-transform:uppercase;color:#fff;text-shadow:0 5px 0 #140B2E;letter-spacing:.01em}
+.act i{font-style:normal;display:inline-block;margin-right:26px;font:400 40px/1 "Anton",sans-serif;color:#140B2E;background:linear-gradient(92deg,#FFB36B,#FF5FA2 48%,#B14CFF);padding:14px 20px 11px;border-radius:10px;transform:translateY(-16px) skewX(-8deg)}
+/* ligne sous le carton de titre */
+#t6{left:0;right:0;bottom:120px;justify-content:center}
+#t6 b{font:700 44px/1 "Barlow Condensed",sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:rgba(20,11,46,.75);border:3px solid #FF5FA2;border-radius:14px;padding:16px 30px 14px;box-shadow:0 10px 30px rgba(255,45,138,.4)}
+#t6 b span{color:#FFB36B}
+</style>
+</head>
+<body>
+<div class="t" id="t1"><small>Démo e-learning · mécanique auto</small><b>Et si l'atelier<br>devenait <em>un jeu</em>&nbsp;?</b></div>
+<div class="t act" id="t2"><b><i>1</i>Une voiture <em>en 3D</em> à inspecter</b></div>
+<div class="t act" id="t3"><b><i>2</i>Chaque panne, <em>sur la route</em></b></div>
+<div class="t act" id="t4"><b><i>3</i>Un client <em>qui répond</em></b></div>
+<div class="t act" id="t5"><b><i>4</i>Réparer, <em>pièce par pièce</em></b></div>
+<div class="t" id="t6"><b>À tester sur <span>portfolio.meujesselearning.com</span></b></div>
+<script>document.getElementById('t' + (new URLSearchParams(location.search).get('n') || '1')).style.display = 'flex';</script>
+</body>
+</html>
