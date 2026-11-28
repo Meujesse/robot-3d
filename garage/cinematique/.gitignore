@@ -1,0 +1,10 @@
+# Fichiers de travail lourds de la cinématique : gardés sur le Mac, pas dans le dépôt
+clips/
+lipsync/
+images/
+neon-garage-cinematique-v*.mp4
+apercu-*.mp4
+*.wav
+musique.mp3
+montage.json
+montage-v3.json

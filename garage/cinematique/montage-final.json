@@ -1,0 +1,113 @@
+{
+ "titre": "Néon Garage : cinématique d’ouverture",
+ "pistes": [
+  [
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/p0-ville-b.mp4",
+    "in": 0.3,
+    "out": 4.5,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "La ville au coucher du soleil"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/p1-entree-c.mp4",
+    "in": 0.0,
+    "out": 4.8,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "On avance vers le garage"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/p2-accueil-c-sync.mp4",
+    "in": 0.35,
+    "out": 5.88,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "Inès nous accueille et montre l’atelier"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-entree-atelier.mp4",
+    "in": 0.0,
+    "out": 1.62,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "On entre"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-visite.mp4",
+    "in": 0.0,
+    "out": 7.35,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "La visite, avec les repères"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-voiture.mp4",
+    "in": 0.0,
+    "out": 6.0,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "La citadine à réparer"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/p5-mission-b-sync.mp4",
+    "in": 0.0,
+    "out": 4.9,
+    "zoom": 1.01,
+    "volume": 0.0,
+    "nom": "À toi de trouver la panne"
+   },
+   {
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-carton.mp4",
+    "in": 0.0,
+    "out": 4.6,
+    "zoom": 1.0,
+    "volume": 0.0,
+    "nom": "Carton de titre"
+   }
+  ]
+ ],
+ "audio": [
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p2-accueil.mp3",
+   "in": 0,
+   "out": 6.61,
+   "at": 8.65,
+   "volume": 1.0,
+   "nom": "Voix d’Inès : p2-accueil"
+  },
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p3-visite.mp3",
+   "in": 0,
+   "out": 7.81,
+   "at": 15.5,
+   "volume": 1.0,
+   "nom": "Voix d’Inès : p3-visite"
+  },
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p4-voiture.mp3",
+   "in": 0,
+   "out": 5.88,
+   "at": 23.5,
+   "volume": 1.0,
+   "nom": "Voix d’Inès : p4-voiture"
+  },
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p5-mission.mp3",
+   "in": 0,
+   "out": 3.97,
+   "at": 29.5,
+   "volume": 1.0,
+   "nom": "Voix d’Inès : p5-mission"
+  },
+  {
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/musique-mixee-v3.wav",
+   "in": 0,
+   "out": 39.0,
+   "at": 0,
+   "volume": 1.0,
+   "nom": "Musique (niveaux déjà réglés)"
+  }
+ ]
+}

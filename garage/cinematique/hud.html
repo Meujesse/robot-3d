@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Néon Garage · repères de la visite</title>
+<style>
+/* Repères façon jeu vidéo posés sur le plan de visite (1914 x 1082, fond transparent). ?n=1 : l'établi ; ?n=2 : les ponts */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap');
+html,body{margin:0;width:1914px;height:1082px;overflow:hidden;background:transparent}
+.rep{position:absolute;display:none;flex-direction:column;align-items:center}
+.rep b{display:flex;align-items:center;gap:14px;font:700 40px/1 "Barlow Condensed",sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:rgba(20,11,46,.9);padding:14px 26px 13px 20px;border-radius:12px;border:3px solid #FF5FA2;box-shadow:0 0 0 3px rgba(20,11,46,.55),0 10px 28px rgba(255,45,138,.45)}
+.rep b::before{content:"";width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,#FFB36B,#FF2D8A);box-shadow:0 0 12px #FF2D8A}
+.rep i{width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:20px solid #FF5FA2;margin-top:5px;filter:drop-shadow(0 4px 6px rgba(20,11,46,.7))}
+#r1{left:64px;top:300px}
+#r2{left:1320px;top:120px}
+body.n1 #r1,body.n2 #r2{display:flex}
+</style>
+</head>
+<body>
+<div class="rep" id="r1"><b>L'établi et les outils</b><i></i></div>
+<div class="rep" id="r2"><b>Les deux ponts</b><i></i></div>
+<script>document.body.classList.add('n' + (new URLSearchParams(location.search).get('n') || '1'));</script>
+</body>
+</html>
