@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>Néon Garage · repères de la visite</title>
 <style>
-/* Repères façon jeu vidéo posés sur le plan de visite (1914 x 1082, fond transparent). ?n=1 : l'établi ; ?n=2 : les ponts */
+/* Repères façon jeu vidéo posés sur le plan de visite (1914 x 1082, fond transparent). ?n=1 : l'établi ; ?n=2 : le pont élévateur */
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap');
 html,body{margin:0;width:1914px;height:1082px;overflow:hidden;background:transparent}
 .rep{position:absolute;display:none;flex-direction:column;align-items:center}
@@ -12,13 +12,13 @@ html,body{margin:0;width:1914px;height:1082px;overflow:hidden;background:transpa
 .rep b::before{content:"";width:16px;height:16px;border-radius:50%;background:linear-gradient(135deg,#FFB36B,#FF2D8A);box-shadow:0 0 12px #FF2D8A}
 .rep i{width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:20px solid #FF5FA2;margin-top:5px;filter:drop-shadow(0 4px 6px rgba(20,11,46,.7))}
 #r1{left:64px;top:300px}
-#r2{left:1320px;top:120px}
+#r2{left:1290px;top:120px}
 body.n1 #r1,body.n2 #r2{display:flex}
 </style>
 </head>
 <body>
 <div class="rep" id="r1"><b>L'établi et les outils</b><i></i></div>
-<div class="rep" id="r2"><b>Les deux ponts</b><i></i></div>
+<div class="rep" id="r2"><b>Le pont élévateur</b><i></i></div>
 <script>document.body.classList.add('n' + (new URLSearchParams(location.search).get('n') || '1'));</script>
 </body>
 </html>

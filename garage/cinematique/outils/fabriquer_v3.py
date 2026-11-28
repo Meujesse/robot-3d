@@ -32,6 +32,18 @@ def ff(args):
 X264 = ['-an', '-r', '30', '-c:v', 'libx264', '-crf', '14', '-preset', 'fast', '-pix_fmt', 'yuv420p']
 
 
+def fige(nom):
+    """L'outil de rendu garde ses morceaux en cache d'après le NOM du fichier source : un plan refabriqué sous le même nom
+    ressortirait dans son ancienne version. On ajoute donc au nom une empreinte du contenu."""
+    import glob, zlib
+    f = c(nom)
+    neuf_nom = f"{nom}-{zlib.crc32(open(f, 'rb').read()):08x}"
+    for vieux in glob.glob(c(nom + '-????????')):
+        os.remove(vieux)
+    os.replace(f, c(neuf_nom))
+    return c(neuf_nom)
+
+
 def silence(f):
     """L'outil de rendu attend une piste son dans chaque plan de la piste principale : on en ajoute une, muette."""
     tmp = f + '.tmp.mp4'
@@ -57,6 +69,7 @@ D_ENTREE = 1.62
 ff(['-loop', '1', '-framerate', '30', '-t', str(D_ENTREE), '-i', D + 'images/atelier-entree.png', '-vf',
     f"scale=w='2*trunc(1914*(1+0.12*(0.6*t/{D_ENTREE}+0.4*(t/{D_ENTREE})*(2-t/{D_ENTREE}))))':h='2*trunc(1082*(1+0.12*(0.6*t/{D_ENTREE}+0.4*(t/{D_ENTREE})*(2-t/{D_ENTREE}))))':eval=frame,crop=3828:2164,scale=1914:1082:flags=lanczos,setsar=1", '-t', str(D_ENTREE)] + X264 + [c('v3-entree-atelier')])
 silence(c('v3-entree-atelier'))
+F_ENTREE = fige('v3-entree-atelier')
 
 # 3. visite : repères calés sur les mots (l'établi 0,98 s, là 2,38 s, « Et chez nous » 4,02 s), puis fin ralentie
 reperes = ("[1:v]format=rgba,fade=t=in:st=0.75:d=0.15:alpha=1,fade=t=out:st=2.3:d=0.15:alpha=1[h1];"
@@ -66,16 +79,18 @@ ff(['-i', c(SOURCES['visite']), '-loop', '1', '-framerate', '30', '-t', '8.1', '
     '-filter_complex', reperes, '-map', '[v]', '-t', '8.03'] + X264 + [c('v3-visite-reperes')])
 d_visite = etire_fin(c('v3-visite-reperes'), c('v3-visite'), 0.65, 8.0, 0.4, 0.4, avant='[0:v]null[v0];')
 silence(c('v3-visite'))
+F_VISITE = fige('v3-visite')
 
 # 4. voiture avec badge : on entre 0,35 s après le début du clip, fin ralentie de 0,2 s
 d_voiture = etire_fin(c(SOURCES['voiture'] + '-badge'), c('v3-voiture'), 0.0, 6.0, 0.3, 0.3, avant='[0:v]null[v0];')
 silence(c('v3-voiture'))
+F_VOITURE = fige('v3-voiture')
 
 # 5. carton de titre : le titre apparaît dès la coupe
 T = {}
 plans = [('ville', c(SOURCES['ville']), 0.3, 4.5, 'La ville au coucher du soleil'), ('entree', c(SOURCES['entree']), 0.0, 4.8, 'On avance vers le garage'),
-         ('accueil', c(SOURCES['accueil']), 0.35, 5.88, 'Inès nous accueille et montre l’atelier'), ('atelier', c('v3-entree-atelier'), 0.0, D_ENTREE, 'On entre'),
-         ('visite', c('v3-visite'), 0.0, d_visite, 'La visite, avec les repères'), ('voiture', c('v3-voiture'), 0.0, d_voiture, 'La citadine à réparer'),
+         ('accueil', c(SOURCES['accueil']), 0.35, 5.88, 'Inès nous accueille et montre l’atelier'), ('atelier', F_ENTREE, 0.0, D_ENTREE, 'On entre'),
+         ('visite', F_VISITE, 0.0, d_visite, 'La visite, avec les repères'), ('voiture', F_VOITURE, 0.0, d_voiture, 'La citadine à réparer'),
          ('mission', c(SOURCES['mission']), 0.0, 4.9, 'À toi de trouver la panne')]
 t = 0.0
 for nom, _, a, b, _ in plans:
@@ -85,14 +100,15 @@ ff(['-loop', '1', '-framerate', '30', '-t', str(d_carton), '-i', D + 'images/car
     '-filter_complex', f"[0:v]scale=w='2*trunc(960*(1+0.04*t/{d_carton}))':h='2*trunc(540*(1+0.04*t/{d_carton}))':eval=frame,crop=1920:1080,setsar=1[bg];"
     "[1:v]format=rgba,fade=t=in:st=0:d=0.4:alpha=1[ti];[bg][ti]overlay=0:0:format=auto,format=yuv420p[v]", '-map', '[v]', '-t', str(d_carton)] + X264 + [c('v3-carton')])
 silence(c('v3-carton'))
-plans.append(('carton', c('v3-carton'), 0.0, d_carton, 'Carton de titre'))
+F_CARTON = fige('v3-carton')
+plans.append(('carton', F_CARTON, 0.0, d_carton, 'Carton de titre'))
 T['carton'] = t
 
 # 6. voix : chaque réplique part un peu avant le plan où l'on voit Inès
 # accueil : la voix part pendant l'avancée (pas d'Inès à l'image) ; visite : idem pendant l'entrée, et le clip n'a pas été resynchronisé ;
 # voiture et clé : clips resynchronisés, la voix part à la coupe (sinon on l'entend sur Inès qui sourit bouche fermée au plan d'avant)
-voix = [('p2-accueil', T['accueil'] - 0.35), ('p3-visite', T['visite'] - 0.65), ('p4-voiture', T['voiture']), ('p5-mission', T['mission'])]
-durees = {'p2-accueil': 6.61, 'p3-visite': 7.81, 'p4-voiture': 5.88, 'p5-mission': 3.97}
+voix = [('p2-accueil', T['accueil'] - 0.35), ('p3-visite-v2', T['visite'] - 0.65), ('p4-voiture', T['voiture']), ('p5-mission', T['mission'])]
+durees = {'p2-accueil': 6.61, 'p3-visite-v2': 7.81, 'p4-voiture': 5.88, 'p5-mission': 3.97}
 for (n1, a1), (n2, a2) in zip(voix, voix[1:]):
     assert a1 + durees[n1] + 0.1 <= a2, f'les voix {n1} et {n2} se chevauchent'
 

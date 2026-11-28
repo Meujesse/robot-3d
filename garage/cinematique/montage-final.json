@@ -27,7 +27,7 @@
     "nom": "Inès nous accueille et montre l’atelier"
    },
    {
-    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-entree-atelier.mp4",
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-entree-atelier-ae55db03.mp4",
     "in": 0.0,
     "out": 1.62,
     "zoom": 1.01,
@@ -35,7 +35,7 @@
     "nom": "On entre"
    },
    {
-    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-visite.mp4",
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-visite-25aa866c.mp4",
     "in": 0.0,
     "out": 7.35,
     "zoom": 1.01,
@@ -43,7 +43,7 @@
     "nom": "La visite, avec les repères"
    },
    {
-    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-voiture.mp4",
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-voiture-e4c325c0.mp4",
     "in": 0.0,
     "out": 6.0,
     "zoom": 1.01,
@@ -59,7 +59,7 @@
     "nom": "À toi de trouver la panne"
    },
    {
-    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-carton.mp4",
+    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/clips/v3-carton-18433a1f.mp4",
     "in": 0.0,
     "out": 4.6,
     "zoom": 1.0,
@@ -78,12 +78,12 @@
    "nom": "Voix d’Inès : p2-accueil"
   },
   {
-   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p3-visite.mp3",
+   "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p3-visite-v2.mp3",
    "in": 0,
    "out": 7.81,
    "at": 15.5,
    "volume": 1.0,
-   "nom": "Voix d’Inès : p3-visite"
+   "nom": "Voix d’Inès : p3-visite-v2"
   },
   {
    "src": "/Users/jynchereze/Downloads/robot-3d/garage/cinematique/voix/p4-voiture.mp3",
